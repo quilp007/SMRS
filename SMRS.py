@@ -16,11 +16,15 @@ import pandas as pd
 import pyqtgraph as pg
 
 import time
+import pymongo
+import pprint
 
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 x_size = 360# graph's x size
+NUM_X_AXIS = 300
+NUM_UPDATE_X_AXIS = 5
 
 ROW_COUNT = 7  
 COL_COUNT = 3
@@ -220,11 +224,36 @@ class qt(QMainWindow, form_class):
         # self.btn_stop.clicked.connect(lambda: self.btn_34461a(self.btn_stop))
         # self.btn_close.clicked.connect(lambda: self.btn_34461a(self.btn_close))
 
-        self.data = np.linspace(-np.pi, np.pi, x_size)
-        # self.y1_1 = np.zeros(len(self.data))
-        self.y1_2 = np.zeros(len(self.data))
+        self.data_temp = []
+        self.data_hum = []
+        self.data_pres = []
 
-        self.y2_1 = np.sin(self.data)
+        # qeury(read) from start date (time) to end date (time)
+        # TODO: need to modify "query_time" as a user input
+        self.query_time = datetime(2022, 6, 15, 18, 22, 37)
+        results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
+        for result in results:
+            self.data_temp.append(result.get("temperature"))
+            self.data_hum.append(result.get("humidity"))
+            self.data_pres.append(result.get("pressure"))
+            self.query_time = result.get("timestamp")
+            # print(result)
+            # print(result.get("temperature"))
+            # print(self.query_time)
+
+        # print("self.data_temp")
+        # print(self.data_temp)
+        # print("self.data_hum")
+        # print(self.data_hum)
+        # print("self.data_pres")
+        # print(self.data_pres)
+
+
+        # self.data = np.linspace(-np.pi, np.pi, x_size)
+        # self.y1_1 = np.zeros(len(self.data))
+        # self.y1_2 = np.zeros(len(self.data))
+
+        # self.y2_1 = np.sin(self.data)
 
         # self.y2_1 = np.zeros(mean_plot_x_size)
         # self.y2_2 = np.zeros(mean_plot_x_size)
@@ -237,10 +266,14 @@ class qt(QMainWindow, form_class):
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         # Updating Plot
-        self.plot = self.graphWidget.addPlot(title="Temperature")
-        self.curve1_1 = self.plot.plot(pen='g')
-        self.curve1_2 = self.plot.plot(pen='r')
-        self.plot.setGeometry(0, 0, x_size, 5)
+        self.plot = self.graphWidget.addPlot(title="Current Status")
+
+        self.curve_temp = self.plot.plot(pen='g')
+        self.curve_hum = self.plot.plot(pen='r')
+        self.curve_pres = self.plot.plot(pen='y')
+
+        # self.plot.setGeometry(0, 0, x_size, 5)
+        self.plot.setGeometry(0, 0, NUM_X_AXIS, 5)
 
         # self.plot.setYRange(self.plot_upper, self.plot_lower, padding=0)
 
@@ -252,11 +285,11 @@ class qt(QMainWindow, form_class):
         # self.graphWidget.nextRow()
 
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(10)
+        self.timer.setInterval(100)
         # self.timer.timeout.connect(self.update_func_1)
 
         # self.timer.timeout.connect(self.mean_value_plot)
-        self.timer.timeout.connect(self.sine_plot)
+        self.timer.timeout.connect(self.graph_plot)
 
         self.timer.start()
 
@@ -513,12 +546,54 @@ class qt(QMainWindow, form_class):
 
         # self.tableWidget.setItem(0, LINE_NUM, QTableWidgetItem(str(line_data[-1])))
 
-    def sine_plot(self):
+    def graph_plot(self):
         # self.g_plotWidget.plot(hour, temperature)
         # curve = self.graphWidget_2.plot(pen='y')
-        self.y2_1 = np.roll(self.y2_1, -1)
-        self.y2_1[-1] = np.sin(self.data[self.counter % x_size])
-        self.curve1_1.setData(self.y2_1)
+
+        # self.y2_1 = np.roll(self.y2_1, -1)
+        # self.y2_1[-1] = np.sin(self.data[self.counter % x_size])
+        # self.curve1_1.setData(self.y2_1)
+
+        # self.y2_1 = np.roll(self.y2_1, -1)
+        # self.y2_1[-1] = np.sin(self.data[self.counter % x_size])
+        update_data_temp = []
+        update_data_hum = []
+        update_data_pres = []
+
+        update_results = collection.find({"timestamp": {"$gt":self.query_time}}, limit=NUM_UPDATE_X_AXIS)
+        for result in update_results:
+            update_data_temp.append(result.get("temperature"))
+            update_data_hum.append(result.get("humidity"))
+            update_data_pres.append(result.get("pressure"))
+            self.query_time = result.get("timestamp")
+            # print(result)
+            # print(result.get("temperature"))
+            # print(self.query_time)
+
+        # print("data_temp")
+        # print(self.data_temp)
+        # print("data_hum")
+        # print(self.data_hum)
+        # print("data_pres")
+        # print(self.data_pres)
+        # print("update_data_temp")
+        # print(update_data_temp)
+        # print("update_data_hum")
+        # print(update_data_hum)
+        # print("update_data_pres")
+        # print(update_data_pres)
+
+        self.data_temp = self.data_temp[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_temp
+        self.data_hum = self.data_hum[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_hum
+        self.data_pres = self.data_pres[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_pres
+
+        update_data_temp.clear()
+        update_data_hum.clear()
+        update_data_pres.clear()
+
+        self.curve_temp.setData(self.data_temp)
+        self.curve_hum.setData(self.data_hum)
+        self.curve_pres.setData(self.data_pres)
 
         # if self.counter % 50 == 0:
         #     self.lcdNum_T_SV_CH1.display("{:.1f}".format(mean_value))
@@ -556,4 +631,13 @@ def run():
 
 
 if __name__ == "__main__":
+    conn = pymongo.MongoClient('203.251.78.135', 27017)
+    db = conn.get_database('road_1')
+    collection = db.get_collection('device_1')
+
+    #results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
+    #for result in results:
+    #    print(result)
+
+
     run()
