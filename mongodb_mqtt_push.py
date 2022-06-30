@@ -48,7 +48,7 @@ while True:
     sine_value = np.sin(sine_x_data[idx%x_size])
     # temp_data['_id'] = idx
     temp_data['road_temp'] = sine_value
-    temp_data['air_temp'] = sine_value * 5
+    temp_data['road_humidity'] = sine_value *5 
     temp_data['air_humidity'] = sine_value * 10
     # data = copy.deepcopy(temp_data)
     temp_data['timestamp'] = datetime.now()
