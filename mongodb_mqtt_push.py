@@ -13,8 +13,15 @@ port = 1883
 topic = "device_1/+"
 root_topic = "device_1/"
 
+userid = 'smrs_1'
+passwd = 'smrs2580_1!'
+
 # client = MongoClient(host='localhost', port=27017)
-client = MongoClient(host=ip, port=27017)
+# client = MongoClient(host=ip, port=27017)
+client = MongoClient('mongodb://' + ip,
+                    username = userid,
+                    password =  passwd,
+                    authSource = 'road_1')
 
 print(client.list_database_names())
 
@@ -58,4 +65,4 @@ while True:
 
     idx += 1
 
-    time.sleep(1)
+    time.sleep(5)
