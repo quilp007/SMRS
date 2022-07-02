@@ -9,14 +9,17 @@ root_topic = "device_1/"
 
 class SUB_MQTT(QtCore.QObject):
 
-    messageSignal = QtCore.pyqtSignal(float)
+    # messageSignal = QtCore.pyqtSignal(float)
+    messageSignal = QtCore.pyqtSignal(str, str)
 
     # def __init__(self, _on_message, broker_addr = broker_address, _port = port, _topic = topic):
     def __init__(self, broker_addr = broker_address, _port = port, _topic = topic):
         super().__init__()
         self.topic = _topic
+        self.broker_address = broker_addr
         print("class init")
         self.client1 = mqtt.Client("client1")
+        self.pub_client = mqtt.Client("pub client")
 
         self.client1.on_message = self.on_message
         # self.client1.on_message = _on_message()
@@ -24,11 +27,21 @@ class SUB_MQTT(QtCore.QObject):
         # self.client1.on_disconnect = self.on_disconnect
         self.client1.on_connect = self.on_connect
 
+        self.pub_client.on_publish = self.on_publish
+
         self.client1.connect(broker_addr)
         # client1.subscribe(topic, qos=2)    # => moved to on_connect() callback function
 
         # self.client1.loop_forever()
         # self.client1.loop_start()
+
+    def on_publish(self, client, userdata, result):             #create function for callback
+        print("data published \n")
+        pass
+
+    def send_msg(self, topic, msg):
+        # self.pub_client.connect(self.broker_address)
+        ret = self.client1.publish(topic, msg)
 
     def loop_start_func(self):
         # self.client1.loop_forever()
@@ -36,20 +49,21 @@ class SUB_MQTT(QtCore.QObject):
 
     # subscriber callback
     def on_message(self, client, userdata, message):
-        rcvData =  str(message.payload.decode("utf-8"))
-        print("message received ", rcvData)
-        # print("message received ", str(message.payload.decode("utf-8")))
+        rcvData = message.payload.decode("utf-8")
+        # rcvData = str(message.payload.decode("utf-8"))
+        # print("message received ", rcvData)
         print("message topic=", message.topic)
         print("message qos=", message.qos)
         print("message retain flag=", message.retain)
 
-        jsonData = json.loads(rcvData) 
-
         # if message.topic == root_topic + 'CMD':
         #     print("CMD: ", str(jsonData['CH1']))
 
+        jsonData = json.loads(rcvData) 
         road_temp = jsonData['road_temp']
-        self.messageSignal.emit(road_temp)
+        # self.messageSignal.emit(road_temp)
+
+        self.messageSignal.emit(rcvData, message.topic)
 
     def on_log(self, client, userdata, level, buf):
         print("log: ", buf)
