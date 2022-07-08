@@ -34,6 +34,9 @@ NUM_UPDATE_X_AXIS = 5
 ROW_COUNT = 7
 COL_COUNT = 3
 
+pub_root_topic = "APP/"
+sub_root_topic = "R_PI/"
+
 
 form_class = uic.loadUiType('SMRS.ui')[0]
 
@@ -91,38 +94,43 @@ class qt(QMainWindow, form_class):
         self.pushButton.clicked.connect(lambda: self.send_CMD(self.pushButton))
         self.pushButton_2.clicked.connect(lambda: self.send_CMD(self.pushButton_2))
 
-        self.data_temp = []
-        self.data_hum = []
-        self.data_pres = []
+        self.road_temp = []
+        self.road_humidity = []
+        self.air_temp = []
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
+
         self.query_time = datetime(2022, 6, 15, 18, 22, 37)
         results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
+
+        # self.query_time = datetime.now()
+        # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
+
         for result in results:
-            self.data_temp.append(result.get("road_temp"))
-            self.data_hum.append(result.get("road_humidity"))
-            self.data_pres.append(result.get("air_temp"))
+            self.road_temp.append(result.get("road_temp"))
+            self.road_humidity.append(result.get("road_humidity"))
+            self.air_temp.append(result.get("air_temp"))
             self.query_time = result.get("timestamp")
             # print(result)
             # print(result.get("road_temp"))
             # print(self.query_time)
 
-        # print("self.data_temp")
-        # print(self.data_temp)
-        # print("self.data_hum")
-        # print(self.data_hum)
-        # print("self.data_pres")
-        # print(self.data_pres)
+        # print("self.road_temp")
+        # print(self.road_temp)
+        # print("self.road_humidity")
+        # print(self.road_humidity)
+        # print("self.air_temp")
+        # print(self.air_temp)
 
 
         self.data = np.linspace(-np.pi, np.pi, x_size)
         self.y2_1 = np.sin(self.data)
         # self.y2_1 = np.zeros(x_size)
 
-        self.road_temp = np.zeros(x_size)
-        self.road_humidity = np.zeros(x_size)
-        self.air_temp = np.zeros(x_size)
+        # self.road_temp = np.zeros(x_size)
+        # self.road_humidity = np.zeros(x_size)
+        # self.air_temp = np.zeros(x_size)
 
 
         # table Widget ------------------------------------------------------------------
@@ -156,7 +164,7 @@ class qt(QMainWindow, form_class):
         self.timer.timeout.connect(self.graph_plot)
 
         # start loop for drawing graph #################
-        self.timer.start()
+        # self.timer.start()
         ################################################
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
@@ -167,7 +175,7 @@ class qt(QMainWindow, form_class):
         self.log_flag = False
 
         ################################################
-        self.sub_mqtt = sc.SUB_MQTT(_topic = 'device_1/DATA')
+        self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
         ################################################
 
     def loop_start_func(self):
@@ -176,7 +184,7 @@ class qt(QMainWindow, form_class):
 
     @QtCore.pyqtSlot(str, str)
     def on_message_1(self, msg, topic):
-        if topic == 'device_1/DATA':
+        if topic == sub_root_topic + 'DATA':
             jsonData = json.loads(msg) 
             roadTemp = jsonData['road_temp']
             roadHumidity = jsonData['road_humidity']
@@ -254,12 +262,12 @@ class qt(QMainWindow, form_class):
             # print(result.get("temperature"))
             # print(self.query_time)
 
-        # print("data_temp")
-        # print(self.data_temp)
-        # print("data_hum")
-        # print(self.data_hum)
-        # print("data_pres")
-        # print(self.data_pres)
+        # print("road_temp")
+        # print(self.road_temp)
+        # print("road_humidity")
+        # print(self.road_humidity)
+        # print("air_temp")
+        # print(self.air_temp)
         # print("update_data_road_temp")
         # print(update_data_road_temp)
         # print("update_data_road_humidity")
@@ -267,26 +275,26 @@ class qt(QMainWindow, form_class):
         # print("update_data_air_temp")
         # print(update_data_air_temp)
 
-        self.data_temp = self.data_temp[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_road_temp
-        self.data_hum = self.data_hum[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_road_humidity
-        self.data_pres = self.data_pres[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_air_temp
+        self.road_temp = self.road_temp[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_road_temp
+        self.road_humidity = self.road_humidity[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_road_humidity
+        self.air_temp = self.air_temp[NUM_UPDATE_X_AXIS : NUM_X_AXIS+NUM_UPDATE_X_AXIS-1] + update_data_air_temp
 
         update_data_road_temp.clear()
         update_data_road_humidity.clear()
         update_data_air_temp.clear()
 
-        self.curve_road_temp.setData(self.data_temp)
-        self.curve_road_humidity.setData(self.data_hum)
-        self.curve_air_temp.setData(self.data_pres)
+        self.curve_road_temp.setData(self.road_temp)
+        self.curve_road_humidity.setData(self.road_humidity)
+        self.curve_air_temp.setData(self.air_temp)
 
     # sned CMD by mqtt
     def send_CMD(self, button):
         if button == self.pushButton:
             print('send CH1 on')
-            self.sub_mqtt.send_msg('device_1/CMD', 'CH1 ON')
+            self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': False}))
         elif button == self.pushButton_2:
             print('send CH1 & CH2 on')
-            self.sub_mqtt.send_msg('device_1/CMD', 'CH1 & CH2 ON')
+            self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': True}))
 
 
 def run():
@@ -294,7 +302,7 @@ def run():
     widget = qt()
     widget.show()
 
-    # widget.loop_start_func()
+    widget.loop_start_func()
     sys.exit(app.exec_())
 
 
