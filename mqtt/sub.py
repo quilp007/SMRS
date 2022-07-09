@@ -3,8 +3,10 @@ import json
 
 broker_address = "203.251.78.135"
 port = 1883
-topic = "device_1/+"
-root_topic = "device_1/"
+# topic = "device_1/+"
+topic = "R_PI/+"
+# root_topic = "device_1/"
+root_topic = "R_PI/"
 
 # subscriber callback
 def on_message(client, userdata, message):
@@ -53,7 +55,7 @@ client1 = mqtt.Client("client1")
 
 client1.on_message = on_message
 client1.on_log = on_log
-# client1.on_disconnect = on_disconnect
+client1.on_disconnect = on_disconnect
 client1.on_connect = on_connect
 
 client1.connect(broker_address)

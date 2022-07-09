@@ -14,6 +14,7 @@ class PUB_MQTT:
         self.client1 = mqtt.Client("control1")
         self.client1.on_publish = self.on_publish
         # self.client1.connect(self.broker_ress)
+        self.client1.loop_start()
 
     def on_publish(self, client, userdata, result):             #create function for callback
         print("data published \n")
