@@ -191,14 +191,14 @@ class qt(QMainWindow, form_class):
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
             if jsonData['CH1'] == True and jsonData['CH2'] == False:
                 print("CH1: ON, CH2: OFF")
-                self.label_7.setStyleSheet("background-color: green")
-                self.label_timer1.start(HEATING_TIME)
+                # self.label_7.setStyleSheet("background-color: green")
+                # self.label_timer1.start(HEATING_TIME)
                 self.send_STATUS(self.pushButton)
                 # TODO: update DB for heating status
             elif jsonData['CH1'] == True and jsonData['CH2'] == True:
                 print("CH1: ON, Ch2: ON")
-                self.label_8.setStyleSheet("background-color: green")
-                self.label_timer2.start(HEATING_TIME)
+                # self.label_8.setStyleSheet("background-color: green")
+                # self.label_timer2.start(HEATING_TIME)
                 self.send_STATUS(self.pushButton_2)
                 # TODO: update DB for heating status
 
@@ -206,8 +206,10 @@ class qt(QMainWindow, form_class):
     def label_color_change(self, inLabel):
         if inLabel == self.label_7:
             self.label_timer1.stop()
+            self.pushButton.setStyleSheet("background-color: gray; border: 1px solid black")
         else:
             self.label_timer2.stop()
+            self.pushButton_2.setStyleSheet("background-color: gray; border: 1px solid black")
 
         inLabel.setStyleSheet("background-color: gray")
         # TODO: update DB for heating status -> OFF
@@ -236,12 +238,17 @@ class qt(QMainWindow, form_class):
 
     # sned STATUS by mqtt
     def send_STATUS(self, button):
+        button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.pushButton:
             print('send CH1 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
+            self.label_7.setStyleSheet("background-color: green")
+            self.label_timer1.start(HEATING_TIME)
         elif button == self.pushButton_2:
             print('send CH1 & CH2 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': True}))
+            self.label_8.setStyleSheet("background-color: green")
+            self.label_timer2.start(HEATING_TIME)
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
