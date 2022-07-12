@@ -2,7 +2,7 @@
 # coding=utf8
 
 import os, sys, time, datetime, warnings, signal
-from PyQt5.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
+from PyQt5.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot, Qt, QEvent, QTimer, QProcess
 from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, \
     QListView
 from PyQt5.QtWidgets import QPushButton, QGridLayout, QLCDNumber
@@ -44,6 +44,8 @@ NUM_UPDATE_X_AXIS = 5
 ROW_COUNT = 7
 COL_COUNT = 3
 
+SEND_SENSOR_DATA_INTERVAL = 1000 # ms -> timer setting
+HEATING_TIME = 5000 # ms -> timeer setting
 
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
@@ -95,27 +97,15 @@ class qt(QMainWindow, form_class):
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.pushButton.clicked.connect(lambda: self.send_CMD(self.pushButton))
-        self.pushButton_2.clicked.connect(lambda: self.send_CMD(self.pushButton_2))
-
-        self.road_temp = []
-        self.road_humidity = []
-        self.air_temp = []
+        self.pushButton.clicked.connect(lambda: self.send_STATUS(self.pushButton))
+        self.pushButton_2.clicked.connect(lambda: self.send_STATUS(self.pushButton_2))
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
 
+        # self.query_time = datetime.now()
         self.query_time = datetime(2022, 6, 15, 18, 22, 37)
         results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
-
-        # self.query_time = datetime.now()
-        # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
-
-        for result in results:
-            self.road_temp.append(result.get("road_temp"))
-            self.road_humidity.append(result.get("road_humidity"))
-            self.air_temp.append(result.get("air_temp"))
-            self.query_time = result.get("timestamp")
 
         # table Widget ------------------------------------------------------------------
         self.tableWidget.setRowCount(ROW_COUNT)
@@ -129,13 +119,21 @@ class qt(QMainWindow, form_class):
         self.idx = 0
         self.temp_data = {}
 
+        # loop for sending sensor data ###################
         self.timer = QtCore.QTimer()
-        self.timer.setInterval(1000) # 100ms 
+        self.timer.setInterval(SEND_SENSOR_DATA_INTERVAL) # 100ms 
         self.timer.timeout.connect(self.send_msg_loop_timer)
 
-        # start loop for drawing graph #################
         self.timer.start()
-        ################################################
+        ##################################################
+
+        # HEAT TIME setting ##############################
+        self.label_timer1 = QtCore.QTimer()
+        self.label_timer2 = QtCore.QTimer()
+        self.label_timer1.timeout.connect(lambda: self.label_color_change(self.label_7))
+        self.label_timer2.timeout.connect(lambda: self.label_color_change(self.label_8))
+        # self.label_timer.setInterval(HEATING_TIME) # 100ms 
+        ##################################################
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         self.thread_rcv_data.to_excel.connect(self.to_excel_func)
@@ -149,14 +147,71 @@ class qt(QMainWindow, form_class):
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'CMD', _client='client_r_pi')
         ################################################
 
+        self.label_7.setStyleSheet("background-color: gray")
+        self.label_8.setStyleSheet("background-color: gray")
+
+
+        self.temp_lcdNumber = self.lcdNumber_7
+
+        self.lineEdit.returnPressed.connect(self.LineEdit_RET)
+        self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))
+
+        self.lineEdit.setVisible(False)
+
+        self.process = QProcess()
+
+
+    def LineEdit_RET(self):
+        self.temp_lcdNumber.display(self.lineEdit.text())
+        self.lineEdit.setVisible(False)
+        self.lineEdit.setText("")
+
+    def input_value(self, lcdNum):
+        self.temp_lcdNumber = lcdNum
+        self.lineEdit.setVisible(True)
+        self.lineEdit.setFocus()
+        # ret, pid = QProcess.startDetached('florence')
+        # ret = QProcess.startDetached('florence')
+        # ret = self.process.startDetached("florence")
+        ret = self.process.start('florence')
+        pid = int(self.process.pid())
+
+        print('ret: ', ret, 'pid: ', pid)
+
+        # tt = self.lineEdit.text()
+        # print(tt)
+        # self.lineEdit.setText(tt)
+
+
     @QtCore.pyqtSlot(str, str)
     def on_message_callback(self, msg, topic):
         jsonData = json.loads(msg) 
         if topic == sub_root_topic + 'CMD':
-            print('received CMD!!!')
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
+            if jsonData['CH1'] == True and jsonData['CH2'] == False:
+                print("CH1: ON, CH2: OFF")
+                self.label_7.setStyleSheet("background-color: green")
+                self.label_timer1.start(HEATING_TIME)
+                self.send_STATUS(self.pushButton)
+                # TODO: update DB for heating status
+            elif jsonData['CH1'] == True and jsonData['CH2'] == True:
+                print("CH1: ON, Ch2: ON")
+                self.label_8.setStyleSheet("background-color: green")
+                self.label_timer2.start(HEATING_TIME)
+                self.send_STATUS(self.pushButton_2)
+                # TODO: update DB for heating status
 
+
+    def label_color_change(self, inLabel):
+        if inLabel == self.label_7:
+            self.label_timer1.stop()
+        else:
+            self.label_timer2.stop()
+
+        inLabel.setStyleSheet("background-color: gray")
+        # TODO: update DB for heating status -> OFF
+        self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
 
     def send_msg_loop_timer(self):
         sine_value = np.sin(self.sine_x_data[self.idx%self.x_size])
@@ -178,6 +233,15 @@ class qt(QMainWindow, form_class):
         self.sub_mqtt.send_msg(pub_root_topic+"DATA", json.dumps(self.temp_data))
 
         self.idx += 1
+
+    # sned STATUS by mqtt
+    def send_STATUS(self, button):
+        if button == self.pushButton:
+            print('send CH1 on')
+            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
+        elif button == self.pushButton_2:
+            print('send CH1 & CH2 on')
+            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': True}))
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
@@ -238,15 +302,6 @@ class qt(QMainWindow, form_class):
             update_data_air_temp.append(result.get("air_temp"))
             self.query_time = result.get("timestamp")
 
-    # sned CMD by mqtt
-    def send_CMD(self, button):
-        if button == self.pushButton:
-            print('send CH1 on')
-            self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': False}))
-        elif button == self.pushButton_2:
-            print('send CH1 & CH2 on')
-            self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': True}))
-
 
 def run():
     app = QApplication(sys.argv)
@@ -255,7 +310,6 @@ def run():
 
     widget.loop_start_func()
     sys.exit(app.exec_())
-
 
 
 if __name__ == "__main__":
@@ -272,6 +326,5 @@ if __name__ == "__main__":
     #results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     #for result in results:
     #    print(result)
-
 
     run()
