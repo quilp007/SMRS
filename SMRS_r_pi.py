@@ -165,6 +165,8 @@ class qt(QMainWindow, form_class):
         self.temp_lcdNumber.display(self.lineEdit.text())
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
+        self.process.terminate()
+
 
     def input_value(self, lcdNum):
         self.temp_lcdNumber = lcdNum
@@ -174,13 +176,9 @@ class qt(QMainWindow, form_class):
         # ret = QProcess.startDetached('florence')
         # ret = self.process.startDetached("florence")
         ret = self.process.start('florence')
-        pid = int(self.process.pid())
+        pid = self.process.pid()
 
         print('ret: ', ret, 'pid: ', pid)
-
-        # tt = self.lineEdit.text()
-        # print(tt)
-        # self.lineEdit.setText(tt)
 
 
     @QtCore.pyqtSlot(str, str)
