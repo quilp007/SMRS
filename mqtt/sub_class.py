@@ -7,13 +7,14 @@ port = 1883
 topic = "device_1/+"
 root_topic = "device_1/"
 client = 'client'
+MQTT_DEBUG = False
 
 class SUB_MQTT(QtCore.QObject):
 
     messageSignal = QtCore.pyqtSignal(str, str)
 
     # def __init__(self, _on_message, broker_addr = broker_address, _port = port, _topic = topic):
-    def __init__(self, _broker_address = broker_address, _port = port, _topic = topic, _client = client):
+    def __init__(self, _broker_address = broker_address, _port = port, _topic = topic, _client = client, _mqtt_debug = False):
         super().__init__()
         self.topic = _topic
         print(_topic, _client)
@@ -21,6 +22,8 @@ class SUB_MQTT(QtCore.QObject):
         print("class init")
         self.client1 = mqtt.Client(_client)
         # self.pub_client = mqtt.Client("pub client")
+
+        MQTT_DEBUG = _mqtt_debug
 
         self.client1.on_message = self.on_message
         self.client1.on_log = self.on_log
@@ -53,9 +56,10 @@ class SUB_MQTT(QtCore.QObject):
         rcvData = message.payload.decode("utf-8")
         # rcvData = str(message.payload.decode("utf-8"))
         # print("message received ", rcvData)
-        print("message topic=", message.topic)
-        print("message qos=", message.qos)
-        print("message retain flag=", message.retain)
+        if MQTT_DEBUG:
+            print("message topic=", message.topic)
+            print("message qos=", message.qos)
+            print("message retain flag=", message.retain)
 
         # jsonData = json.loads(rcvData) 
         # self.messageSignal.emit(road_temp)
@@ -63,7 +67,10 @@ class SUB_MQTT(QtCore.QObject):
         self.messageSignal.emit(rcvData, message.topic)
 
     def on_log(self, client, userdata, level, buf):
-        print("log: ", buf)
+        if MQTT_DEBUG:
+            print("log: ", buf)
+        else:
+            return
 
     def on_connect(self, client, userdata, flags, rc):
         if rc==0:

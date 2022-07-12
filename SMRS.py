@@ -175,7 +175,8 @@ class qt(QMainWindow, form_class):
         self.log_flag = False
 
         ################################################
-        self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
+        # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
+        self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
         ################################################
 
     def loop_start_func(self):
@@ -184,8 +185,8 @@ class qt(QMainWindow, form_class):
 
     @QtCore.pyqtSlot(str, str)
     def on_message_1(self, msg, topic):
+        jsonData = json.loads(msg) 
         if topic == sub_root_topic + 'DATA':
-            jsonData = json.loads(msg) 
             roadTemp = jsonData['road_temp']
             roadHumidity = jsonData['road_humidity']
             airTemp = jsonData['air_temp']
@@ -202,9 +203,25 @@ class qt(QMainWindow, form_class):
             self.curve_road_humidity.setData(self.road_humidity)
             self.curve_air_temp.setData(self.air_temp)
 
+        elif topic == sub_root_topic + 'STATUS':
+            print("CMD: ", "CH1: ", str(jsonData['CH1']))
+            print("CMD: ", "CH2: ", str(jsonData['CH2']))
+            if jsonData['CH1'] == True and jsonData['CH2'] == False:
+                print("CH1: ON, CH2: OFF")
+                self.label_7.setStyleSheet("background-color: green")
+                self.pushButton.setStyleSheet("background-color: green")
+            elif jsonData['CH1'] == True and jsonData['CH2'] == True:
+                print("CH1: ON, Ch2: ON")
+                self.label_8.setStyleSheet("background-color: green")
+                self.pushButton_2.setStyleSheet("background-color: green")
+            elif jsonData['CH1'] == False and jsonData['CH2'] == False:     # after HEATING TIME, R_PI send this msg
+                self.label_7.setStyleSheet("background-color: gray")        # Status CH1 Label
+                self.label_8.setStyleSheet("background-color: gray")        # Status CH1, 2 Label
+                self.pushButton.setStyleSheet("background-color: gray")     # Setting CH1 Button
+                self.pushButton_2.setStyleSheet("background-color: gray")   # setting Ch1, 2 Button
+
         # if message.topic == root_topic + 'CMD':
         #     print("CMD: ", str(jsonData['CH1']))
-
 
 
     def clickable(self, widget):
@@ -289,6 +306,8 @@ class qt(QMainWindow, form_class):
 
     # sned CMD by mqtt
     def send_CMD(self, button):
+        # button.setStyleSheet("background-color: green")
+        button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.pushButton:
             print('send CH1 on')
             self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': False}))
