@@ -100,7 +100,7 @@ class THREAD_RECEIVE_Data(QThread):
 class KEY_PAD_UI(QWidget):
     cb_signal = pyqtSignal(str)
     
-    def __init__(self):
+    def __init__(self, _timer):
         super().__init__()
         self.Init_UI()
         self.text = ''
@@ -108,6 +108,7 @@ class KEY_PAD_UI(QWidget):
         # self.obj = QLCDNumber()
         self.endFlag = 1
         self.obj = None
+        self.timer = _timer
 
     def Init_UI(self):
         # self.setGeometry(750, 300, 400, 300)
@@ -152,6 +153,8 @@ class KEY_PAD_UI(QWidget):
         # self.show()
 
     def Cli(self):
+        self.timer.stop()
+        self.timer.start(KEYPAD_TIME)
         sender = self.sender().text()
 
         if sender == 'OK':
@@ -197,7 +200,12 @@ class qt(QMainWindow, form_class):
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
 
-        self.ex = KEY_PAD_UI()
+        # Keypad timer setting ##############################
+        self.keypad_timer = QtCore.QTimer()
+        self.keypad_timer.timeout.connect(lambda: self.ex.close_func(self.keypad_timer))
+        
+        ##################################################
+        self.ex = KEY_PAD_UI(self.keypad_timer)
         self.ex.cb_signal.connect(self.LineEdit_RET)
 
         # self.query_time = datetime.now()
@@ -232,11 +240,6 @@ class qt(QMainWindow, form_class):
         # self.label_timer.setInterval(HEATING_TIME) # 100ms 
         ##################################################
 
-        # Keypad timer setting ##############################
-        self.keypad_timer = QtCore.QTimer()
-        self.keypad_timer.timeout.connect(lambda: self.ex.close_func(self.keypad_timer))
-        
-        ##################################################
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         self.thread_rcv_data.to_excel.connect(self.to_excel_func)
