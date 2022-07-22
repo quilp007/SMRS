@@ -18,8 +18,11 @@ import time
 import pymongo
 import pprint
 
+import subprocess
+
 import mqtt.sub_class as sc
 import json
+import psutil
 
 server_ip = '203.251.78.135'
 
@@ -32,6 +35,7 @@ mqtt_port = 1883
 pub_root_topic = "R_PI/"
 sub_root_topic = "APP/"
 
+DEBUG_PRINT = False
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -46,6 +50,8 @@ COL_COUNT = 3
 
 SEND_SENSOR_DATA_INTERVAL = 1000 # ms -> timer setting
 HEATING_TIME = 5000 # ms -> timeer setting
+
+KEYPAD_TIME = 5000
 
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
@@ -91,6 +97,94 @@ class THREAD_RECEIVE_Data(QThread):
         self.mySuspend()
 
 
+class KEY_PAD_UI(QWidget):
+    cb_signal = pyqtSignal(str)
+    
+    def __init__(self):
+        super().__init__()
+        self.Init_UI()
+        self.text = ''
+        self.num = '0'
+        # self.obj = QLCDNumber()
+        self.endFlag = 1
+        self.obj = None
+
+    def Init_UI(self):
+        # self.setGeometry(750, 300, 400, 300)
+        # self.setGeometry(300, 100, 400, 300)
+        self.setGeometry(300, 100, 350, 350)
+        self.setWindowTitle('Keypad')
+
+        grid = QGridLayout()
+        self.setLayout(grid)        
+
+        self.lcd = QLCDNumber()
+        self.lcd.setSegmentStyle(QLCDNumber.Flat)
+        grid.addWidget(self.lcd, 0, 0, 3, 0)
+        grid.setSpacing(10)
+
+        """
+        names = ['Cls', '', '',  'Close',
+                 '7',   '8',  '9', '',
+                 '4',   '5',  '6', '',
+                 '1',   '2',  '3', '',
+                 '-',   '0',  '.', 'Enter']
+        """
+        names = ['Cls',    '',   'Close',
+                 '7',     '8',  '9',
+                 '4',     '5',  '6',
+                 '1',     '2',  '3',
+                 '-',     '0',  '.',
+                 'OK',     '', 'Cancel']
+
+        # positions = [(i,j) for i in range(4, 9) for j in range(4, 8)]
+        positions = [(i,j) for i in range(4, 10) for j in range(4, 7)]
+
+        for position, name in zip(positions, names):
+            # print("position=`{}`, name=`{}`".format(position, name))
+            if name == '':
+                continue
+
+            button = QPushButton(name)
+            grid.addWidget(button, *position)
+            button.clicked.connect(self.Cli)
+
+        # self.show()
+
+    def Cli(self):
+        sender = self.sender().text()
+
+        if sender == 'OK':
+            print("in pad: ", self.text)
+            # self.obj.display(self.text)
+            if self.text != '':
+                self.num = self.text
+
+            self.text = ''
+            self.lcd.display(self.text)
+            self.endFlag = 0
+            self.close()
+            self.cb_signal.emit(self.num)
+            return
+        elif sender == 'Cls':
+            self.text = ''
+        elif sender == 'Close':
+            self.endFlag = 0
+            self.text = ''
+            self.close()
+        else:
+            self.text += sender
+
+        self.lcd.display(self.text)
+    
+    def close_func(self, timer):
+        timer.stop()
+        self.text = ''
+        self.lcd.display(self.text)
+        self.endFlag = 0
+        self.close()
+
+
 class qt(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
@@ -102,6 +196,9 @@ class qt(QMainWindow, form_class):
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
+
+        self.ex = KEY_PAD_UI()
+        self.ex.cb_signal.connect(self.LineEdit_RET)
 
         # self.query_time = datetime.now()
         self.query_time = datetime(2022, 6, 15, 18, 22, 37)
@@ -135,6 +232,12 @@ class qt(QMainWindow, form_class):
         # self.label_timer.setInterval(HEATING_TIME) # 100ms 
         ##################################################
 
+        # Keypad timer setting ##############################
+        self.keypad_timer = QtCore.QTimer()
+        self.keypad_timer.timeout.connect(lambda: self.ex.close_func(self.keypad_timer))
+        
+        ##################################################
+
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         # self.thread_rcv_data.start()
@@ -144,7 +247,7 @@ class qt(QMainWindow, form_class):
 
         ################################################
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'CMD', _client='client_r_pi')
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'CMD', _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
         ################################################
 
         self.label_7.setStyleSheet("background-color: gray")
@@ -153,32 +256,89 @@ class qt(QMainWindow, form_class):
 
         self.temp_lcdNumber = self.lcdNumber_7
 
-        self.lineEdit.returnPressed.connect(self.LineEdit_RET)
         self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))
+        # TODO: connect all lcdNums
 
+        '''
+        # virtual keyboard & input lineEdit setting
+        self.lineEdit.returnPressed.connect(self.LineEdit_RET)
         self.lineEdit.setVisible(False)
 
-        self.process = QProcess()
+        self.process = QProcess(self)
+        self.pid = None
+        # self.pid = subprocess.Popen(['florence'])
+        os.system('florence hide')
+        '''
 
 
-    def LineEdit_RET(self):
-        self.temp_lcdNumber.display(self.lineEdit.text())
-        self.lineEdit.setVisible(False)
-        self.lineEdit.setText("")
-        self.process.terminate()
+    def LineEdit_RET(self, input_num):
+        # self.temp_lcdNumber.display(self.lineEdit.text())
+        # self.lineEdit.setVisible(False)
+        # self.lineEdit.setText("")
+        self.temp_lcdNumber.display(input_num)
+
+        # TODO: send config datas to PC & DB
+        # or if recevied config data from PC, update local & DB config data
+
+        # os.system('florence hide')
+
+        # self.process.terminate()
+        # self.process.start("kill -9 " + str(self.pid))
+
+        # self.pid.kill()
+        # os.killpg(self.pid.pid, signal.SIGKILL)
 
 
     def input_value(self, lcdNum):
         self.temp_lcdNumber = lcdNum
-        self.lineEdit.setVisible(True)
-        self.lineEdit.setFocus()
+        # self.lineEdit.setVisible(True)
+        # self.lineEdit.setFocus()
+        self.keypad_timer.start(KEYPAD_TIME)
+        self.ex.show()
+
+        return
+
+        pl = list()
+        for process in psutil.process_iter():
+            pl.append(process.name())
+
+        if 'florence' in pl:
+            os.system('florence show')
+
+
+        """
+        # proc = os.system('ps -a')
+        proc = subprocess.check_output(['ps', '-a'])
+        print(proc)
+        b = proc.splitlines()
+        print(b)
+        flag = 0
+        for item in b:
+            print(item)
+            if 'florence' in str(item):
+                print('-----------------------------', str(item))
+                os.system('florence show')
+                flag = 1
+                break
+        
+        if flag == 0:
+            os.system('florence')
+            
+        """
+                
         # ret, pid = QProcess.startDetached('florence')
         # ret = QProcess.startDetached('florence')
         # ret = self.process.startDetached("florence")
-        ret = self.process.start('florence')
-        pid = self.process.pid()
+        # self.process = QProcess()
 
-        print('ret: ', ret, 'pid: ', pid)
+        # ret = self.process.start('florence')
+        # self.pid = self.process.pid()
+
+        # self.pid = subprocess.Popen(['florence'])
+
+        # print('333333333333333333333', pid)
+        # self.flag = 0
+        # pid.kill()
 
 
     @QtCore.pyqtSlot(str, str)
@@ -224,7 +384,8 @@ class qt(QMainWindow, form_class):
 
         result = collection.insert_one(self.temp_data)
 
-        print("inserted data", self.temp_data['timestamp'])
+        if DEBUG_PRINT:
+            print("inserted data", self.temp_data['timestamp'])
 
         del self.temp_data['_id']
         # del temp_data['timestamp']

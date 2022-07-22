@@ -23,6 +23,7 @@ class SUB_MQTT(QtCore.QObject):
         self.client1 = mqtt.Client(_client)
         # self.pub_client = mqtt.Client("pub client")
 
+        global MQTT_DEBUG
         MQTT_DEBUG = _mqtt_debug
 
         self.client1.on_message = self.on_message
@@ -40,8 +41,9 @@ class SUB_MQTT(QtCore.QObject):
         # self.client1.loop_start()
 
     def on_publish(self, client, userdata, result):             #create function for callback
-        print("data published \n")
-        pass
+        if MQTT_DEBUG:
+            print("data published \n")
+            pass
 
     def send_msg(self, topic, msg):
         # self.pub_client.connect(self.broker_address)
