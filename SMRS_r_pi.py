@@ -259,10 +259,10 @@ class qt(QMainWindow, form_class):
         self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))
         # TODO: connect all lcdNums
 
+        self.lineEdit.setVisible(False)
         '''
         # virtual keyboard & input lineEdit setting
         self.lineEdit.returnPressed.connect(self.LineEdit_RET)
-        self.lineEdit.setVisible(False)
 
         self.process = QProcess(self)
         self.pid = None
