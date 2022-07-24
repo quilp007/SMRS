@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding=utf8
 
+# sudo vi .config/lxsession/LXDE-pi/autostart 
+
 import os, sys, time, datetime, warnings, signal
 from PyQt5.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot, Qt, QEvent, QTimer, QProcess
 from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, \
@@ -16,13 +18,9 @@ from datetime import datetime
 
 import time
 import pymongo
-import pprint
-
-import subprocess
 
 import mqtt.sub_class as sc
 import json
-import psutil
 
 server_ip = '203.251.78.135'
 
@@ -104,6 +102,19 @@ class THREAD_RECEIVE_Data(QThread):
     def close(self):
         self.mySuspend()
 
+class Util_Function:
+    def Qsleep(self, ms):
+        QtTest.QTest.qWait(ms)
+
+    def save_var(self, key, value):
+        with shelve.open('config') as f:
+            f[key] = value
+
+    def read_var(self, key):
+        with shelve.open('config') as f:
+            temp = f[key]
+            # print(f[key])
+        return temp
 
 class KEY_PAD_UI(QWidget):
     cb_signal = pyqtSignal(str)
@@ -209,6 +220,8 @@ class qt(QMainWindow, form_class):
         self.ex = KEY_PAD_UI(self.keypad_timer)
         self.ex.cb_signal.connect(self.LineEdit_RET)
 
+        self.util_func = Util_Function()
+
         # self.query_time = datetime.now()
         self.query_time = datetime(2022, 6, 15, 18, 22, 37)
         results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
@@ -292,7 +305,9 @@ class qt(QMainWindow, form_class):
 
         # 4. update DB
 
-        # 5. save config 
+        # 5. save config to local file 
+        self.util_func.save_var(variable_name, input_num)
+        print(self.util_func.read_var(variable_name))
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
