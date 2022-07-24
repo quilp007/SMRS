@@ -36,6 +36,7 @@ pub_root_topic = "R_PI/"
 sub_root_topic = "APP/"
 
 DEBUG_PRINT = False
+# DEBUG_PRINT = True
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -257,33 +258,42 @@ class qt(QMainWindow, form_class):
 
         ################################################
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'CMD', _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
         ################################################
 
         self.label_7.setStyleSheet("background-color: gray")
         self.label_8.setStyleSheet("background-color: gray")
 
+        self.temp_lcdNumber = None
 
-        self.temp_lcdNumber = self.lcdNumber_7
-
-        self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))        # pre_heat_road_temp
-        self.clickable(self.lcdNumber_8).connect(lambda: self.input_value(self.lcdNumber_8))        # heat_road_temp
-        self.clickable(self.lcdNumber_9).connect(lambda: self.input_value(self.lcdNumber_9))        # set_road_humidity
-        self.clickable(self.lcdNumber_13).connect(lambda: self.input_value(self.lcdNumber_13))      # set_air_temp 
-        self.clickable(self.lcdNumber_10).connect(lambda: self.input_value(self.lcdNumber_10))      # pre_heat_on_time
-        self.clickable(self.lcdNumber_11).connect(lambda: self.input_value(self.lcdNumber_11))      # heat_on_time
+        self.clickable(self.pre_heat_road_temp).connect(lambda: self.input_value(self.pre_heat_road_temp))      # pre_heat_road_temp
+        self.clickable(self.heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))              # heat_road_temp
+        self.clickable(self.set_road_humidity).connect(lambda: self.input_value(self.set_road_humidity))        # set_road_humidity
+        self.clickable(self.set_air_temp).connect(lambda: self.input_value(self.set_air_temp))                  # set_air_temp 
+        self.clickable(self.pre_heat_on_time).connect(lambda: self.input_value(self.pre_heat_on_time))          # pre_heat_on_time
+        self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            self.lcdNumber_7:  ['pre_heat_road_temp', pre_heat_road_temp], 
-            self.lcdNumber_8:  ['heat_road_temp',     heat_road_temp],
-            self.lcdNumber_9:  ['set_road_humidity',  set_road_humidity],
-            self.lcdNumber_13: ['set_air_temp',       set_air_temp],
-            self.lcdNumber_10: ['pre_heat_on_time',   pre_heat_on_time],
-            self.lcdNumber_11: ['heat_on_time',       heat_on_time]       
+            self.pre_heat_road_temp:['pre_heat_road_temp', pre_heat_road_temp], 
+            self.heat_road_temp:    ['heat_road_temp',     heat_road_temp],
+            self.set_road_humidity: ['set_road_humidity',  set_road_humidity],
+            self.set_air_temp:      ['set_air_temp',       set_air_temp],
+            self.pre_heat_on_time:  ['pre_heat_on_time',   pre_heat_on_time],
+            self.heat_on_time:      ['heat_on_time',       heat_on_time]       
+        }
+
+        self.config_dict_new = {
+            'pre_heat_road_temp': pre_heat_road_temp, 
+            'heat_road_temp':     heat_road_temp,
+            'set_road_humidity':  set_road_humidity,
+            'set_air_temp':       set_air_temp,
+            'pre_heat_on_time':   pre_heat_on_time,
+            'heat_on_time':       heat_on_time       
         }
 
         self.lineEdit.setVisible(False)
+
         '''
         # virtual keyboard & input lineEdit setting
         self.lineEdit.returnPressed.connect(self.LineEdit_RET)
@@ -300,8 +310,10 @@ class qt(QMainWindow, form_class):
         self.temp_lcdNumber.display(input_num)
 
         # 2. update Global Config Variable
-        variable_name = self.config_dict[self.temp_lcdNumber][0]
-        self.config_dict[self.temp_lcdNumber][1] = input_num
+        # variable_name = self.config_dict[self.temp_lcdNumber][0]
+        # self.config_dict[self.temp_lcdNumber][1] = input_num
+        variable_name = self.temp_lcdNumber.objectName()
+        self.config_dict_new[variable_name] = input_num
 
         # 3. send mqtt msg
         self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({variable_name: input_num}))
@@ -310,7 +322,7 @@ class qt(QMainWindow, form_class):
 
         # 5. save config 
 
-        print(self.config_dict[self.temp_lcdNumber][0])
+        # print(self.config_dict[self.temp_lcdNumber][0])
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
@@ -331,6 +343,8 @@ class qt(QMainWindow, form_class):
 
 
     def input_value(self, lcdNum):
+        # print(lcdNum.objectName())
+        # print('test::: ', self.findChild(QLCDNumber, lcdNum.objectName()).objectName())
         self.temp_lcdNumber = lcdNum
         self.keypad_timer.start(KEYPAD_TIME)
         self.ex.show()
@@ -399,6 +413,20 @@ class qt(QMainWindow, form_class):
                 # self.label_timer2.start(HEATING_TIME)
                 self.send_STATUS(self.pushButton_2)
                 # TODO: update DB for heating status
+
+        elif topic == sub_root_topic+'CONFIG':
+            for key, value in jsonData.items():
+                # lcd = [k for k, v in self.config_dict.items() if v[0] == key]
+                # self.temp_lcdNumber = lcd[0]
+                lcdNum = self.findChild(QLCDNumber, key)
+                self.temp_lcdNumber = lcdNum
+                self.LineEdit_RET(value)
+
+            # for key, value in jsonData.items():
+            #     print('*****************************************************')
+            #     print(key, value)
+            #     lcd = [k for k, v in self.config_dict.items() if v[0] == key]
+            #     lcd[0].display(value)
 
 
     def label_color_change(self, inLabel):
