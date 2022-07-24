@@ -34,9 +34,25 @@ NUM_UPDATE_X_AXIS = 5
 ROW_COUNT = 7
 COL_COUNT = 3
 
+server_ip = '203.251.78.135'
+
+userid = 'smrs_1'
+passwd = 'smrs2580_1!'
+
+mongo_port = 27017
+mqtt_port = 1883
+
 pub_root_topic = "APP/"
 sub_root_topic = "R_PI/"
 
+pre_heat_road_temp = 0
+heat_road_temp  = 0
+set_road_humidity = 0
+set_air_temp = 0
+pre_heat_on_time = 0
+heat_on_time = 0
+
+DEBUG_PRINT = True
 
 form_class = uic.loadUiType('SMRS.ui')[0]
 
@@ -132,6 +148,9 @@ class qt(QMainWindow, form_class):
         # self.road_humidity = np.zeros(x_size)
         # self.air_temp = np.zeros(x_size)
 
+        self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
+
+        self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))        # pre_heat_road_temp
 
         # table Widget ------------------------------------------------------------------
         self.tableWidget.setRowCount(ROW_COUNT)
@@ -176,8 +195,49 @@ class qt(QMainWindow, form_class):
 
         ################################################
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
-        self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
+        # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
         ################################################
+
+        self.config_dict = {
+            self.lcdNumber_7:  ['pre_heat_road_temp', pre_heat_road_temp], 
+            self.lcdNumber_8:  ['heat_road_temp',     heat_road_temp],
+            self.lcdNumber_9:  ['set_road_humidity',  set_road_humidity],
+            self.lcdNumber_13: ['set_air_temp',       set_air_temp],
+            self.lcdNumber_10: ['pre_heat_on_time',   pre_heat_on_time],
+            self.lcdNumber_11: ['heat_on_time',       heat_on_time]       
+        }
+
+        self.lineEdit.setVisible(False)
+
+    def LineEdit_RET(self, input_num):
+        # 1. Display in lcdNumber => after receive mqtt msg
+        # self.temp_lcdNumber.display(input_num)
+
+        # 2. update Global Config Variable
+        variable_name = self.config_dict[self.temp_lcdNumber][0]
+        # self.config_dict[self.temp_lcdNumber][1] = input_num
+
+        # 3. send mqtt msg
+        self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({variable_name: input_num}))
+
+        # 4. update DB
+
+        # 5. save config 
+
+        print(self.config_dict[self.temp_lcdNumber][0])
+
+        # TODO: send config datas to PC & DB
+        # or if recevied config data from PC, update local & DB config data
+
+        self.lineEdit.setVisible(False)
+        self.lineEdit.setText("")
+
+    def input_value(self, lcdNum):
+        self.temp_lcdNumber = lcdNum
+        self.lineEdit.setVisible(True)
+        self.lineEdit.setFocus()
+
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_1)
@@ -219,6 +279,12 @@ class qt(QMainWindow, form_class):
                 self.label_8.setStyleSheet("background-color: gray")        # Status CH1, 2 Label
                 self.pushButton.setStyleSheet("background-color: gray")     # Setting CH1 Button
                 self.pushButton_2.setStyleSheet("background-color: gray")   # setting Ch1, 2 Button
+        elif topic == sub_root_topic + 'CONFIG':
+            for key, value in jsonData.items():
+                print('*****************************************************')
+                print(key, value)
+                lcd = [k for k, v in self.config_dict.items() if v[0] == key]
+                lcd[0].display(value)
 
         # if message.topic == root_topic + 'CMD':
         #     print("CMD: ", str(jsonData['CH1']))
