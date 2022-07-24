@@ -53,6 +53,13 @@ HEATING_TIME = 5000 # ms -> timeer setting
 
 KEYPAD_TIME = 5000
 
+pre_heat_road_temp = 0
+heat_road_temp  = 0
+set_road_humidity = 0
+set_air_temp = 0
+pre_heat_on_time = 0
+heat_on_time = 0
+
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
 # --------------------------------------------------------------
@@ -259,8 +266,22 @@ class qt(QMainWindow, form_class):
 
         self.temp_lcdNumber = self.lcdNumber_7
 
-        self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))
+        self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))        # pre_heat_road_temp
+        self.clickable(self.lcdNumber_8).connect(lambda: self.input_value(self.lcdNumber_8))        # heat_road_temp
+        self.clickable(self.lcdNumber_9).connect(lambda: self.input_value(self.lcdNumber_9))        # set_road_humidity
+        self.clickable(self.lcdNumber_13).connect(lambda: self.input_value(self.lcdNumber_13))      # set_air_temp 
+        self.clickable(self.lcdNumber_10).connect(lambda: self.input_value(self.lcdNumber_10))      # pre_heat_on_time
+        self.clickable(self.lcdNumber_11).connect(lambda: self.input_value(self.lcdNumber_11))      # heat_on_time
         # TODO: connect all lcdNums
+
+        self.config_dict = {
+            self.lcdNumber_7:  ['pre_heat_road_temp', pre_heat_road_temp], 
+            self.lcdNumber_8:  ['heat_road_temp',     heat_road_temp],
+            self.lcdNumber_9:  ['set_road_humidity',  set_road_humidity],
+            self.lcdNumber_13: ['set_air_temp',       set_air_temp],
+            self.lcdNumber_10: ['pre_heat_on_time',   pre_heat_on_time],
+            self.lcdNumber_11: ['heat_on_time',       heat_on_time]       
+        }
 
         self.lineEdit.setVisible(False)
         '''
@@ -275,13 +296,30 @@ class qt(QMainWindow, form_class):
 
 
     def LineEdit_RET(self, input_num):
-        # self.temp_lcdNumber.display(self.lineEdit.text())
-        # self.lineEdit.setVisible(False)
-        # self.lineEdit.setText("")
+        # 1. Display in lcdNumber
         self.temp_lcdNumber.display(input_num)
+
+        # 2. update Global Config Variable
+        variable_name = self.config_dict[self.temp_lcdNumber][0]
+        self.config_dict[self.temp_lcdNumber][1] = input_num
+
+        # 3. send mqtt msg
+        self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({variable_name: input_num}))
+
+        # 4. update DB
+
+        # 5. save config 
+
+        print(self.config_dict[self.temp_lcdNumber][0])
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
+
+
+        # self.temp_lcdNumber.display(self.lineEdit.text())
+        # self.lineEdit.setVisible(False)
+        # self.lineEdit.setText("")
+
 
         # os.system('florence hide')
 
@@ -294,20 +332,19 @@ class qt(QMainWindow, form_class):
 
     def input_value(self, lcdNum):
         self.temp_lcdNumber = lcdNum
-        # self.lineEdit.setVisible(True)
-        # self.lineEdit.setFocus()
         self.keypad_timer.start(KEYPAD_TIME)
         self.ex.show()
 
         return
 
+        # self.lineEdit.setVisible(True)
+        # self.lineEdit.setFocus()
         pl = list()
         for process in psutil.process_iter():
             pl.append(process.name())
 
         if 'florence' in pl:
             os.system('florence show')
-
 
         """
         # proc = os.system('ps -a')
