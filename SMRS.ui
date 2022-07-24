@@ -469,7 +469,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QLCDNumber" name="lcdNumber_7">
+     <widget class="QLCDNumber" name="pre_heat_road_temp">
       <property name="geometry">
        <rect>
         <x>530</x>
@@ -529,7 +529,7 @@
        <string>본 가동 설정 노면 온도</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_8">
+     <widget class="QLCDNumber" name="heat_road_temp">
       <property name="geometry">
        <rect>
         <x>530</x>
@@ -571,7 +571,7 @@
        <string>설정 노면 습도</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_9">
+     <widget class="QLCDNumber" name="set_road_humidity">
       <property name="geometry">
        <rect>
         <x>530</x>
@@ -649,7 +649,7 @@
        <string>자동 Heating 동작 ON/OFF</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_10">
+     <widget class="QLCDNumber" name="pre_heat_on_time">
       <property name="geometry">
        <rect>
         <x>1250</x>
@@ -673,7 +673,7 @@
        <number>220</number>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_11">
+     <widget class="QLCDNumber" name="heat_on_time">
       <property name="geometry">
        <rect>
         <x>1250</x>
@@ -715,7 +715,7 @@
        <string>설정 대기 온도</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_13">
+     <widget class="QLCDNumber" name="set_air_temp">
       <property name="geometry">
        <rect>
         <x>520</x>

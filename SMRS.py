@@ -150,7 +150,6 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
 
-        self.clickable(self.lcdNumber_7).connect(lambda: self.input_value(self.lcdNumber_7))        # pre_heat_road_temp
 
         # table Widget ------------------------------------------------------------------
         self.tableWidget.setRowCount(ROW_COUNT)
@@ -199,24 +198,22 @@ class qt(QMainWindow, form_class):
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
         ################################################
 
-        self.config_dict = {
-            self.lcdNumber_7:  ['pre_heat_road_temp', pre_heat_road_temp], 
-            self.lcdNumber_8:  ['heat_road_temp',     heat_road_temp],
-            self.lcdNumber_9:  ['set_road_humidity',  set_road_humidity],
-            self.lcdNumber_13: ['set_air_temp',       set_air_temp],
-            self.lcdNumber_10: ['pre_heat_on_time',   pre_heat_on_time],
-            self.lcdNumber_11: ['heat_on_time',       heat_on_time]       
-        }
+        self.clickable(self.pre_heat_road_temp).connect(lambda: self.input_value(self.pre_heat_road_temp))      # pre_heat_road_temp
+        self.clickable(self.heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))              # heat_road_temp
+        self.clickable(self.set_road_humidity).connect(lambda: self.input_value(self.set_road_humidity))        # set_road_humidity
+        self.clickable(self.set_air_temp).connect(lambda: self.input_value(self.set_air_temp))                  # set_air_temp 
+        self.clickable(self.pre_heat_on_time).connect(lambda: self.input_value(self.pre_heat_on_time))          # pre_heat_on_time
+        self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
 
         self.lineEdit.setVisible(False)
+
 
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber => after receive mqtt msg
         # self.temp_lcdNumber.display(input_num)
 
         # 2. update Global Config Variable
-        variable_name = self.config_dict[self.temp_lcdNumber][0]
-        # self.config_dict[self.temp_lcdNumber][1] = input_num
+        variable_name = self.temp_lcdNumber.objectName()
 
         # 3. send mqtt msg
         self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({variable_name: input_num}))
@@ -224,8 +221,6 @@ class qt(QMainWindow, form_class):
         # 4. update DB
 
         # 5. save config 
-
-        print(self.config_dict[self.temp_lcdNumber][0])
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
@@ -281,10 +276,8 @@ class qt(QMainWindow, form_class):
                 self.pushButton_2.setStyleSheet("background-color: gray")   # setting Ch1, 2 Button
         elif topic == sub_root_topic + 'CONFIG':
             for key, value in jsonData.items():
-                print('*****************************************************')
-                print(key, value)
-                lcd = [k for k, v in self.config_dict.items() if v[0] == key]
-                lcd[0].display(value)
+                lcdNum = self.findChild(QLCDNumber, key)
+                lcdNum.display(value)
 
         # if message.topic == root_topic + 'CMD':
         #     print("CMD: ", str(jsonData['CH1']))
