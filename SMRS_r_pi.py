@@ -132,19 +132,12 @@ class KEY_PAD_UI(QWidget):
         grid.addWidget(self.lcd, 0, 0, 3, 0)
         grid.setSpacing(10)
 
-        """
-        names = ['Cls', '', '',  'Close',
-                 '7',   '8',  '9', '',
-                 '4',   '5',  '6', '',
-                 '1',   '2',  '3', '',
-                 '-',   '0',  '.', 'Enter']
-        """
         names = ['Cls',    '',   'Close',
                  '7',     '8',  '9',
                  '4',     '5',  '6',
                  '1',     '2',  '3',
                  '-',     '0',  '.',
-                 'OK',     '', 'Cancel']
+                 '',      '',   'OK']
 
         # positions = [(i,j) for i in range(4, 9) for j in range(4, 8)]
         positions = [(i,j) for i in range(4, 10) for j in range(4, 7)]
@@ -275,15 +268,6 @@ class qt(QMainWindow, form_class):
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            self.pre_heat_road_temp:['pre_heat_road_temp', pre_heat_road_temp], 
-            self.heat_road_temp:    ['heat_road_temp',     heat_road_temp],
-            self.set_road_humidity: ['set_road_humidity',  set_road_humidity],
-            self.set_air_temp:      ['set_air_temp',       set_air_temp],
-            self.pre_heat_on_time:  ['pre_heat_on_time',   pre_heat_on_time],
-            self.heat_on_time:      ['heat_on_time',       heat_on_time]       
-        }
-
-        self.config_dict_new = {
             'pre_heat_road_temp': pre_heat_road_temp, 
             'heat_road_temp':     heat_road_temp,
             'set_road_humidity':  set_road_humidity,
@@ -294,26 +278,14 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.setVisible(False)
 
-        '''
-        # virtual keyboard & input lineEdit setting
-        self.lineEdit.returnPressed.connect(self.LineEdit_RET)
-
-        self.process = QProcess(self)
-        self.pid = None
-        # self.pid = subprocess.Popen(['florence'])
-        os.system('florence hide')
-        '''
-
 
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber
         self.temp_lcdNumber.display(input_num)
 
         # 2. update Global Config Variable
-        # variable_name = self.config_dict[self.temp_lcdNumber][0]
-        # self.config_dict[self.temp_lcdNumber][1] = input_num
         variable_name = self.temp_lcdNumber.objectName()
-        self.config_dict_new[variable_name] = input_num
+        self.config_dict[variable_name] = input_num
 
         # 3. send mqtt msg
         self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({variable_name: input_num}))
@@ -322,24 +294,8 @@ class qt(QMainWindow, form_class):
 
         # 5. save config 
 
-        # print(self.config_dict[self.temp_lcdNumber][0])
-
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
-
-
-        # self.temp_lcdNumber.display(self.lineEdit.text())
-        # self.lineEdit.setVisible(False)
-        # self.lineEdit.setText("")
-
-
-        # os.system('florence hide')
-
-        # self.process.terminate()
-        # self.process.start("kill -9 " + str(self.pid))
-
-        # self.pid.kill()
-        # os.killpg(self.pid.pid, signal.SIGKILL)
 
 
     def input_value(self, lcdNum):
@@ -348,51 +304,6 @@ class qt(QMainWindow, form_class):
         self.temp_lcdNumber = lcdNum
         self.keypad_timer.start(KEYPAD_TIME)
         self.ex.show()
-
-        return
-
-        # self.lineEdit.setVisible(True)
-        # self.lineEdit.setFocus()
-        pl = list()
-        for process in psutil.process_iter():
-            pl.append(process.name())
-
-        if 'florence' in pl:
-            os.system('florence show')
-
-        """
-        # proc = os.system('ps -a')
-        proc = subprocess.check_output(['ps', '-a'])
-        print(proc)
-        b = proc.splitlines()
-        print(b)
-        flag = 0
-        for item in b:
-            print(item)
-            if 'florence' in str(item):
-                print('-----------------------------', str(item))
-                os.system('florence show')
-                flag = 1
-                break
-        
-        if flag == 0:
-            os.system('florence')
-            
-        """
-                
-        # ret, pid = QProcess.startDetached('florence')
-        # ret = QProcess.startDetached('florence')
-        # ret = self.process.startDetached("florence")
-        # self.process = QProcess()
-
-        # ret = self.process.start('florence')
-        # self.pid = self.process.pid()
-
-        # self.pid = subprocess.Popen(['florence'])
-
-        # print('333333333333333333333', pid)
-        # self.flag = 0
-        # pid.kill()
 
 
     @QtCore.pyqtSlot(str, str)
@@ -416,17 +327,9 @@ class qt(QMainWindow, form_class):
 
         elif topic == sub_root_topic+'CONFIG':
             for key, value in jsonData.items():
-                # lcd = [k for k, v in self.config_dict.items() if v[0] == key]
-                # self.temp_lcdNumber = lcd[0]
                 lcdNum = self.findChild(QLCDNumber, key)
                 self.temp_lcdNumber = lcdNum
                 self.LineEdit_RET(value)
-
-            # for key, value in jsonData.items():
-            #     print('*****************************************************')
-            #     print(key, value)
-            #     lcd = [k for k, v in self.config_dict.items() if v[0] == key]
-            #     lcd[0].display(value)
 
 
     def label_color_change(self, inLabel):
@@ -489,8 +392,6 @@ class qt(QMainWindow, form_class):
             roadHumidity = jsonData['road_humidity']
             airTemp = jsonData['air_temp']
 
-        # if message.topic == root_topic + 'CMD':
-        #     print("CMD: ", str(jsonData['CH1']))
 
     def clickable(self, widget):
         class Filter(QObject):
