@@ -289,6 +289,14 @@ class qt(QMainWindow, form_class):
             'heat_on_time':       heat_on_time       
         }
 
+        for key, value in self.config_dict.items():
+            temp = self.util_func.read_var(key)
+            lcdNum = self.findChild(QLCDNumber, key)
+            lcdNum.display(self.util_func.read_var(key))
+            self.config_dict[key] = temp
+
+            print('key: {0}, value: {1}'.format(key, temp))
+
         self.lineEdit.setVisible(False)
 
 
