@@ -49,6 +49,7 @@ COL_COUNT = 3
 
 SEND_SENSOR_DATA_INTERVAL = 1000 # ms -> timer setting
 HEATING_TIME = 5000 # ms -> timeer setting
+PRE_HEATING_TIME = 5000 # ms -> timeer setting
 
 KEYPAD_TIME = 5000
 
@@ -206,8 +207,8 @@ class qt(QMainWindow, form_class):
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.pushButton.clicked.connect(lambda: self.send_STATUS(self.pushButton))
-        self.pushButton_2.clicked.connect(lambda: self.send_STATUS(self.pushButton_2))
+        self.pushButton.clicked.connect(lambda: self.change_STATUS(self.pushButton))
+        self.pushButton_2.clicked.connect(lambda: self.change_STATUS(self.pushButton_2))
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
@@ -343,13 +344,13 @@ class qt(QMainWindow, form_class):
                 print("CH1: ON, CH2: OFF")
                 # self.label_7.setStyleSheet("background-color: green")
                 # self.label_timer1.start(HEATING_TIME)
-                self.send_STATUS(self.pushButton)
+                self.change_STATUS(self.pushButton)
                 # TODO: update DB for heating status
             elif jsonData['CH1'] == True and jsonData['CH2'] == True:
                 print("CH1: ON, Ch2: ON")
                 # self.label_8.setStyleSheet("background-color: green")
                 # self.label_timer2.start(HEATING_TIME)
-                self.send_STATUS(self.pushButton_2)
+                self.change_STATUS(self.pushButton_2)
                 # TODO: update DB for heating status
 
         elif topic == sub_root_topic+'CONFIG':
@@ -399,18 +400,20 @@ class qt(QMainWindow, form_class):
 
     # press the button for Thermal Film ON in R/pi or receive Film ON command from PC/APP
     # sned STATUS by mqtt
-    def send_STATUS(self, button):
+    def change_STATUS(self, button):
         button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.pushButton:
             print('send CH1 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
             self.label_7.setStyleSheet("background-color: green")
+            # TODO: change label_timer to HEAT_TIMEOUT_TIMER
             self.label_timer1.start(HEATING_TIME)
         elif button == self.pushButton_2:
             print('send CH1 & CH2 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': True}))
             self.label_8.setStyleSheet("background-color: green")
-            self.label_timer2.start(HEATING_TIME)
+            # TODO: change label_timer to HEAT_TIMEOUT_TIMER
+            self.label_timer2.start(PRE_HEATING_TIME)
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
