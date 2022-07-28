@@ -289,17 +289,19 @@ class qt(QMainWindow, form_class):
             'heat_on_time':       heat_on_time       
         }
 
-        for key, value in self.config_dict.items():
-            temp = self.util_func.read_var(key)
-            lcdNum = self.findChild(QLCDNumber, key)
-            lcdNum.display(self.util_func.read_var(key))
-            self.config_dict[key] = temp
+        # laod saved config data to QLCDNumber
+        for key, value in self.config_dict.items():     # saved (LCDNumber name, value) in config.db
+            temp = self.util_func.read_var(key)         # read config data from local db file
+            lcdNum = self.findChild(QLCDNumber, key)    # find LCDNumber with key 
+            lcdNum.display(temp)                        # display to LCDNumber
+            self.config_dict[key] = temp                # set the data to config_dict
 
             print('key: {0}, value: {1}'.format(key, temp))
 
         self.lineEdit.setVisible(False)
 
 
+    # Keypad 'OK' pressed event -> emit signal in keypad
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber
         self.temp_lcdNumber.display(input_num)
@@ -321,6 +323,7 @@ class qt(QMainWindow, form_class):
         # or if recevied config data from PC, update local & DB config data
 
 
+    # QLCDNumber input
     def input_value(self, lcdNum):
         # print(lcdNum.objectName())
         # print('test::: ', self.findChild(QLCDNumber, lcdNum.objectName()).objectName())
@@ -329,6 +332,7 @@ class qt(QMainWindow, form_class):
         self.ex.show()
 
 
+    # MQTT received msg callback function
     @QtCore.pyqtSlot(str, str)
     def on_message_callback(self, msg, topic):
         jsonData = json.loads(msg) 
@@ -364,9 +368,13 @@ class qt(QMainWindow, form_class):
             self.pushButton_2.setStyleSheet("background-color: gray; border: 1px solid black")
 
         inLabel.setStyleSheet("background-color: gray")
+
         # TODO: update DB for heating status -> OFF
         self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
 
+
+    # TEST FUNCTION for mongoDB to send msg periodically
+    # TODO: move to UART RECEIVE THREAD
     def send_msg_loop_timer(self):
         sine_value = np.sin(self.sine_x_data[self.idx%self.x_size])
         # temp_data['_id'] = idx
@@ -389,6 +397,7 @@ class qt(QMainWindow, form_class):
 
         self.idx += 1
 
+    # press the button for Thermal Film ON in R/pi or receive Film ON command from PC/APP
     # sned STATUS by mqtt
     def send_STATUS(self, button):
         button.setStyleSheet("background-color: green; border: 1px solid black")
