@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf8
 
+# auto excution in booting time
 # sudo vi .config/lxsession/LXDE-pi/autostart 
 
 import os, sys, time, datetime, warnings, signal
@@ -47,18 +48,11 @@ NUM_UPDATE_X_AXIS = 5
 ROW_COUNT = 7
 COL_COUNT = 3
 
-SEND_SENSOR_DATA_INTERVAL = 1000 # ms -> timer setting
-HEATING_TIME = 5000 # ms -> timeer setting
-PRE_HEATING_TIME = 5000 # ms -> timeer setting
+SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
+HEATING_TIME                = 5000 # ms -> timer setting
+PRE_HEATING_TIME            = 5000 # ms -> timer setting
 
 KEYPAD_TIME = 5000
-
-pre_heat_road_temp = 0
-heat_road_temp  = 0
-set_road_humidity = 0
-set_air_temp = 0
-pre_heat_on_time = 0
-heat_on_time = 0
 
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
@@ -67,7 +61,7 @@ form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 # --------------------------------------------------------------
 class THREAD_RECEIVE_Data(QThread):
     intReady = pyqtSignal(float)
-    to_excel = pyqtSignal(str, float)
+    # to_excel = pyqtSignal(str, float)
 
     @pyqtSlot()
     def __init__(self):
@@ -103,6 +97,7 @@ class THREAD_RECEIVE_Data(QThread):
     def close(self):
         self.mySuspend()
 
+
 class Util_Function:
     def Qsleep(self, ms):
         QtTest.QTest.qWait(ms)
@@ -116,6 +111,12 @@ class Util_Function:
             temp = f[key]
             # print(f[key])
         return temp
+
+    def to_excel_func(self, _time, data):
+        tt = [_time, data]
+        self.resist_data.append(tt)
+        print(tt)
+
 
 class KEY_PAD_UI(QWidget):
     cb_signal = pyqtSignal(str)
@@ -207,8 +208,8 @@ class qt(QMainWindow, form_class):
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.pushButton.clicked.connect(lambda: self.change_STATUS(self.pushButton))
-        self.pushButton_2.clicked.connect(lambda: self.change_STATUS(self.pushButton_2))
+        self.btn_HEAT_ON.clicked.connect(lambda: self.change_STATUS(self.btn_HEAT_ON))
+        self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.change_STATUS(self.btn_PRE_HEAT_ON))
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
@@ -247,29 +248,28 @@ class qt(QMainWindow, form_class):
         self.timer.start()
         ##################################################
 
-        # HEAT TIME setting ##############################
-        self.label_timer1 = QtCore.QTimer()
-        self.label_timer2 = QtCore.QTimer()
-        self.label_timer1.timeout.connect(lambda: self.label_color_change(self.label_7))
-        self.label_timer2.timeout.connect(lambda: self.label_color_change(self.label_8))
-        # self.label_timer.setInterval(HEATING_TIME) # 100ms 
+        # HEAT TIMER setting ##############################
+        self.heat_timer = QtCore.QTimer()
+        self.pre_heat_timer = QtCore.QTimer()
+        self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_pre_heat_on))
+        self.pre_heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
         ##################################################
 
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
-        self.thread_rcv_data.to_excel.connect(self.to_excel_func)
+        # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         # self.thread_rcv_data.start()
 
         self.resist_data = []
         self.log_flag = False
 
-        ################################################
-        # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
-        ################################################
+        # MQTT init ###############################################
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
+                                     _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
+        ##########################################################
 
-        self.label_7.setStyleSheet("background-color: gray")
-        self.label_8.setStyleSheet("background-color: gray")
+        self.label_pre_heat_on.setStyleSheet("background-color: gray")
+        self.label_heat_on.setStyleSheet("background-color: gray")
 
         self.temp_lcdNumber = None
 
@@ -282,15 +282,15 @@ class qt(QMainWindow, form_class):
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            'pre_heat_road_temp': pre_heat_road_temp, 
-            'heat_road_temp':     heat_road_temp,
-            'set_road_humidity':  set_road_humidity,
-            'set_air_temp':       set_air_temp,
-            'pre_heat_on_time':   pre_heat_on_time,
-            'heat_on_time':       heat_on_time       
+            'pre_heat_road_temp': 0, 
+            'heat_road_temp':     0,
+            'set_road_humidity':  0,
+            'set_air_temp':       0,
+            'pre_heat_on_time':   0,
+            'heat_on_time':       0 
         }
 
-        # laod saved config data to QLCDNumber
+        # laod saved config data and display to QLCDNumber
         for key, value in self.config_dict.items():     # saved (LCDNumber name, value) in config.db
             temp = self.util_func.read_var(key)         # read config data from local db file
             lcdNum = self.findChild(QLCDNumber, key)    # find LCDNumber with key 
@@ -342,15 +342,11 @@ class qt(QMainWindow, form_class):
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
             if jsonData['CH1'] == True and jsonData['CH2'] == False:
                 print("CH1: ON, CH2: OFF")
-                # self.label_7.setStyleSheet("background-color: green")
-                # self.label_timer1.start(HEATING_TIME)
-                self.change_STATUS(self.pushButton)
+                self.change_STATUS(self.btn_HEAT_ON)
                 # TODO: update DB for heating status
             elif jsonData['CH1'] == True and jsonData['CH2'] == True:
                 print("CH1: ON, Ch2: ON")
-                # self.label_8.setStyleSheet("background-color: green")
-                # self.label_timer2.start(HEATING_TIME)
-                self.change_STATUS(self.pushButton_2)
+                self.change_STATUS(self.btn_PRE_HEAT_ON)
                 # TODO: update DB for heating status
 
         elif topic == sub_root_topic+'CONFIG':
@@ -360,18 +356,25 @@ class qt(QMainWindow, form_class):
                 self.LineEdit_RET(value)
 
 
-    def label_color_change(self, inLabel):
-        if inLabel == self.label_7:
-            self.label_timer1.stop()
-            self.pushButton.setStyleSheet("background-color: gray; border: 1px solid black")
+    # heat timeout function
+    # 1. stop timer
+    # 2. change button color -> gray
+    # 3. change label color -> gray
+    # 4. send mqtt msg to PC/SP APP
+    # 5. update mongoDB
+    def heat_timeout_func(self, inLabel):
+        if inLabel == self.label_pre_heat_on:
+            self.heat_timer.stop()
+            self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
         else:
-            self.label_timer2.stop()
-            self.pushButton_2.setStyleSheet("background-color: gray; border: 1px solid black")
+            self.pre_heat_timer.stop()
+            self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
 
         inLabel.setStyleSheet("background-color: gray")
 
-        # TODO: update DB for heating status -> OFF
         self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
+
+        # TODO: update DB for heating status -> OFF
 
 
     # TEST FUNCTION for mongoDB to send msg periodically
@@ -402,18 +405,18 @@ class qt(QMainWindow, form_class):
     # sned STATUS by mqtt
     def change_STATUS(self, button):
         button.setStyleSheet("background-color: green; border: 1px solid black")
-        if button == self.pushButton:
+        if button == self.btn_HEAT_ON:
             print('send CH1 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
-            self.label_7.setStyleSheet("background-color: green")
+            self.label_pre_heat_on.setStyleSheet("background-color: green")
             # TODO: change label_timer to HEAT_TIMEOUT_TIMER
-            self.label_timer1.start(HEATING_TIME)
-        elif button == self.pushButton_2:
+            self.heat_timer.start(HEATING_TIME)
+        elif button == self.btn_PRE_HEAT_ON:
             print('send CH1 & CH2 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': True}))
-            self.label_8.setStyleSheet("background-color: green")
+            self.label_heat_on.setStyleSheet("background-color: green")
             # TODO: change label_timer to HEAT_TIMEOUT_TIMER
-            self.label_timer2.start(PRE_HEATING_TIME)
+            self.pre_heat_timer.start(PRE_HEATING_TIME)
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
@@ -444,21 +447,6 @@ class qt(QMainWindow, form_class):
         filter = Filter(widget)
         widget.installEventFilter(filter)
         return filter.clicked
-
-    def save_var(self, key, value):
-        with shelve.open('config.db') as f:
-            f[key] = value
-
-    def stParam(self, lcdNum):
-        with shelve.open('config.db') as f:
-            if lcdNum == self.lcdNum_line_num:
-                f['LINE_NUM'] = self.lcdNum_line_num.value()
-
-    def to_excel_func(self, _time, data):
-        tt = [_time, data]
-        self.resist_data.append(tt)
-        print(tt)
-
 
     def graph_plot(self):
         update_data_road_temp = []
