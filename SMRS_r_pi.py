@@ -49,6 +49,7 @@ ROW_COUNT = 7
 COL_COUNT = 3
 
 SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
+
 HEATING_TIME                = 5000 # ms -> timer setting
 PRE_HEATING_TIME            = 5000 # ms -> timer setting
 
@@ -60,7 +61,7 @@ form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 # [THREAD] 
 # --------------------------------------------------------------
 class THREAD_RECEIVE_Data(QThread):
-    intReady = pyqtSignal(float)
+    intReady = pyqtSignal()
     # to_excel = pyqtSignal(str, float)
 
     @pyqtSlot()
@@ -80,6 +81,10 @@ class THREAD_RECEIVE_Data(QThread):
 
             _time = datetime.now()
             _time = _time.strftime(self.time_format)
+
+            # TEST CODE - send data
+            self.intReady.emit() # call send_msg_loop_timer()
+            time.sleep(1)
 
             ### Exit ###
             if self.__exit:
@@ -245,7 +250,7 @@ class qt(QMainWindow, form_class):
         self.timer.setInterval(SEND_SENSOR_DATA_INTERVAL) # 100ms 
         self.timer.timeout.connect(self.send_msg_loop_timer)
 
-        self.timer.start()
+        # self.timer.start()
         ##################################################
 
         # HEAT TIMER setting ##############################
@@ -258,7 +263,8 @@ class qt(QMainWindow, form_class):
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
-        # self.thread_rcv_data.start()
+        self.thread_rcv_data.intReady.connect(self.send_msg_loop_timer)
+        self.thread_rcv_data.start()
 
         self.resist_data = []
         self.log_flag = False
