@@ -54,8 +54,8 @@ COL_COUNT = 3
 
 SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
 
-HEATING_TIME                = 5000 # ms -> timer setting
-PRE_HEATING_TIME            = 10000 # ms -> timer setting
+PRE_HEATING_TIME            = 3000 # ms -> timer setting
+HEATING_TIME                = 10000 # ms -> timer setting
 
 KEYPAD_TIME = 5000
 
@@ -280,8 +280,8 @@ class qt(QMainWindow, form_class):
         # HEAT TIMER setting ##############################
         self.heat_timer = QtCore.QTimer()
         self.pre_heat_timer = QtCore.QTimer()
-        self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_pre_heat_on))
-        self.pre_heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
+        self.pre_heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_pre_heat_on))
+        self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
         ##################################################
 
 
@@ -331,8 +331,12 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.setVisible(False)
 
+        # GLOBAL VARIABLE --------------------------------------------------
         # BLOCK change config during HEAT ON time
         self.flag_HEAT_ON = False
+
+        self.PRE_HEAT_STATUS = False
+        self.HEAT_STATUS = False
 
 
     # Keypad 'OK' pressed event -> emit signal in keypad
@@ -386,11 +390,11 @@ class qt(QMainWindow, form_class):
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
             if jsonData['CH1'] == True and jsonData['CH2'] == False:
-                print("CH1: ON, CH2: OFF")
+                print("pressed pre-heat-on")
                 self.change_STATUS(self.btn_PRE_HEAT_ON)
                 # TODO: update DB for heating status
-            elif jsonData['CH1'] == True and jsonData['CH2'] == True:
-                print("CH1: ON, Ch2: ON")
+            elif jsonData['CH1'] == False and jsonData['CH2'] == True:
+                print("pressed heat-on")
                 self.change_STATUS(self.btn_HEAT_ON)
                 # TODO: update DB for heating status
 
@@ -409,15 +413,19 @@ class qt(QMainWindow, form_class):
     # 5. update mongoDB
     def heat_timeout_func(self, inLabel):
         if inLabel == self.label_pre_heat_on:
-            self.heat_timer.stop()
-            self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
-        else:
             self.pre_heat_timer.stop()
             self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
+            self.PRE_HEAT_STATUS = False
+        else:
+            self.heat_timer.stop()
+            self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
+            self.HEAT_STATUS = False
 
         inLabel.setStyleSheet("background-color: gray")
 
-        self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
+        # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
+        self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+        print('heat_timeout_func CH1: {}, CH2: {}'.format(self.PRE_HEAT_STATUS, self.HEAT_STATUS))
 
         self.flag_HEAT_ON = False
 
@@ -454,22 +462,37 @@ class qt(QMainWindow, form_class):
         if button == 'INIT':
             print("change_STATUS: INIT")
             self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps(self.config_dict))
+            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
             return
 
         button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.btn_PRE_HEAT_ON:
-            print('send CH1 on')
-            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
-            self.label_pre_heat_on.setStyleSheet("background-color: green")
-            self.pre_heat_timer.start(PRE_HEATING_TIME)
-
+            print('pressed btn_PRE_HEAT')
+            self.PRE_HEAT_STATUS ^= 1
+            if self.PRE_HEAT_STATUS == True:
+                print('PRE_HEAT_STATUS: ON')
+                self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
+                self.label_pre_heat_on.setStyleSheet("background-color: green")
+                self.pre_heat_timer.start(PRE_HEATING_TIME)
+                self.heat_timeout_func(self.label_heat_on)
+            else:
+                print('PRE_HEAT_STATUS: OFF')
+                self.heat_timeout_func(self.label_pre_heat_on)
+                
             # TODO: send 'PRE HEAT ON' msg to MCU
 
         elif button == self.btn_HEAT_ON:
             print('send CH1 & CH2 on')
-            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': True}))
-            self.label_heat_on.setStyleSheet("background-color: green")
-            self.heat_timer.start(HEATING_TIME)
+            self.HEAT_STATUS ^= 1
+            if self.HEAT_STATUS == True:
+                print('HEAT_STATUS: ON')
+                self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': True}))
+                self.label_heat_on.setStyleSheet("background-color: green")
+                self.heat_timer.start(HEATING_TIME)
+                self.heat_timeout_func(self.label_pre_heat_on)
+            else:
+                print('PRE_HEAT_STATUS: OFF')
+                self.heat_timeout_func(self.label_heat_on)
 
             # TODO: send 'HEAT ON' msg to MCU
 
