@@ -267,22 +267,27 @@ class qt(QMainWindow, form_class):
         elif topic == sub_root_topic + 'STATUS':
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
-            if jsonData['CH1'] == True and jsonData['CH2'] == False:        # PRE HEAT ON
+            if jsonData['CH1'] == True:             # PRE HEAT ON
                 self.flag_HEAT_ON = True
-                print("CH1: ON, CH2: OFF")
+                print("PRE HEAT: ON")
                 self.label_7.setStyleSheet("background-color: green")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: green")
-            elif jsonData['CH1'] == True and jsonData['CH2'] == True:       # HEAT ON
+            elif jsonData['CH1'] == False:          # PRE HEAT OFF
+                self.flag_HEAT_ON = False
+                print("PRE HEAT: OFF")
+                self.label_7.setStyleSheet("background-color: gray")
+                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")
+
+            if jsonData['CH2'] == True:             # HEAT ON
                 self.flag_HEAT_ON = True
-                print("CH1: ON, Ch2: ON")
+                print("HEAT: ON")
                 self.label_8.setStyleSheet("background-color: green")
                 self.btn_HEAT_ON.setStyleSheet("background-color: green")
-            elif jsonData['CH1'] == False and jsonData['CH2'] == False:     # after HEATING TIME, R_PI send this msg
+            if jsonData['CH2'] == False:            # HEAT OFF
                 self.flag_HEAT_ON = False
-                self.label_7.setStyleSheet("background-color: gray")        # Status CH1 Label
-                self.label_8.setStyleSheet("background-color: gray")        # Status CH1, 2 Label
-                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")     # Setting CH1 Button
-                self.btn_HEAT_ON.setStyleSheet("background-color: gray")   # setting Ch1, 2 Button
+                print("HEAT: OFF")
+                self.label_8.setStyleSheet("background-color: gray")
+                self.btn_HEAT_ON.setStyleSheet("background-color: gray")
 
         elif topic == sub_root_topic + 'CONFIG':
             print('received CONFIG')
@@ -290,9 +295,6 @@ class qt(QMainWindow, form_class):
                 print(key, value)
                 lcdNum = self.findChild(QLCDNumber, key)
                 lcdNum.display(value)
-
-        # if message.topic == root_topic + 'CMD':
-        #     print("CMD: ", str(jsonData['CH1']))
 
 
     def clickable(self, widget):
@@ -377,7 +379,6 @@ class qt(QMainWindow, form_class):
 
     # sned CMD by mqtt
     def send_CMD(self, button):
-        # button.setStyleSheet("background-color: green")
         if button == 'INIT':
             print('INIT. request DATA, Config, Status!!')
             self.sub_mqtt.send_msg(pub_root_topic+"INIT", json.dumps({'REQUEST': 'INIT'}))
@@ -385,11 +386,11 @@ class qt(QMainWindow, form_class):
 
         button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.btn_PRE_HEAT_ON:
-            print('send CH1 on')
+            print('pressed PRE HEAT BUtton')
             self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': False}))
         elif button == self.btn_HEAT_ON:
-            print('send CH1 & CH2 on')
-            self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': True, 'CH2': True}))
+            print('pressed HEAT BUtton')
+            self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': False, 'CH2': True}))
 
 
 def run():
