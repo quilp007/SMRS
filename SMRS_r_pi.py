@@ -22,6 +22,10 @@ import pymongo
 
 import mqtt.sub_class as sc
 import json
+import serial
+
+serial_port = "/dev/ttyACM0"
+# mcuSerial = serial.Serial(serial_port, 115200)
 
 server_ip = '203.251.78.135'
 
@@ -51,7 +55,7 @@ COL_COUNT = 3
 SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
 
 HEATING_TIME                = 5000 # ms -> timer setting
-PRE_HEATING_TIME            = 5000 # ms -> timer setting
+PRE_HEATING_TIME            = 10000 # ms -> timer setting
 
 KEYPAD_TIME = 5000
 
@@ -73,6 +77,8 @@ class THREAD_RECEIVE_Data(QThread):
         self.__exit = False
         self.log_flag = False
 
+
+
     def run(self):
         while True:
             ### Suspend ###
@@ -83,8 +89,26 @@ class THREAD_RECEIVE_Data(QThread):
             _time = _time.strftime(self.time_format)
 
             # TEST CODE - send data
-            self.intReady.emit() # call send_msg_loop_timer()
-            time.sleep(1)
+            # self.intReady.emit() # call send_msg_loop_timer()
+            # time.sleep(1)
+
+            try: 
+                line = mcuSerial.readline()
+                # print(line)
+            except:
+                print('MCU uart readline error!!!')
+                pass
+            else:
+                try:
+                    data = json.loads(line)
+                except:
+                    print('json error!!')
+                    pass
+                else:
+                    for key, value in data.items():
+                        print('received key: {} value: {}'.format(key, value))
+                        print('value type: ', type(value))
+            
 
             ### Exit ###
             if self.__exit:
@@ -264,7 +288,7 @@ class qt(QMainWindow, form_class):
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         self.thread_rcv_data.intReady.connect(self.send_msg_loop_timer)
-        self.thread_rcv_data.start()
+        # self.thread_rcv_data.start()
 
         self.resist_data = []
         self.log_flag = False
@@ -307,6 +331,9 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.setVisible(False)
 
+        # BLOCK change config during HEAT ON time
+        self.flag_HEAT_ON = False
+
 
     # Keypad 'OK' pressed event -> emit signal in keypad
     def LineEdit_RET(self, input_num):
@@ -332,6 +359,10 @@ class qt(QMainWindow, form_class):
 
     # QLCDNumber input
     def input_value(self, lcdNum):
+        if self.flag_HEAT_ON == True:
+            print('Heat ON!!!')
+            return
+
         # print(lcdNum.objectName())
         # print('test::: ', self.findChild(QLCDNumber, lcdNum.objectName()).objectName())
         self.temp_lcdNumber = lcdNum
@@ -340,19 +371,27 @@ class qt(QMainWindow, form_class):
 
 
     # MQTT received msg callback function
-    @QtCore.pyqtSlot(str, str)
+    # @QtCore.pyqtSlot(str, str)
     def on_message_callback(self, msg, topic):
         jsonData = json.loads(msg) 
-        if topic == sub_root_topic + 'CMD':
+
+        if topic == sub_root_topic + 'INIT':
+            if jsonData['REQUEST'] == 'INIT':
+                print('received: ', 'INIT')
+                self.change_STATUS('INIT')
+                return
+
+        elif topic == sub_root_topic + 'CMD':
+
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
             if jsonData['CH1'] == True and jsonData['CH2'] == False:
                 print("CH1: ON, CH2: OFF")
-                self.change_STATUS(self.btn_HEAT_ON)
+                self.change_STATUS(self.btn_PRE_HEAT_ON)
                 # TODO: update DB for heating status
             elif jsonData['CH1'] == True and jsonData['CH2'] == True:
                 print("CH1: ON, Ch2: ON")
-                self.change_STATUS(self.btn_PRE_HEAT_ON)
+                self.change_STATUS(self.btn_HEAT_ON)
                 # TODO: update DB for heating status
 
         elif topic == sub_root_topic+'CONFIG':
@@ -379,6 +418,8 @@ class qt(QMainWindow, form_class):
         inLabel.setStyleSheet("background-color: gray")
 
         self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
+
+        self.flag_HEAT_ON = False
 
         # TODO: update DB for heating status -> OFF
 
@@ -410,19 +451,30 @@ class qt(QMainWindow, form_class):
     # press the button for Thermal Film ON in R/pi or receive Film ON command from PC/APP
     # sned STATUS by mqtt
     def change_STATUS(self, button):
+        if button == 'INIT':
+            print("change_STATUS: INIT")
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps(self.config_dict))
+            return
+
         button.setStyleSheet("background-color: green; border: 1px solid black")
-        if button == self.btn_HEAT_ON:
+        if button == self.btn_PRE_HEAT_ON:
             print('send CH1 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
             self.label_pre_heat_on.setStyleSheet("background-color: green")
-            # TODO: change label_timer to HEAT_TIMEOUT_TIMER
-            self.heat_timer.start(HEATING_TIME)
-        elif button == self.btn_PRE_HEAT_ON:
+            self.pre_heat_timer.start(PRE_HEATING_TIME)
+
+            # TODO: send 'PRE HEAT ON' msg to MCU
+
+        elif button == self.btn_HEAT_ON:
             print('send CH1 & CH2 on')
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': True}))
             self.label_heat_on.setStyleSheet("background-color: green")
-            # TODO: change label_timer to HEAT_TIMEOUT_TIMER
-            self.pre_heat_timer.start(PRE_HEATING_TIME)
+            self.heat_timer.start(HEATING_TIME)
+
+            # TODO: send 'HEAT ON' msg to MCU
+
+        self.flag_HEAT_ON = True
+        
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
