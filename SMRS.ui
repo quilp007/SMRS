@@ -739,7 +739,7 @@
        <number>220</number>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="btn_PRE_HEAT_ON">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -757,7 +757,7 @@
        <string>강제 예열 가동 (Channel1)</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="btn_HEAT_ON">
       <property name="geometry">
        <rect>
         <x>740</x>

@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 broker_address = "203.251.78.135"
 port = 1883
 topic = "device_1/+"
-root_topic = "device_1/"
+# root_topic = "device_1/"
 client = 'client'
 MQTT_DEBUG = False
 
@@ -57,7 +57,7 @@ class SUB_MQTT(QtCore.QObject):
     def on_message(self, client, userdata, message):
         rcvData = message.payload.decode("utf-8")
         # rcvData = str(message.payload.decode("utf-8"))
-        # print("message received ", rcvData)
+        print("message received ", rcvData)
         if MQTT_DEBUG:
             print("message topic=", message.topic)
             print("message qos=", message.qos)
