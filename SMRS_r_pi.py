@@ -57,6 +57,8 @@ SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
 PRE_HEATING_TIME            = 3000 # ms -> timer setting
 HEATING_TIME                = 10000 # ms -> timer setting
 
+LABEL_WARNING_TIME          = 3000 # ms -> timer setting
+
 KEYPAD_TIME = 5000
 
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
@@ -284,6 +286,10 @@ class qt(QMainWindow, form_class):
         self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
         ##################################################
 
+        # Warning label TIMER setting ##############################
+        self.label_warning_timer = QtCore.QTimer()
+        self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
+        ##################################################
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
@@ -329,7 +335,8 @@ class qt(QMainWindow, form_class):
 
             print('key: {0}, value: {1}'.format(key, temp))
 
-        self.lineEdit.setVisible(False)
+        self.label_warning.setVisible(False)
+        # self.lineEdit.setVisible(False)
 
         # GLOBAL VARIABLE --------------------------------------------------
         # BLOCK change config during HEAT ON time
@@ -364,6 +371,8 @@ class qt(QMainWindow, form_class):
     # QLCDNumber input
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
             print('Heat ON!!!')
             return
 
@@ -428,9 +437,13 @@ class qt(QMainWindow, form_class):
         print('heat_timeout_func CH1: {}, CH2: {}'.format(self.PRE_HEAT_STATUS, self.HEAT_STATUS))
 
         self.flag_HEAT_ON = False
+        self.label_warning_timer.stop()
+        self.label_warning.setVisible(False)
 
         # TODO: update DB for heating status -> OFF
 
+    def label_warning_timeout_func(self):
+        self.label_warning.setVisible(False)
 
     # TEST FUNCTION for mongoDB to send msg periodically
     # TODO: move to UART RECEIVE THREAD
@@ -475,6 +488,7 @@ class qt(QMainWindow, form_class):
                 self.label_pre_heat_on.setStyleSheet("background-color: green")
                 self.pre_heat_timer.start(PRE_HEATING_TIME)
                 self.heat_timeout_func(self.label_heat_on)
+                self.flag_HEAT_ON = True
             else:
                 print('PRE_HEAT_STATUS: OFF')
                 self.heat_timeout_func(self.label_pre_heat_on)
@@ -490,13 +504,13 @@ class qt(QMainWindow, form_class):
                 self.label_heat_on.setStyleSheet("background-color: green")
                 self.heat_timer.start(HEATING_TIME)
                 self.heat_timeout_func(self.label_pre_heat_on)
+                self.flag_HEAT_ON = True
             else:
                 print('PRE_HEAT_STATUS: OFF')
                 self.heat_timeout_func(self.label_heat_on)
 
             # TODO: send 'HEAT ON' msg to MCU
 
-        self.flag_HEAT_ON = True
         
 
     def loop_start_func(self):

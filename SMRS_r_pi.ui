@@ -813,20 +813,29 @@
        <number>5</number>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLabel" name="label_warning">
       <property name="geometry">
        <rect>
-        <x>440</x>
-        <y>-20</y>
-        <width>181</width>
-        <height>51</height>
+        <x>290</x>
+        <y>120</y>
+        <width>401</width>
+        <height>151</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <weight>50</weight>
-        <bold>false</bold>
+        <pointsize>20</pointsize>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(255, 255, 0)</string>
+      </property>
+      <property name="text">
+       <string>Cannot change config value
+(thermal film is working!!)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
