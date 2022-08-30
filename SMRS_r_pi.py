@@ -24,8 +24,13 @@ import mqtt.sub_class as sc
 import json
 import serial
 
-serial_port = "/dev/ttyACM0"
-# mcuSerial = serial.Serial(serial_port, 115200)
+USB_SERIAL = False
+
+# serial_port = "/dev/ttyACM0"
+serial_port = "/dev/ttyUSB0"
+
+if USB_SERIAL == True:
+    mcuSerial = serial.Serial(serial_port, 115200)
 
 server_ip = '203.251.78.135'
 
@@ -61,6 +66,13 @@ LABEL_WARNING_TIME          = 3000 # ms -> timer setting
 
 KEYPAD_TIME = 5000
 
+sensor_data_dict = {
+    'road_temp':        0, 
+    'road_humidity':    0,
+    'air_temp':         0
+}
+
+
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
 # --------------------------------------------------------------
@@ -71,14 +83,14 @@ class THREAD_RECEIVE_Data(QThread):
     # to_excel = pyqtSignal(str, float)
 
     @pyqtSlot()
-    def __init__(self):
+    def __init__(self, qt_object, parent=None):
         super(THREAD_RECEIVE_Data, self).__init__()
         self.time_format = '%Y%m%d_%H%M%S'
 
         self.__suspend = False
         self.__exit = False
         self.log_flag = False
-
+        self.qt_object = qt_object 
 
 
     def run(self):
@@ -96,7 +108,7 @@ class THREAD_RECEIVE_Data(QThread):
 
             try: 
                 line = mcuSerial.readline()
-                # print(line)
+                print(line)
             except:
                 print('MCU uart readline error!!!')
                 pass
@@ -107,7 +119,17 @@ class THREAD_RECEIVE_Data(QThread):
                     print('json error!!')
                     pass
                 else:
+                    # sensor_data_dict = data
+                    # for key, value in data.items():
+
+                    # self.intReady.emit()
+
                     for key, value in data.items():
+                        lcdNum = self.qt_object.findChild(QLCDNumber, key)    # find LCDNumber with key 
+                        if lcdNum is not None:
+                            print('lcd is not empty!!')
+                            lcdNum.display(value)                        # display to LCDNumber
+
                         print('received key: {} value: {}'.format(key, value))
                         print('value type: ', type(value))
             
@@ -205,15 +227,20 @@ class KEY_PAD_UI(QWidget):
         if sender == 'OK':
             print("in pad: ", self.text)
             # self.obj.display(self.text)
-            if self.text != '':
-                self.num = self.text
 
-            self.text = ''
-            self.lcd.display(self.text)
             self.endFlag = 0
             self.close()
+
+            if self.text == '':
+                return
+
+            self.num = self.text
+            self.text = ''
+            self.lcd.display(self.text)
             self.cb_signal.emit(self.num)
+            self.num = ''
             return
+
         elif sender == 'Cls':
             self.text = ''
         elif sender == 'Close':
@@ -272,9 +299,9 @@ class qt(QMainWindow, form_class):
         self.temp_data = {}
 
         # loop for sending sensor data ###################
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(SEND_SENSOR_DATA_INTERVAL) # 100ms 
-        self.timer.timeout.connect(self.send_msg_loop_timer)
+        # self.timer = QtCore.QTimer()
+        # self.timer.setInterval(SEND_SENSOR_DATA_INTERVAL) # 100ms 
+        # self.timer.timeout.connect(self.send_msg_loop_timer)
 
         # self.timer.start()
         ##################################################
@@ -291,10 +318,14 @@ class qt(QMainWindow, form_class):
         self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
         ##################################################
 
-        self.thread_rcv_data = THREAD_RECEIVE_Data()
+        self.val = 1000
+
+        self.thread_rcv_data = THREAD_RECEIVE_Data(self, self.val)
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         self.thread_rcv_data.intReady.connect(self.send_msg_loop_timer)
-        # self.thread_rcv_data.start()
+
+        if USB_SERIAL == True:
+            self.thread_rcv_data.start()
 
         self.resist_data = []
         self.log_flag = False
@@ -333,6 +364,10 @@ class qt(QMainWindow, form_class):
             lcdNum.display(temp)                        # display to LCDNumber
             self.config_dict[key] = temp                # set the data to config_dict
 
+            lcdNum = self.findChild(QLCDNumber, key+'_2')    # find LCDNumber with key 
+            if (lcdNum is not None):
+                lcdNum.display(temp)                        # display to LCDNumber
+
             print('key: {0}, value: {1}'.format(key, temp))
 
         self.label_warning.setVisible(False)
@@ -350,6 +385,10 @@ class qt(QMainWindow, form_class):
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber
         self.temp_lcdNumber.display(input_num)
+
+        lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key 
+        if (lcdNum is not None):
+            lcdNum.display(input_num)
 
         # 2. update Global Config Variable
         variable_name = self.temp_lcdNumber.objectName()
@@ -448,6 +487,15 @@ class qt(QMainWindow, form_class):
     # TEST FUNCTION for mongoDB to send msg periodically
     # TODO: move to UART RECEIVE THREAD
     def send_msg_loop_timer(self):
+
+        # for key, value in sensor_data_dict.items():
+        #     print('received key: {} value: {}'.format(key, value))
+        #     print('value type: ', type(value))
+
+            # lcdNum = self.findChild(QLCDNumber, key)    # find LCDNumber with key 
+            # if lcdNum is not None:
+            #     lcdNum.display(value)                        # display to LCDNumber
+
         sine_value = np.sin(self.sine_x_data[self.idx%self.x_size])
         # temp_data['_id'] = idx
         self.temp_data['road_temp'] = sine_value
