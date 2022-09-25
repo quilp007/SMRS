@@ -71,7 +71,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>2</number>
    </property>
    <property name="iconSize">
     <size>
@@ -111,6 +111,10 @@
       <bold>false</bold>
      </font>
     </property>
+    <attribute name="icon">
+     <iconset>
+      <normaloff>icon/main_on.png</normaloff>icon/main_on.png</iconset>
+    </attribute>
     <attribute name="title">
      <string>Current Status</string>
     </attribute>
@@ -423,7 +427,7 @@
     </property>
     <attribute name="icon">
      <iconset>
-      <normaloff>../../../peltier/peltier_sw/pi_fw/0630_1/image/parameter_on.png</normaloff>../../../peltier/peltier_sw/pi_fw/0630_1/image/parameter_on.png</iconset>
+      <normaloff>icon/parameter_on.png</normaloff>icon/parameter_on.png</iconset>
     </attribute>
     <attribute name="title">
      <string>Settings</string>
@@ -840,10 +844,154 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QWidget" name="Camera">
+    <attribute name="icon">
+     <iconset>
+      <normaloff>icon/camera.png</normaloff>icon/camera.png</iconset>
+    </attribute>
+    <attribute name="title">
+     <string>Camera</string>
+    </attribute>
+    <widget class="QFrame" name="frame_3">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>20</y>
+       <width>960</width>
+       <height>450</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <widget class="QPushButton" name="btn_capture">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>310</y>
+        <width>361</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Capture</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_cam">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>20</y>
+        <width>360</width>
+        <height>240</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(128, 128, 128)</string>
+      </property>
+      <property name="text">
+       <string>Preview</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_cam_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>480</width>
+        <height>360</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(128, 128, 128)</string>
+      </property>
+      <property name="text">
+       <string>Capture Preview</string>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="textEdit">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>390</y>
+        <width>481</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rb_preview">
+      <property name="geometry">
+       <rect>
+        <x>789</x>
+        <y>260</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Preview On</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_cam_3">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>20</y>
+        <width>360</width>
+        <height>240</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(128, 128, 128)</string>
+      </property>
+      <property name="text">
+       <string>Preview</string>
+      </property>
+     </widget>
+     <zorder>label_cam_3</zorder>
+     <zorder>btn_capture</zorder>
+     <zorder>label_cam</zorder>
+     <zorder>label_cam_2</zorder>
+     <zorder>textEdit</zorder>
+     <zorder>rb_preview</zorder>
+    </widget>
+   </widget>
    <widget class="QWidget" name="admin">
     <attribute name="icon">
      <iconset>
-      <normaloff>../../../peltier/peltier_sw/pi_fw/0630_1/image/engineer_on.png</normaloff>../../../peltier/peltier_sw/pi_fw/0630_1/image/engineer_on.png</iconset>
+      <normaloff>icon/engineer_on.png</normaloff>icon/engineer_on.png</iconset>
     </attribute>
     <attribute name="title">
      <string>Admin</string>

@@ -11,6 +11,9 @@ from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidg
 from PyQt5.QtWidgets import QPushButton, QGridLayout, QLCDNumber
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtTest, QtGui, QtCore
+from PyQt5.QtGui import QPixmap
+
+import cv2
 
 import numpy as np
 import shelve
@@ -74,6 +77,42 @@ sensor_data_dict = {
 
 
 form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
+
+
+class VideoThread(QThread):
+    change_pixmap_signal = pyqtSignal(np.ndarray)
+
+    def __init__(self):
+        super().__init__()
+        self._run_flag = True
+        self.__suspend = True 
+
+    def run(self):
+        print('thread running')
+        # capture from web cam
+        self.cap = cv2.VideoCapture(0)
+        while self._run_flag:
+            while self.__suspend:
+                time.sleep(0.5)
+
+            ret, cv_img = self.cap.read()
+            if ret:
+                self.change_pixmap_signal.emit(cv_img)
+        # shut down capture system
+        self.cap.release()
+
+    def stop(self):
+        print('thread stoped')
+        """Sets run flag to False and waits for thread to finish"""
+        self._run_flag = False
+        self.wait()
+
+    def mySuspend(self):
+        self.__suspend = True
+
+    def myResume(self):
+        self.__suspend = False
+        self._run_flag = True
 
 # --------------------------------------------------------------
 # [THREAD] 
@@ -320,6 +359,7 @@ class qt(QMainWindow, form_class):
 
         self.val = 1000
 
+        # serial receive THREAD ##############################
         self.thread_rcv_data = THREAD_RECEIVE_Data(self, self.val)
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         self.thread_rcv_data.intReady.connect(self.send_msg_loop_timer)
@@ -379,6 +419,93 @@ class qt(QMainWindow, form_class):
 
         self.PRE_HEAT_STATUS = False
         self.HEAT_STATUS = False
+
+        # CAM preview/caputre THREAD ##############################
+        self.disply_width = 360
+        self.display_height = 240
+
+        # create the video capture thread
+        self.V_thread = VideoThread()
+        # connect its signal to the update_image slot
+        self.V_thread.change_pixmap_signal.connect(self.update_image)
+        # start the thread
+        self.V_thread.start()
+        self.V_thread.stop()
+
+        self.btn_capture.clicked.connect(self._capture)
+        self.rb_preview.clicked.connect(self._preview)
+
+    def _preview(self):
+        if self.rb_preview.isChecked():
+            self.V_thread.myResume()
+            self.V_thread.start()
+
+            self.label_cam.show()
+
+            # changing text of label
+            self.textEdit.setText("preview on")
+  
+        # if it is not checked
+        else:
+            self.V_thread.mySuspend()
+            self.V_thread.stop()
+
+            # img = np.zeros((270, 360, 3), np.uint8)
+            # self.update_image(img, 360, 270)
+
+            self.label_cam.hide()
+
+            # self.label_cam.setStyleSheet("background-color: gray; border: 1px solid black")
+            # self.label_cam.setStyleSheet("background-color: gray")
+              
+            # changing text of label
+            self.textEdit.setText("preview off")
+
+    def _capture(self):
+        new_cap = False
+        ret, img = self.V_thread.cap.read()
+
+        if ret == False:
+            new_cap = True
+            cap = cv2.VideoCapture(0)
+            ret, img = cap.read()
+
+        filename = './video/' + time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + '.png'
+        try:
+            cv2.imwrite(filename, img)
+        except:
+            print('save image error!!')
+            print('(image is not saved!!)')
+            return
+
+        self.textEdit.append('captured ' + filename)
+        
+        qt_img = self.convert_cv_qt(img, 480, 360)
+        self.label_cam_2.setPixmap(qt_img)
+
+        if new_cap == True:
+            cap.release()
+
+
+    def closeEvent(self, event):
+        self.V_thread.stop()
+        event.accept()
+
+    @pyqtSlot(np.ndarray)
+    def update_image(self, cv_img, _width = 360, _height = 270):
+        """Updates the image_label with a new opencv image"""
+        qt_img = self.convert_cv_qt(cv_img, _width, _height)
+        self.label_cam.setPixmap(qt_img)
+    
+    def convert_cv_qt(self, cv_img, _width = 360, _height = 270):
+        """Convert from an opencv image to QPixmap"""
+        rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+        h, w, ch = rgb_image.shape
+        bytes_per_line = ch * w
+        convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
+        # p = convert_to_Qt_format.scaled(self.disply_width, self.display_height, Qt.KeepAspectRatio)
+        p = convert_to_Qt_format.scaled(_width, _height, Qt.KeepAspectRatio)
+        return QPixmap.fromImage(p)
 
 
     # Keypad 'OK' pressed event -> emit signal in keypad
