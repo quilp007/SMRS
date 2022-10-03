@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidg
 from PyQt5.QtWidgets import QPushButton, QGridLayout, QLCDNumber
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtTest, QtGui, QtCore
+from PyQt5.QtGui import QPixmap
 
 import numpy as np
 import shelve
@@ -21,6 +22,9 @@ import pprint
 
 import mqtt.sub_class as sc
 import json
+import base64
+
+import cv2
 
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
@@ -109,6 +113,7 @@ class qt(QMainWindow, form_class):
 
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
         self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
+        self.btn_capture.clicked.connect(lambda: self.send_CMD(self.btn_capture))
 
         self.road_temp = []
         self.road_humidity = []
@@ -246,7 +251,7 @@ class qt(QMainWindow, form_class):
     @QtCore.pyqtSlot(str, str)
     def on_message_1(self, msg, topic):
         jsonData = json.loads(msg) 
-        print('on_message_callback: ', msg)
+        # print('on_message_callback: ', msg)
         if topic == sub_root_topic + 'DATA':
             roadTemp = jsonData['road_temp']
             roadHumidity = jsonData['road_humidity']
@@ -295,7 +300,20 @@ class qt(QMainWindow, form_class):
                 print(key, value)
                 lcdNum = self.findChild(QLCDNumber, key)
                 lcdNum.display(value)
+        
+        elif topic == sub_root_topic + 'IMAGE':
+            filename = jsonData['filename'].split('/')[2]
+            img_str = jsonData['IMG']
 
+            # to decode back to np.array
+            jpg_original = base64.b64decode(img_str)
+            jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+            decoded_img = cv2.imdecode(jpg_as_np, flags=1)
+
+            self.update_image(decoded_img, 480, 360)
+            self.btn_capture.setStyleSheet("background-color: gray; border: 1px solid black")
+
+            self.textEdit.append('captured ' + filename)
 
     def clickable(self, widget):
         class Filter(QObject):
@@ -391,6 +409,26 @@ class qt(QMainWindow, form_class):
         elif button == self.btn_HEAT_ON:
             print('pressed HEAT BUtton')
             self.sub_mqtt.send_msg(pub_root_topic+"CMD", json.dumps({'CH1': False, 'CH2': True}))
+        elif button == self.btn_capture:
+            print('pressed capture button')
+            self.sub_mqtt.send_msg(pub_root_topic+"CAPTURE", json.dumps({'CAPTURE': True}))
+
+
+    @pyqtSlot(np.ndarray)
+    def update_image(self, cv_img, _width = 360, _height = 270):
+        """Updates the image_label with a new opencv image"""
+        qt_img = self.convert_cv_qt(cv_img, _width, _height)
+        self.label_cam_2.setPixmap(qt_img)
+    
+    def convert_cv_qt(self, cv_img, _width = 360, _height = 270):
+        """Convert from an opencv image to QPixmap"""
+        rgb_image = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+        h, w, ch = rgb_image.shape
+        bytes_per_line = ch * w
+        convert_to_Qt_format = QtGui.QImage(rgb_image.data, w, h, bytes_per_line, QtGui.QImage.Format_RGB888)
+        # p = convert_to_Qt_format.scaled(self.disply_width, self.display_height, Qt.KeepAspectRatio)
+        p = convert_to_Qt_format.scaled(_width, _height, Qt.KeepAspectRatio)
+        return QPixmap.fromImage(p)
 
 
 def run():

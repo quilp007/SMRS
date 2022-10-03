@@ -57,7 +57,7 @@ class SUB_MQTT(QtCore.QObject):
     def on_message(self, client, userdata, message):
         rcvData = message.payload.decode("utf-8")
         # rcvData = str(message.payload.decode("utf-8"))
-        print("message received ", rcvData)
+        # print("message received ", rcvData)
         if MQTT_DEBUG:
             print("message topic=", message.topic)
             print("message qos=", message.qos)
