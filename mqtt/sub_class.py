@@ -23,6 +23,8 @@ class SUB_MQTT(QtCore.QObject):
         self.client1 = mqtt.Client(_client)
         # self.pub_client = mqtt.Client("pub client")
 
+        # self.client1.username_pw_set(username="steve",password="password")
+
         global MQTT_DEBUG
         MQTT_DEBUG = _mqtt_debug
 
