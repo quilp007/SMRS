@@ -26,6 +26,7 @@ import pymongo
 import mqtt.sub_class as sc
 import json
 import serial
+import base64
 
 USB_SERIAL = False
 
@@ -486,6 +487,10 @@ class qt(QMainWindow, form_class):
         if new_cap == True:
             cap.release()
 
+        # to encode for JSON
+        str_img = base64.b64encode(cv2.imencode('.jpg', img)[1]).decode()
+        self.sub_mqtt.send_msg(pub_root_topic+"IMAGE", json.dumps({'filename': filename, 'IMG': str_img}))
+
 
     def closeEvent(self, event):
         self.V_thread.stop()
@@ -579,6 +584,8 @@ class qt(QMainWindow, form_class):
                 self.temp_lcdNumber = lcdNum
                 self.LineEdit_RET(value)
 
+        elif topic == sub_root_topic+'CAPTURE':
+            self._capture()
 
     # heat timeout function
     # 1. stop timer
