@@ -1262,8 +1262,5 @@
    </widget>
   </widget>
  </widget>
- <resources>
-  <include location="icon/logo.qrc"/>
- </resources>
  <connections/>
 </ui>
