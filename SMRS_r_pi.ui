@@ -614,6 +614,22 @@
        <string>℃</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_21">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>400</y>
+        <width>151</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="pixmap">
+       <pixmap>icon/logo1.png</pixmap>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="settings">
@@ -1246,6 +1262,8 @@
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="icon/logo.qrc"/>
+ </resources>
  <connections/>
 </ui>
