@@ -71,7 +71,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="iconSize">
     <size>
@@ -138,8 +138,8 @@
        <rect>
         <x>40</x>
         <y>100</y>
-        <width>181</width>
-        <height>60</height>
+        <width>231</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="smallDecimalPoint">
@@ -191,10 +191,10 @@
      <widget class="QLCDNumber" name="road_humidity">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>350</x>
         <y>100</y>
-        <width>181</width>
-        <height>60</height>
+        <width>231</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="smallDecimalPoint">
@@ -228,10 +228,10 @@
      <widget class="QLCDNumber" name="air_temp">
       <property name="geometry">
        <rect>
-        <x>700</x>
+        <x>660</x>
         <y>100</y>
-        <width>181</width>
-        <height>60</height>
+        <width>221</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="smallDecimalPoint">
@@ -247,7 +247,7 @@
      <widget class="QLCDNumber" name="heat_road_temp_2">
       <property name="geometry">
        <rect>
-        <x>500</x>
+        <x>490</x>
         <y>309</y>
         <width>121</width>
         <height>41</height>
@@ -266,7 +266,7 @@
      <widget class="QLCDNumber" name="set_road_humidity_2">
       <property name="geometry">
        <rect>
-        <x>500</x>
+        <x>490</x>
         <y>350</y>
         <width>121</width>
         <height>41</height>
@@ -285,7 +285,7 @@
      <widget class="QLCDNumber" name="set_air_temp_2">
       <property name="geometry">
        <rect>
-        <x>810</x>
+        <x>800</x>
         <y>310</y>
         <width>121</width>
         <height>41</height>
@@ -304,7 +304,7 @@
      <widget class="QLabel" name="label_pre_heat_on">
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>20</x>
         <y>220</y>
         <width>281</width>
         <height>81</height>
@@ -340,7 +340,7 @@
      <widget class="QLabel" name="label_heat_on">
       <property name="geometry">
        <rect>
-        <x>350</x>
+        <x>340</x>
         <y>220</y>
         <width>271</width>
         <height>81</height>
@@ -363,10 +363,10 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QLabel" name="label_heat_on_2">
+     <widget class="QLabel" name="label_emc_heat_on">
       <property name="geometry">
        <rect>
-        <x>660</x>
+        <x>650</x>
         <y>220</y>
         <width>271</width>
         <height>81</height>
@@ -392,7 +392,7 @@
      <widget class="QLabel" name="label_19">
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>20</x>
         <y>300</y>
         <width>161</width>
         <height>60</height>
@@ -472,7 +472,7 @@
      <widget class="QLCDNumber" name="pre_heat_road_temp_2">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>170</x>
         <y>310</y>
         <width>121</width>
         <height>41</height>
@@ -486,6 +486,132 @@
       </property>
       <property name="intValue" stdset="0">
        <number>0</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>120</y>
+        <width>31</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>120</y>
+        <width>31</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>LV</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>890</x>
+        <y>120</y>
+        <width>31</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>320</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>320</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>360</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>LV</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_20">
+      <property name="geometry">
+       <rect>
+        <x>930</x>
+        <y>320</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>14</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
       </property>
      </widget>
     </widget>
