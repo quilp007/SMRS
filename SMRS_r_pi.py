@@ -660,14 +660,15 @@ class qt(QMainWindow, form_class):
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
             return
 
-        button.setStyleSheet("background-color: green; border: 1px solid black")
+        # button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.btn_PRE_HEAT_ON:
+            button.setStyleSheet("background-color: yellow; border: 1px solid black")
             print('pressed btn_PRE_HEAT')
             self.PRE_HEAT_STATUS ^= 1
             if self.PRE_HEAT_STATUS == True:
                 print('PRE_HEAT_STATUS: ON')
                 self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
-                self.label_pre_heat_on.setStyleSheet("background-color: green")
+                self.label_pre_heat_on.setStyleSheet("background-color: yellow")
                 self.pre_heat_timer.start(PRE_HEATING_TIME)
                 self.heat_timeout_func(self.label_heat_on)
                 self.flag_HEAT_ON = True
@@ -679,11 +680,12 @@ class qt(QMainWindow, form_class):
 
         elif button == self.btn_HEAT_ON:
             print('send CH1 & CH2 on')
+            button.setStyleSheet("background-color: pink; border: 1px solid black")
             self.HEAT_STATUS ^= 1
             if self.HEAT_STATUS == True:
                 print('HEAT_STATUS: ON')
                 self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': True}))
-                self.label_heat_on.setStyleSheet("background-color: green")
+                self.label_heat_on.setStyleSheet("background-color: pink")
                 self.heat_timer.start(HEATING_TIME)
                 self.heat_timeout_func(self.label_pre_heat_on)
                 self.flag_HEAT_ON = True
