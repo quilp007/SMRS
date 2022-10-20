@@ -122,7 +122,7 @@ class qt(QMainWindow, form_class):
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
 
-        self.query_time = datetime(2022, 6, 15, 18, 22, 37)
+        self.query_time = datetime(2022, 6, 20, 00, 36, 43)
         results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
 
         # self.query_time = datetime.now()
