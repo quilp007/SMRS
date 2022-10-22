@@ -29,6 +29,9 @@ import cv2
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+
+ENABLE_MONGODB = False
+
 # x_size = 360# graph's x size
 x_size = 720# graph's x size
 # NUM_X_AXIS = 300
@@ -124,27 +127,28 @@ class qt(QMainWindow, form_class):
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
 
-        self.query_time = datetime(2022, 6, 20, 00, 36, 43)
-        results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
+        if ENABLE_MONGODB:
+            self.query_time = datetime(2022, 6, 20, 00, 36, 43)
+            results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
 
-        # self.query_time = datetime.now()
-        # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
+            # self.query_time = datetime.now()
+            # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
 
-        for result in results:
-            self.road_temp.append(result.get("road_temp"))
-            self.road_humidity.append(result.get("road_humidity"))
-            self.air_temp.append(result.get("air_temp"))
-            self.query_time = result.get("timestamp")
-            # print(result)
-            # print(result.get("road_temp"))
-            # print(self.query_time)
+            for result in results:
+                self.road_temp.append(result.get("road_temp"))
+                self.road_humidity.append(result.get("road_humidity"))
+                self.air_temp.append(result.get("air_temp"))
+                self.query_time = result.get("timestamp")
+                # print(result)
+                # print(result.get("road_temp"))
+                # print(self.query_time)
 
-        # print("self.road_temp")
-        # print(self.road_temp)
-        # print("self.road_humidity")
-        # print(self.road_humidity)
-        # print("self.air_temp")
-        # print(self.air_temp)
+            # print("self.road_temp")
+            # print(self.road_temp)
+            # print("self.road_humidity")
+            # print(self.road_humidity)
+            # print("self.air_temp")
+            # print(self.air_temp)
 
 
         self.data = np.linspace(-np.pi, np.pi, x_size)
@@ -472,13 +476,14 @@ passwd = 'smrs2580_1!'
 if __name__ == "__main__":
     # conn = pymongo.MongoClient('203.251.78.135', 27017)
 
-    conn = pymongo.MongoClient('mongodb://' + ip,
-                        username = userid,
-                        password =  passwd,
-                        authSource = 'road_1')
+    if ENABLE_MONGODB:
+        conn = pymongo.MongoClient('mongodb://' + ip,
+                            username = userid,
+                            password =  passwd,
+                            authSource = 'road_1')
 
-    db = conn.get_database('road_1')
-    collection = db.get_collection('device_1')
+        db = conn.get_database('road_1')
+        collection = db.get_collection('device_1')
 
     #results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     #for result in results:
