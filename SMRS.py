@@ -279,6 +279,7 @@ class qt(QMainWindow, form_class):
             # self.tabWidget.setCurrentIndex(1)
             # TODO: DB Connection???????
         else:
+            self.Login_2.clear()
             QMessageBox.warning(self, 'Wrong Password', 'Try Again')
 
     def input_value(self, lcdNum):
