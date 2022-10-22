@@ -236,6 +236,10 @@ class qt(QMainWindow, form_class):
         # 1. Display in lcdNumber => after receive mqtt msg
         # self.temp_lcdNumber.display(input_num)
 
+        lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key 
+        if (lcdNum is not None):
+            lcdNum.display(input_num)
+
         # 2. update Global Config Variable
         variable_name = self.temp_lcdNumber.objectName()
 

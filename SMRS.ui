@@ -141,7 +141,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QLCDNumber" name="lcdNumber">
+     <widget class="QLCDNumber" name="road_temp">
       <property name="geometry">
        <rect>
         <x>40</x>
@@ -225,7 +225,7 @@
        <string>현재습도</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_2">
+     <widget class="QLCDNumber" name="road_humidity">
       <property name="geometry">
        <rect>
         <x>350</x>
@@ -283,7 +283,7 @@
        <string>대기온도</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_3">
+     <widget class="QLCDNumber" name="air_temp">
       <property name="geometry">
        <rect>
         <x>660</x>
@@ -312,7 +312,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>220</number>
+       <number>0</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_4">
@@ -364,7 +364,7 @@
        </font>
       </property>
       <property name="text">
-       <string>설정 노면 습도</string>
+       <string>설정 노면 온도</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">
@@ -393,7 +393,7 @@
        <string>설정대기온도</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_4">
+     <widget class="QLCDNumber" name="pre_heat_road_temp_2">
       <property name="geometry">
        <rect>
         <x>170</x>
@@ -425,7 +425,7 @@
        <number>0</number>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_5">
+     <widget class="QLCDNumber" name="heat_road_temp_2">
       <property name="geometry">
        <rect>
         <x>490</x>
@@ -457,7 +457,7 @@
        <number>0</number>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcdNumber_6">
+     <widget class="QLCDNumber" name="set_air_temp_2">
       <property name="geometry">
        <rect>
         <x>800</x>
@@ -725,6 +725,64 @@
       </property>
       <property name="pixmap">
        <pixmap>icon/logo1.png</pixmap>
+      </property>
+     </widget>
+     <widget class="QLCDNumber" name="set_road_humidity_2">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>350</y>
+        <width>121</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>.AppleSystemUIFont</family>
+        <pointsize>30</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="smallDecimalPoint">
+       <bool>false</bool>
+      </property>
+      <property name="digitCount">
+       <number>3</number>
+      </property>
+      <property name="intValue" stdset="0">
+       <number>0</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_14">
+      <property name="geometry">
+       <rect>
+        <x>340</x>
+        <y>341</y>
+        <width>161</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>.AppleSystemUIFont</family>
+        <pointsize>18</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>설정 노면 습도</string>
       </property>
      </widget>
     </widget>
