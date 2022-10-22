@@ -38,6 +38,8 @@ NUM_UPDATE_X_AXIS = 5
 ROW_COUNT = 7
 COL_COUNT = 3
 
+LABEL_WARNING_TIME          = 3000 # ms -> timer setting
+
 server_ip = '203.251.78.135'
 
 userid = 'smrs_1'
@@ -163,6 +165,7 @@ class qt(QMainWindow, form_class):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
+        """
         # Updating Plot
         self.plot = self.graphWidget.addPlot(title="Current Status")
 
@@ -181,6 +184,7 @@ class qt(QMainWindow, form_class):
         # self.drawLine(self.plot, self.error_limit_upper, 'r')
 
         # self.graphWidget.nextRow()
+        """
 
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000) # 100ms 
@@ -189,6 +193,11 @@ class qt(QMainWindow, form_class):
         # start loop for drawing graph #################
         # self.timer.start()
         ################################################
+        
+        # Warning label TIMER setting ##############################
+        self.label_warning_timer = QtCore.QTimer()
+        self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
+        ##################################################
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         self.thread_rcv_data.to_excel.connect(self.to_excel_func)
@@ -200,7 +209,8 @@ class qt(QMainWindow, form_class):
         ################################################
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
+        # self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc_1', _mqtt_debug = DEBUG_PRINT)
         ################################################
 
         self.clickable(self.pre_heat_road_temp).connect(lambda: self.input_value(self.pre_heat_road_temp))      # pre_heat_road_temp
@@ -210,10 +220,13 @@ class qt(QMainWindow, form_class):
         self.clickable(self.pre_heat_on_time).connect(lambda: self.input_value(self.pre_heat_on_time))          # pre_heat_on_time
         self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
 
+        self.label_warning.setVisible(False)
         self.lineEdit.setVisible(False)
 
         self.flag_HEAT_ON = False
 
+    def label_warning_timeout_func(self):
+        self.label_warning.setVisible(False)
 
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber => after receive mqtt msg
@@ -237,6 +250,9 @@ class qt(QMainWindow, form_class):
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
             return
 
         self.temp_lcdNumber = lcdNum
@@ -283,16 +299,22 @@ class qt(QMainWindow, form_class):
                 self.label_7.setStyleSheet("background-color: gray")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")
 
+                self.label_warning_timer.stop()
+                self.label_warning.setVisible(False)
+
             if jsonData['CH2'] == True:             # HEAT ON
                 self.flag_HEAT_ON = True
                 print("HEAT: ON")
                 self.label_8.setStyleSheet("background-color: green")
                 self.btn_HEAT_ON.setStyleSheet("background-color: green")
-            if jsonData['CH2'] == False:            # HEAT OFF
-                self.flag_HEAT_ON = False
+            elif jsonData['CH2'] == False:            # HEAT OFF
+                # self.flag_HEAT_ON = False
                 print("HEAT: OFF")
                 self.label_8.setStyleSheet("background-color: gray")
                 self.btn_HEAT_ON.setStyleSheet("background-color: gray")
+
+                self.label_warning_timer.stop()
+                self.label_warning.setVisible(False)
 
         elif topic == sub_root_topic + 'CONFIG':
             print('received CONFIG')
