@@ -271,12 +271,12 @@ class qt(QMainWindow, form_class):
     def LineEdit_Login_2_RET(self, input_num):
         print(input_num)
         if input_num == PASSWORD_2:
-            self.tabWidget.setTabEnabled(0, False)
+            self.tabWidget.setTabVisible(0, False)
             self.tabWidget.setTabEnabled(1, True)
             self.tabWidget.setTabEnabled(2, True)
             self.tabWidget.setTabEnabled(3, True)
             self.tabWidget.setTabEnabled(4, True)
-            self.tabWidget.setCurrentIndex(1)
+            # self.tabWidget.setCurrentIndex(1)
             # TODO: DB Connection???????
         else:
             QMessageBox.warning(self, 'Wrong Password', 'Try Again')
