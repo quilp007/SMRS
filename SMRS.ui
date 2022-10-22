@@ -224,8 +224,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>30</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -256,8 +256,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -282,8 +282,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -308,8 +308,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>30</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -340,8 +340,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -366,8 +366,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>50</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -398,8 +398,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -424,8 +424,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -450,8 +450,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -476,8 +476,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>50</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -508,8 +508,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>30</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -540,8 +540,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>30</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -575,8 +575,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -616,8 +616,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -651,8 +651,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -677,8 +677,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -703,8 +703,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -729,8 +729,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>14</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -755,8 +755,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>14</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -781,8 +781,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>14</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -807,8 +807,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -858,8 +858,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>30</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -890,8 +890,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -976,8 +976,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -994,7 +994,7 @@
      <widget class="QLabel" name="label_10">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>40</x>
         <y>100</y>
         <width>241</width>
         <height>60</height>
@@ -1002,8 +1002,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1055,7 +1055,7 @@
      <widget class="QLabel" name="label_11">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>40</x>
         <y>170</y>
         <width>241</width>
         <height>60</height>
@@ -1063,8 +1063,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1124,8 +1124,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1150,8 +1150,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1240,8 +1240,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>18</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1298,8 +1298,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1324,8 +1324,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1383,8 +1383,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1476,8 +1476,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1499,6 +1499,12 @@
         <width>480</width>
         <height>360</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+       </font>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -1542,6 +1548,12 @@
         <height>240</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>
@@ -1563,8 +1575,8 @@
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>11</pointsize>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
