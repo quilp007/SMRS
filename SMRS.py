@@ -31,6 +31,7 @@ import cv2
 # ------------------------------------------------------------------------------
 
 ENABLE_MONGODB = False
+PASSWORD_2 = "1234"
 
 # x_size = 360# graph's x size
 x_size = 720# graph's x size
@@ -113,8 +114,14 @@ class qt(QMainWindow, form_class):
         # uic.loadUiType('qt_test2.ui', self)[0]
 
         super().__init__()
+
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
+
+        self.tabWidget.setTabEnabled(1, False)
+        self.tabWidget.setTabEnabled(2, False)
+        self.tabWidget.setTabEnabled(3, False)
+        self.tabWidget.setTabEnabled(4, False)
 
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
         self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
@@ -160,6 +167,7 @@ class qt(QMainWindow, form_class):
         # self.air_temp = np.zeros(x_size)
 
         self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
+        self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
 
 
         # table Widget ------------------------------------------------------------------
@@ -258,6 +266,16 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
+
+
+    def LineEdit_Login_2_RET(self, input_num):
+        print(input_num)
+        if input_num == PASSWORD_2:
+            self.tabWidget.setTabEnabled(1, True)
+            self.tabWidget.setTabEnabled(2, True)
+            self.tabWidget.setTabEnabled(3, True)
+            self.tabWidget.setTabEnabled(4, True)
+            # TODO: DB Connection???????
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
