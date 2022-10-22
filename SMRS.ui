@@ -39,11 +39,11 @@
    </property>
    <property name="font">
     <font>
-     <family>.AppleSystemUIFont</family>
-     <pointsize>20</pointsize>
-     <weight>75</weight>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+     <weight>50</weight>
      <italic>false</italic>
-     <bold>true</bold>
+     <bold>false</bold>
      <underline>false</underline>
      <strikeout>false</strikeout>
      <stylestrategy>PreferDefault</stylestrategy>
@@ -105,15 +105,23 @@
     <widget class="QLineEdit" name="Login_2">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>30</y>
-       <width>261</width>
+       <x>470</x>
+       <y>210</y>
+       <width>171</width>
        <height>41</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
+       <pointsize>9</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
       </font>
      </property>
      <property name="inputMethodHints">
@@ -125,20 +133,30 @@
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
     <widget class="QLabel" name="label_19">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>20</y>
-       <width>161</width>
+       <x>340</x>
+       <y>200</y>
+       <width>111</width>
        <height>61</height>
       </rect>
      </property>
      <property name="font">
       <font>
        <family>Arial</family>
-       <pointsize>20</pointsize>
+       <pointsize>9</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
       </font>
      </property>
      <property name="text">
@@ -633,7 +651,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>20</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -651,7 +677,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>20</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -669,7 +703,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>20</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -687,7 +729,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>14</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -705,7 +755,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>14</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -723,7 +781,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>14</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -1284,7 +1350,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>20</pointsize>
+        <weight>75</weight>
+        <italic>false</italic>
+        <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="styleSheet">
@@ -1336,6 +1410,14 @@
       <property name="font">
        <font>
         <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="maxLength">
@@ -1481,7 +1563,15 @@
       </property>
       <property name="font">
        <font>
+        <family>.AppleSystemUIFont</family>
         <pointsize>11</pointsize>
+        <weight>75</weight>
+        <italic>false</italic>
+        <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
