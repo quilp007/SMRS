@@ -269,9 +269,31 @@ class qt(QMainWindow, form_class):
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
 
+    def LineEdit_Login_2_RET(self, input_num):
+        self.sub_mqtt.client1.username_pw_set(username="smrs",password=input_num)
 
+        for x in range(5):
+            print(x)
+            if self.sub_mqtt.login_ok == True:
+                self.tabWidget.setTabVisible(0, False)
+                self.tabWidget.setTabEnabled(1, True)
+                self.tabWidget.setTabEnabled(2, True)
+                self.tabWidget.setTabEnabled(3, True)
+                self.tabWidget.setTabEnabled(4, True)
+                # self.tabWidget.setCurrentIndex(1)
+                # TODO: DB Connection???????
+                return
+
+            time.sleep(1) 
+
+        self.Login_2.clear()
+        QMessageBox.warning(self, 'Wrong Password', 'Try Again')
+
+    """
     def LineEdit_Login_2_RET(self, input_num):
         if input_num == PASSWORD_2:
+            # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
+            self.sub_mqtt.client1.username_pw_set(username="smrs",password="1234")
             self.tabWidget.setTabVisible(0, False)
             self.tabWidget.setTabEnabled(1, True)
             self.tabWidget.setTabEnabled(2, True)
@@ -282,6 +304,7 @@ class qt(QMainWindow, form_class):
         else:
             self.Login_2.clear()
             QMessageBox.warning(self, 'Wrong Password', 'Try Again')
+    """
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
