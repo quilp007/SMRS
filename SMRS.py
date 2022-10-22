@@ -215,6 +215,8 @@ class qt(QMainWindow, form_class):
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
         # self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc_1', _mqtt_debug = DEBUG_PRINT)
+        # time.sleep(3)
+        # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
 
         self.clickable(self.pre_heat_road_temp).connect(lambda: self.input_value(self.pre_heat_road_temp))      # pre_heat_road_temp
@@ -225,6 +227,7 @@ class qt(QMainWindow, form_class):
         self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
 
         self.label_warning.setVisible(False)
+        # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
         self.lineEdit.setVisible(False)
 
         self.flag_HEAT_ON = False
@@ -263,6 +266,13 @@ class qt(QMainWindow, form_class):
             print('Heat ON!!!')
             return
 
+        if('temp' in lcdNum.objectName()):
+            self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
+        if('humidity' in lcdNum.objectName()):
+            self.lineEdit.setValidator(QtGui.QIntValidator(0, 5, self))
+        if('time' in lcdNum.objectName()):
+            self.lineEdit.setValidator(QtGui.QIntValidator(1, 3, self))
+
         self.temp_lcdNumber = lcdNum
         self.lineEdit.setVisible(True)
         self.lineEdit.setFocus()
@@ -296,33 +306,31 @@ class qt(QMainWindow, form_class):
         elif topic == sub_root_topic + 'STATUS':
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
+
+            self.flag_HEAT_ON = True
+            self.label_warning_timer.stop()
+            self.label_warning.setVisible(False)
+
             if jsonData['CH1'] == True:             # PRE HEAT ON
-                self.flag_HEAT_ON = True
                 print("PRE HEAT: ON")
                 self.label_7.setStyleSheet("background-color: green")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: green")
             elif jsonData['CH1'] == False:          # PRE HEAT OFF
-                self.flag_HEAT_ON = False
                 print("PRE HEAT: OFF")
                 self.label_7.setStyleSheet("background-color: gray")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")
 
-                self.label_warning_timer.stop()
-                self.label_warning.setVisible(False)
-
             if jsonData['CH2'] == True:             # HEAT ON
-                self.flag_HEAT_ON = True
                 print("HEAT: ON")
                 self.label_8.setStyleSheet("background-color: green")
                 self.btn_HEAT_ON.setStyleSheet("background-color: green")
             elif jsonData['CH2'] == False:            # HEAT OFF
-                # self.flag_HEAT_ON = False
                 print("HEAT: OFF")
                 self.label_8.setStyleSheet("background-color: gray")
                 self.btn_HEAT_ON.setStyleSheet("background-color: gray")
 
-                self.label_warning_timer.stop()
-                self.label_warning.setVisible(False)
+            if jsonData['CH1'] == False and jsonData['CH2'] == False:   # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
+                self.flag_HEAT_ON = False
 
         elif topic == sub_root_topic + 'CONFIG':
             print('received CONFIG')
@@ -330,6 +338,10 @@ class qt(QMainWindow, form_class):
                 print(key, value)
                 lcdNum = self.findChild(QLCDNumber, key)
                 lcdNum.display(value)
+
+                lcdNum = self.findChild(QLCDNumber, key+'_2')    # find LCDNumber with key 
+                if (lcdNum is not None):
+                    lcdNum.display(value)                        # display to LCDNumber
         
         elif topic == sub_root_topic + 'IMAGE':
             filename = jsonData['filename'].split('/')[2]

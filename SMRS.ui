@@ -1276,6 +1276,14 @@
         <height>71</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+       </font>
+      </property>
+      <property name="maxLength">
+       <number>3</number>
+      </property>
      </widget>
     </widget>
    </widget>
