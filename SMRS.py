@@ -118,10 +118,12 @@ class qt(QMainWindow, form_class):
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
 
+
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setTabEnabled(2, False)
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
+        self.Login_2.setFocus()
 
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
         self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
@@ -269,7 +271,6 @@ class qt(QMainWindow, form_class):
 
 
     def LineEdit_Login_2_RET(self, input_num):
-        print(input_num)
         if input_num == PASSWORD_2:
             self.tabWidget.setTabVisible(0, False)
             self.tabWidget.setTabEnabled(1, True)
