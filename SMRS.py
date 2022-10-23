@@ -326,7 +326,7 @@ class qt(QMainWindow, form_class):
         if('humidity' in lcdNum.objectName()):
             self.lineEdit.setValidator(QtGui.QIntValidator(0, 5, self))
         if('time' in lcdNum.objectName()):
-            self.lineEdit.setValidator(QtGui.QIntValidator(1, 3, self))
+            self.lineEdit.setValidator(QtGui.QIntValidator(1, 120, self))
 
         self.temp_lcdNumber = lcdNum
         self.lineEdit.setVisible(True)

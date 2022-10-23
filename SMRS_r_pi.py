@@ -203,8 +203,12 @@ class Util_Function:
 
     def read_var(self, key):
         with shelve.open('config') as f:
-            temp = f[key]
-            # print(f[key])
+            try:
+                temp = f[key]
+                # print(f[key])
+            except:
+                pass
+
         return temp
 
     def to_excel_func(self, _time, data):
@@ -539,6 +543,11 @@ class qt(QMainWindow, form_class):
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
+
+        if self.temp_lcdNumber.objectName() == 'heat_time':
+            HEAT_TIME = input_num * 60
+        elif self.temp_lcdNumber.objectName() == 'pre_heat_time':
+            PRE_HEAT_TIME = input_num * 60
 
 
     # QLCDNumber input
