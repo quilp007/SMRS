@@ -471,7 +471,7 @@ class qt(QMainWindow, form_class):
             cap = cv2.VideoCapture(0)
             ret, img = cap.read()
 
-        filename = './video/' + time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + '.png'
+        filename = './video/' + time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + '.jpg'
         try:
             cv2.imwrite(filename, img)
         except:

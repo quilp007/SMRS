@@ -415,6 +415,10 @@ class qt(QMainWindow, form_class):
             jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
             decoded_img = cv2.imdecode(jpg_as_np, flags=1)
 
+            filename = jsonData['filename']
+            cv2.imwrite(filename, decoded_img)
+            print('image saved')
+
             self.update_image(decoded_img, 480, 360)
             self.btn_capture.setStyleSheet("background-color: gray; border: 1px solid black")
 
