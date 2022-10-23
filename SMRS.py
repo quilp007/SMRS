@@ -171,13 +171,16 @@ class qt(QMainWindow, form_class):
         self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
         self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
 
+        self.textEdit_log.setReadOnly(True)
 
         # table Widget ------------------------------------------------------------------
+        """
         self.tableWidget.setRowCount(ROW_COUNT)
         self.tableWidget.setColumnCount(COL_COUNT)  # MEAN, parallel resistance
 
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        """
 
         """
         # Updating Plot
@@ -265,6 +268,11 @@ class qt(QMainWindow, form_class):
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
+
+        # log
+        log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + variable_name + ' ' + input_num
+        self.textEdit_log.append(log_text)
+
 
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
@@ -358,10 +366,14 @@ class qt(QMainWindow, form_class):
             self.label_warning_timer.stop()
             self.label_warning.setVisible(False)
 
+            time_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
+
             if jsonData['CH1'] == True:             # PRE HEAT ON
                 print("PRE HEAT: ON")
                 self.label_7.setStyleSheet("background-color: green")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: green")
+                # log
+                log_text = time_text + ' 예비 가동 시작'
             elif jsonData['CH1'] == False:          # PRE HEAT OFF
                 print("PRE HEAT: OFF")
                 self.label_7.setStyleSheet("background-color: gray")
@@ -371,6 +383,7 @@ class qt(QMainWindow, form_class):
                 print("HEAT: ON")
                 self.label_8.setStyleSheet("background-color: green")
                 self.btn_HEAT_ON.setStyleSheet("background-color: green")
+                log_text = time_text + ' 가동 시작'
             elif jsonData['CH2'] == False:            # HEAT OFF
                 print("HEAT: OFF")
                 self.label_8.setStyleSheet("background-color: gray")
@@ -378,6 +391,9 @@ class qt(QMainWindow, form_class):
 
             if jsonData['CH1'] == False and jsonData['CH2'] == False:   # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
                 self.flag_HEAT_ON = False
+                log_text = time_text + ' 가동 멈춤'
+
+            self.textEdit_log.append(log_text)
 
         elif topic == sub_root_topic + 'CONFIG':
             print('received CONFIG')
