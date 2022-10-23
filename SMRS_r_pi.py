@@ -206,10 +206,10 @@ class Util_Function:
             try:
                 temp = f[key]
                 # print(f[key])
+                return temp
             except:
                 pass
 
-        return temp
 
     def to_excel_func(self, _time, data):
         tt = [_time, data]
