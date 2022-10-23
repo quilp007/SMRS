@@ -370,8 +370,8 @@ class qt(QMainWindow, form_class):
 
             if jsonData['CH1'] == True:             # PRE HEAT ON
                 print("PRE HEAT: ON")
-                self.label_7.setStyleSheet("background-color: green")
-                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: green")
+                self.label_7.setStyleSheet("background-color: yellow")
+                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: yellow")
                 # log
                 log_text = time_text + ' 예비 가동 시작'
             elif jsonData['CH1'] == False:          # PRE HEAT OFF
@@ -381,8 +381,8 @@ class qt(QMainWindow, form_class):
 
             if jsonData['CH2'] == True:             # HEAT ON
                 print("HEAT: ON")
-                self.label_8.setStyleSheet("background-color: green")
-                self.btn_HEAT_ON.setStyleSheet("background-color: green")
+                self.label_8.setStyleSheet("background-color: pink")
+                self.btn_HEAT_ON.setStyleSheet("background-color: pink")
                 log_text = time_text + ' 가동 시작'
             elif jsonData['CH2'] == False:            # HEAT OFF
                 print("HEAT: OFF")
