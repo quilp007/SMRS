@@ -173,6 +173,8 @@ class THREAD_RECEIVE_Data(QThread):
                         print('received key: {} value: {}'.format(key, value))
                         print('value type: ', type(value))
             
+                        # send to PC or S/P
+                        self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({key: value}))
 
             ### Exit ###
             if self.__exit:
