@@ -417,6 +417,13 @@ class qt(QMainWindow, form_class):
 
             print('key: {0}, value: {1}'.format(key, temp))
 
+
+        if key == 'heat_on_time':
+            HEATING_TIME = int(value)*60
+        elif key == 'pre_heat_on_time':
+            PRE_HEATING_TIME = int(value)*60
+
+
         self.label_warning.setVisible(False)
         # self.lineEdit.setVisible(False)
 
@@ -544,10 +551,10 @@ class qt(QMainWindow, form_class):
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
 
-        if self.temp_lcdNumber.objectName() == 'heat_time':
-            HEAT_TIME = input_num * 60
-        elif self.temp_lcdNumber.objectName() == 'pre_heat_time':
-            PRE_HEAT_TIME = input_num * 60
+        if self.temp_lcdNumber.objectName() == 'heat_on_time':
+            HEATING_TIME = input_num * 60
+        elif self.temp_lcdNumber.objectName() == 'pre_heat_on_time':
+            PRE_HEATING_TIME = input_num * 60
 
 
     # QLCDNumber input
@@ -609,10 +616,12 @@ class qt(QMainWindow, form_class):
             self.pre_heat_timer.stop()
             self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
             self.PRE_HEAT_STATUS = False
+            mcuSerial.write(b'2')
         else:
             self.heat_timer.stop()
             self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
             self.HEAT_STATUS = False
+            mcuSerial.write(b'4')
 
         inLabel.setStyleSheet("background-color: gray")
 
