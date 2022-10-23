@@ -683,9 +683,13 @@ class qt(QMainWindow, form_class):
                 self.pre_heat_timer.start(PRE_HEATING_TIME)
                 self.heat_timeout_func(self.label_heat_on)
                 self.flag_HEAT_ON = True
+
+                mcuSerial.write(b'1')
             else:
                 print('PRE_HEAT_STATUS: OFF')
                 self.heat_timeout_func(self.label_pre_heat_on)
+
+                mcuSerial.write(b'2')
                 
             # TODO: send 'PRE HEAT ON' msg to MCU
 
@@ -700,9 +704,13 @@ class qt(QMainWindow, form_class):
                 self.heat_timer.start(HEATING_TIME)
                 self.heat_timeout_func(self.label_pre_heat_on)
                 self.flag_HEAT_ON = True
+
+                mcuSerial.write(b'3')
             else:
                 print('PRE_HEAT_STATUS: OFF')
                 self.heat_timeout_func(self.label_heat_on)
+                
+                mcuSerial.write(b'4')
 
             # TODO: send 'HEAT ON' msg to MCU
 
