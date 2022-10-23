@@ -28,7 +28,7 @@ import json
 import serial
 import base64
 
-USB_SERIAL = False
+USB_SERIAL = True
 
 # serial_port = "/dev/ttyACM0"
 serial_port = "/dev/ttyUSB0"
@@ -616,12 +616,14 @@ class qt(QMainWindow, form_class):
             self.pre_heat_timer.stop()
             self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
             self.PRE_HEAT_STATUS = False
-            mcuSerial.write(b'2')
+            if USB_SERIAL == True:
+                mcuSerial.write(b'2')
         else:
             self.heat_timer.stop()
             self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
             self.HEAT_STATUS = False
-            mcuSerial.write(b'4')
+            if USB_SERIAL == True:
+                mcuSerial.write(b'4')
 
         inLabel.setStyleSheet("background-color: gray")
 
@@ -693,12 +695,12 @@ class qt(QMainWindow, form_class):
                 self.heat_timeout_func(self.label_heat_on)
                 self.flag_HEAT_ON = True
 
-                mcuSerial.write(b'1')
+                if USB_SERIAL == True:
+                    mcuSerial.write(b'1')
             else:
                 print('PRE_HEAT_STATUS: OFF')
                 self.heat_timeout_func(self.label_pre_heat_on)
 
-                mcuSerial.write(b'2')
                 
             # TODO: send 'PRE HEAT ON' msg to MCU
 
@@ -714,12 +716,12 @@ class qt(QMainWindow, form_class):
                 self.heat_timeout_func(self.label_pre_heat_on)
                 self.flag_HEAT_ON = True
 
-                mcuSerial.write(b'3')
+                if USB_SERIAL == True:
+                    mcuSerial.write(b'3')
             else:
                 print('PRE_HEAT_STATUS: OFF')
                 self.heat_timeout_func(self.label_heat_on)
                 
-                mcuSerial.write(b'4')
 
             # TODO: send 'HEAT ON' msg to MCU
 
