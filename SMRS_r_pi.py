@@ -123,7 +123,7 @@ class THREAD_RECEIVE_Data(QThread):
     # to_excel = pyqtSignal(str, float)
 
     @pyqtSlot()
-    def __init__(self, qt_object, parent=None):
+    def __init__(self, qt_object, mqtt_object):
         super(THREAD_RECEIVE_Data, self).__init__()
         self.time_format = '%Y%m%d_%H%M%S'
 
@@ -131,6 +131,7 @@ class THREAD_RECEIVE_Data(QThread):
         self.__exit = False
         self.log_flag = False
         self.qt_object = qt_object 
+        self.mqtt_object = mqtt_object 
 
 
     def run(self):
@@ -174,7 +175,7 @@ class THREAD_RECEIVE_Data(QThread):
                         print('value type: ', type(value))
             
                         # send to PC or S/P
-                        self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({key: value}))
+                        self.mqtt_object.send_msg(pub_root_topic+"CONFIG", json.dumps({key: value}))
 
             ### Exit ###
             if self.__exit:
@@ -364,10 +365,13 @@ class qt(QMainWindow, form_class):
         self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
         ##################################################
 
-        self.val = 1000
+        # MQTT init ###############################################
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
+                                     _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
+        ##########################################################
 
         # serial receive THREAD ##############################
-        self.thread_rcv_data = THREAD_RECEIVE_Data(self, self.val)
+        self.thread_rcv_data = THREAD_RECEIVE_Data(self, self.sub_mqtt)
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         self.thread_rcv_data.intReady.connect(self.send_msg_loop_timer)
 
@@ -377,10 +381,6 @@ class qt(QMainWindow, form_class):
         self.resist_data = []
         self.log_flag = False
 
-        # MQTT init ###############################################
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
-                                     _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
-        ##########################################################
 
         self.label_pre_heat_on.setStyleSheet("background-color: gray")
         self.label_heat_on.setStyleSheet("background-color: gray")
