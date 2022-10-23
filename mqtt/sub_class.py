@@ -23,7 +23,8 @@ class SUB_MQTT(QtCore.QObject):
         self.client1 = mqtt.Client(_client)
         # self.pub_client = mqtt.Client("pub client")
 
-        self.client1.username_pw_set(username="steve",password="password")
+        if _client == 'client_r_pi':
+            self.client1.username_pw_set(username="steve",password="password")
 
         global MQTT_DEBUG
         MQTT_DEBUG = _mqtt_debug
@@ -41,6 +42,8 @@ class SUB_MQTT(QtCore.QObject):
 
         # self.client1.loop_forever()
         # self.client1.loop_start()
+
+        self.login_ok = False
 
     def on_publish(self, client, userdata, result):             #create function for callback
         if MQTT_DEBUG:
@@ -82,10 +85,13 @@ class SUB_MQTT(QtCore.QObject):
             self.client1.subscribe(self.topic, qos=2)
             print("connected OK Returned code=",rc)
             print(client)
+
+            self.login_ok = True
         else:
             print("Bad connection Returned code=",rc)
 
     def on_disconnect(self, client, userdata, rc):
+       self.login_ok = False
        print("Client Got Disconnected")
        if rc != 0:
            print('Unexpected MQTT disconnection. Will auto-reconnect')

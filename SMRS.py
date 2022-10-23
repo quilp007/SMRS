@@ -29,6 +29,10 @@ import cv2
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
+
+ENABLE_MONGODB = False
+PASSWORD_2 = "1234"
+
 # x_size = 360# graph's x size
 x_size = 720# graph's x size
 # NUM_X_AXIS = 300
@@ -37,6 +41,8 @@ NUM_UPDATE_X_AXIS = 5
 
 ROW_COUNT = 7
 COL_COUNT = 3
+
+LABEL_WARNING_TIME          = 3000 # ms -> timer setting
 
 server_ip = '203.251.78.135'
 
@@ -108,8 +114,16 @@ class qt(QMainWindow, form_class):
         # uic.loadUiType('qt_test2.ui', self)[0]
 
         super().__init__()
+
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
+
+
+        self.tabWidget.setTabEnabled(1, False)
+        self.tabWidget.setTabEnabled(2, False)
+        self.tabWidget.setTabEnabled(3, False)
+        self.tabWidget.setTabEnabled(4, False)
+        self.Login_2.setFocus()
 
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
         self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
@@ -122,27 +136,28 @@ class qt(QMainWindow, form_class):
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
 
-        self.query_time = datetime(2022, 6, 15, 18, 22, 37)
-        results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
+        if ENABLE_MONGODB:
+            self.query_time = datetime(2022, 6, 20, 00, 36, 43)
+            results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
 
-        # self.query_time = datetime.now()
-        # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
+            # self.query_time = datetime.now()
+            # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
 
-        for result in results:
-            self.road_temp.append(result.get("road_temp"))
-            self.road_humidity.append(result.get("road_humidity"))
-            self.air_temp.append(result.get("air_temp"))
-            self.query_time = result.get("timestamp")
-            # print(result)
-            # print(result.get("road_temp"))
-            # print(self.query_time)
+            for result in results:
+                self.road_temp.append(result.get("road_temp"))
+                self.road_humidity.append(result.get("road_humidity"))
+                self.air_temp.append(result.get("air_temp"))
+                self.query_time = result.get("timestamp")
+                # print(result)
+                # print(result.get("road_temp"))
+                # print(self.query_time)
 
-        # print("self.road_temp")
-        # print(self.road_temp)
-        # print("self.road_humidity")
-        # print(self.road_humidity)
-        # print("self.air_temp")
-        # print(self.air_temp)
+            # print("self.road_temp")
+            # print(self.road_temp)
+            # print("self.road_humidity")
+            # print(self.road_humidity)
+            # print("self.air_temp")
+            # print(self.air_temp)
 
 
         self.data = np.linspace(-np.pi, np.pi, x_size)
@@ -154,15 +169,20 @@ class qt(QMainWindow, form_class):
         # self.air_temp = np.zeros(x_size)
 
         self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
+        self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
 
+        self.textEdit_log.setReadOnly(True)
 
         # table Widget ------------------------------------------------------------------
+        """
         self.tableWidget.setRowCount(ROW_COUNT)
         self.tableWidget.setColumnCount(COL_COUNT)  # MEAN, parallel resistance
 
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        """
 
+        """
         # Updating Plot
         self.plot = self.graphWidget.addPlot(title="Current Status")
 
@@ -181,6 +201,7 @@ class qt(QMainWindow, form_class):
         # self.drawLine(self.plot, self.error_limit_upper, 'r')
 
         # self.graphWidget.nextRow()
+        """
 
         self.timer = QtCore.QTimer()
         self.timer.setInterval(1000) # 100ms 
@@ -189,6 +210,11 @@ class qt(QMainWindow, form_class):
         # start loop for drawing graph #################
         # self.timer.start()
         ################################################
+        
+        # Warning label TIMER setting ##############################
+        self.label_warning_timer = QtCore.QTimer()
+        self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
+        ##################################################
 
         self.thread_rcv_data = THREAD_RECEIVE_Data()
         self.thread_rcv_data.to_excel.connect(self.to_excel_func)
@@ -200,7 +226,10 @@ class qt(QMainWindow, form_class):
         ################################################
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
+        # self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc_1', _mqtt_debug = DEBUG_PRINT)
+        # time.sleep(3)
+        # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
 
         self.clickable(self.pre_heat_road_temp).connect(lambda: self.input_value(self.pre_heat_road_temp))      # pre_heat_road_temp
@@ -210,14 +239,22 @@ class qt(QMainWindow, form_class):
         self.clickable(self.pre_heat_on_time).connect(lambda: self.input_value(self.pre_heat_on_time))          # pre_heat_on_time
         self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
 
+        self.label_warning.setVisible(False)
+        # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
         self.lineEdit.setVisible(False)
 
         self.flag_HEAT_ON = False
 
+    def label_warning_timeout_func(self):
+        self.label_warning.setVisible(False)
 
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber => after receive mqtt msg
         # self.temp_lcdNumber.display(input_num)
+
+        lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key 
+        if (lcdNum is not None):
+            lcdNum.display(input_num)
 
         # 2. update Global Config Variable
         variable_name = self.temp_lcdNumber.objectName()
@@ -232,12 +269,64 @@ class qt(QMainWindow, form_class):
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
 
+        # log
+        log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + variable_name + ' ' + input_num
+        self.textEdit_log.append(log_text)
+
+
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
 
+    def LineEdit_Login_2_RET(self, input_num):
+        self.sub_mqtt.client1.username_pw_set(username="smrs",password=input_num)
+
+        for x in range(5):
+            print(x)
+            if self.sub_mqtt.login_ok == True:
+                self.tabWidget.setTabVisible(0, False)
+                self.tabWidget.setTabEnabled(1, True)
+                self.tabWidget.setTabEnabled(2, True)
+                self.tabWidget.setTabEnabled(3, True)
+                self.tabWidget.setTabEnabled(4, True)
+                # self.tabWidget.setCurrentIndex(1)
+                # TODO: DB Connection???????
+                return
+
+            time.sleep(1) 
+
+        self.Login_2.clear()
+        QMessageBox.warning(self, 'Wrong Password', 'Try Again')
+
+    """
+    def LineEdit_Login_2_RET(self, input_num):
+        if input_num == PASSWORD_2:
+            # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
+            self.sub_mqtt.client1.username_pw_set(username="smrs",password="1234")
+            self.tabWidget.setTabVisible(0, False)
+            self.tabWidget.setTabEnabled(1, True)
+            self.tabWidget.setTabEnabled(2, True)
+            self.tabWidget.setTabEnabled(3, True)
+            self.tabWidget.setTabEnabled(4, True)
+            # self.tabWidget.setCurrentIndex(1)
+            # TODO: DB Connection???????
+        else:
+            self.Login_2.clear()
+            QMessageBox.warning(self, 'Wrong Password', 'Try Again')
+    """
+
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
             return
+
+        if('temp' in lcdNum.objectName()):
+            self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
+        if('humidity' in lcdNum.objectName()):
+            self.lineEdit.setValidator(QtGui.QIntValidator(0, 5, self))
+        if('time' in lcdNum.objectName()):
+            self.lineEdit.setValidator(QtGui.QIntValidator(1, 3, self))
 
         self.temp_lcdNumber = lcdNum
         self.lineEdit.setVisible(True)
@@ -272,27 +361,39 @@ class qt(QMainWindow, form_class):
         elif topic == sub_root_topic + 'STATUS':
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
+
+            self.flag_HEAT_ON = True
+            self.label_warning_timer.stop()
+            self.label_warning.setVisible(False)
+
+            time_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
+
             if jsonData['CH1'] == True:             # PRE HEAT ON
-                self.flag_HEAT_ON = True
                 print("PRE HEAT: ON")
                 self.label_7.setStyleSheet("background-color: green")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: green")
+                # log
+                log_text = time_text + ' 예비 가동 시작'
             elif jsonData['CH1'] == False:          # PRE HEAT OFF
-                self.flag_HEAT_ON = False
                 print("PRE HEAT: OFF")
                 self.label_7.setStyleSheet("background-color: gray")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")
 
             if jsonData['CH2'] == True:             # HEAT ON
-                self.flag_HEAT_ON = True
                 print("HEAT: ON")
                 self.label_8.setStyleSheet("background-color: green")
                 self.btn_HEAT_ON.setStyleSheet("background-color: green")
-            if jsonData['CH2'] == False:            # HEAT OFF
-                self.flag_HEAT_ON = False
+                log_text = time_text + ' 가동 시작'
+            elif jsonData['CH2'] == False:            # HEAT OFF
                 print("HEAT: OFF")
                 self.label_8.setStyleSheet("background-color: gray")
                 self.btn_HEAT_ON.setStyleSheet("background-color: gray")
+
+            if jsonData['CH1'] == False and jsonData['CH2'] == False:   # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
+                self.flag_HEAT_ON = False
+                log_text = time_text + ' 가동 멈춤'
+
+            self.textEdit_log.append(log_text)
 
         elif topic == sub_root_topic + 'CONFIG':
             print('received CONFIG')
@@ -300,6 +401,10 @@ class qt(QMainWindow, form_class):
                 print(key, value)
                 lcdNum = self.findChild(QLCDNumber, key)
                 lcdNum.display(value)
+
+                lcdNum = self.findChild(QLCDNumber, key+'_2')    # find LCDNumber with key 
+                if (lcdNum is not None):
+                    lcdNum.display(value)                        # display to LCDNumber
         
         elif topic == sub_root_topic + 'IMAGE':
             filename = jsonData['filename'].split('/')[2]
@@ -309,6 +414,10 @@ class qt(QMainWindow, form_class):
             jpg_original = base64.b64decode(img_str)
             jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
             decoded_img = cv2.imdecode(jpg_as_np, flags=1)
+
+            filename = jsonData['filename']
+            cv2.imwrite(filename, decoded_img)
+            print('image saved')
 
             self.update_image(decoded_img, 480, 360)
             self.btn_capture.setStyleSheet("background-color: gray; border: 1px solid black")
@@ -450,13 +559,14 @@ passwd = 'smrs2580_1!'
 if __name__ == "__main__":
     # conn = pymongo.MongoClient('203.251.78.135', 27017)
 
-    conn = pymongo.MongoClient('mongodb://' + ip,
-                        username = userid,
-                        password =  passwd,
-                        authSource = 'road_1')
+    if ENABLE_MONGODB:
+        conn = pymongo.MongoClient('mongodb://' + ip,
+                            username = userid,
+                            password =  passwd,
+                            authSource = 'road_1')
 
-    db = conn.get_database('road_1')
-    collection = db.get_collection('device_1')
+        db = conn.get_database('road_1')
+        collection = db.get_collection('device_1')
 
     #results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     #for result in results:
