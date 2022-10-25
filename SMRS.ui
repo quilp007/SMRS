@@ -75,7 +75,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>2</number>
    </property>
    <property name="iconSize">
     <size>
@@ -494,7 +494,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>0</number>
+       <number>1</number>
       </property>
      </widget>
      <widget class="QLCDNumber" name="heat_road_temp_2">
@@ -526,7 +526,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>0</number>
+       <number>-1</number>
       </property>
      </widget>
      <widget class="QLCDNumber" name="set_air_temp_2">
@@ -558,10 +558,10 @@
        <number>3</number>
       </property>
       <property name="value" stdset="0">
-       <double>0.000000000000000</double>
+       <double>-20.000000000000000</double>
       </property>
       <property name="intValue" stdset="0">
-       <number>0</number>
+       <number>-20</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_7">
@@ -576,7 +576,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -585,6 +585,9 @@
         <stylestrategy>PreferDefault</stylestrategy>
         <kerning>true</kerning>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
@@ -617,7 +620,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -626,6 +629,9 @@
         <stylestrategy>PreferDefault</stylestrategy>
         <kerning>true</kerning>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
@@ -744,32 +750,6 @@
        <string>℃</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_31">
-      <property name="geometry">
-       <rect>
-        <x>620</x>
-        <y>320</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>9</pointsize>
-        <weight>50</weight>
-        <italic>false</italic>
-        <bold>false</bold>
-        <underline>false</underline>
-        <strikeout>false</strikeout>
-        <stylestrategy>PreferDefault</stylestrategy>
-        <kerning>true</kerning>
-       </font>
-      </property>
-      <property name="text">
-       <string>LV</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_32">
       <property name="geometry">
        <rect>
@@ -808,7 +788,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -817,6 +797,9 @@
         <stylestrategy>PreferDefault</stylestrategy>
         <kerning>true</kerning>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Box</enum>
@@ -876,7 +859,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>0</number>
+       <number>4</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_14">
@@ -903,6 +886,58 @@
       </property>
       <property name="text">
        <string>설정 노면 습도</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_35">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>360</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>LV</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_31">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>320</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
       </property>
      </widget>
     </widget>
@@ -962,7 +997,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>5</number>
+       <number>1</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_9">
@@ -1046,10 +1081,10 @@
        <number>3</number>
       </property>
       <property name="value" stdset="0">
-       <double>2.000000000000000</double>
+       <double>-1.000000000000000</double>
       </property>
       <property name="intValue" stdset="0">
-       <number>2</number>
+       <number>-1</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_11">
@@ -1107,10 +1142,10 @@
        <number>3</number>
       </property>
       <property name="value" stdset="0">
-       <double>3.000000000000000</double>
+       <double>4.000000000000000</double>
       </property>
       <property name="intValue" stdset="0">
-       <number>3</number>
+       <number>4</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_12">
@@ -1168,7 +1203,7 @@
      <widget class="QLCDNumber" name="pre_heat_on_time">
       <property name="geometry">
        <rect>
-        <x>760</x>
+        <x>750</x>
         <y>30</y>
         <width>181</width>
         <height>60</height>
@@ -1194,13 +1229,13 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>30</number>
+       <number>20</number>
       </property>
      </widget>
      <widget class="QLCDNumber" name="heat_on_time">
       <property name="geometry">
        <rect>
-        <x>760</x>
+        <x>750</x>
         <y>100</y>
         <width>181</width>
         <height>60</height>
@@ -1226,7 +1261,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>30</number>
+       <number>60</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_17">
@@ -1258,7 +1293,7 @@
      <widget class="QLCDNumber" name="set_air_temp">
       <property name="geometry">
        <rect>
-        <x>760</x>
+        <x>750</x>
         <y>170</y>
         <width>181</width>
         <height>60</height>
@@ -1284,7 +1319,7 @@
        <number>3</number>
       </property>
       <property name="intValue" stdset="0">
-       <number>10</number>
+       <number>-20</number>
       </property>
      </widget>
      <widget class="QPushButton" name="btn_PRE_HEAT_ON">
@@ -1299,7 +1334,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1308,6 +1343,9 @@
         <stylestrategy>PreferDefault</stylestrategy>
         <kerning>true</kerning>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
       </property>
       <property name="text">
        <string>강제 예열 가동</string>
@@ -1325,7 +1363,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1335,6 +1373,9 @@
         <kerning>true</kerning>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
+      </property>
       <property name="text">
        <string>강제 본 가동</string>
       </property>
@@ -1343,18 +1384,18 @@
       <property name="geometry">
        <rect>
         <x>300</x>
-        <y>130</y>
+        <y>120</y>
         <width>401</width>
         <height>151</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <family>.AppleSystemUIFont</family>
-        <pointsize>20</pointsize>
-        <weight>75</weight>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
         <italic>false</italic>
-        <bold>true</bold>
+        <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
         <stylestrategy>PreferDefault</stylestrategy>
@@ -1366,7 +1407,7 @@
       </property>
       <property name="text">
        <string>Cannot change config value
-(thermal film is working!!)</string>
+(Melting is working!!)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1384,7 +1425,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>11</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1394,6 +1435,9 @@
         <kerning>true</kerning>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
+      </property>
       <property name="text">
        <string>설정 초기화</string>
       </property>
@@ -1401,8 +1445,8 @@
      <widget class="QLineEdit" name="lineEdit">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>70</y>
+        <x>520</x>
+        <y>50</y>
         <width>171</width>
         <height>71</height>
        </rect>
@@ -1424,6 +1468,185 @@
        <number>3</number>
       </property>
      </widget>
+     <widget class="QLabel" name="label_36">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>30</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_37">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>100</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_38">
+      <property name="geometry">
+       <rect>
+        <x>940</x>
+        <y>170</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>℃</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_39">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>170</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>LV</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_40">
+      <property name="geometry">
+       <rect>
+        <x>930</x>
+        <y>30</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>min</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_41">
+      <property name="geometry">
+       <rect>
+        <x>930</x>
+        <y>100</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>9</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>min</string>
+      </property>
+     </widget>
+     <zorder>pre_heat_road_temp</zorder>
+     <zorder>label_9</zorder>
+     <zorder>label_10</zorder>
+     <zorder>heat_road_temp</zorder>
+     <zorder>label_11</zorder>
+     <zorder>set_road_humidity</zorder>
+     <zorder>label_12</zorder>
+     <zorder>label_13</zorder>
+     <zorder>pre_heat_on_time</zorder>
+     <zorder>heat_on_time</zorder>
+     <zorder>label_17</zorder>
+     <zorder>set_air_temp</zorder>
+     <zorder>btn_PRE_HEAT_ON</zorder>
+     <zorder>btn_HEAT_ON</zorder>
+     <zorder>btn_HEAT_ON_2</zorder>
+     <zorder>lineEdit</zorder>
+     <zorder>label_36</zorder>
+     <zorder>label_37</zorder>
+     <zorder>label_38</zorder>
+     <zorder>label_39</zorder>
+     <zorder>label_40</zorder>
+     <zorder>label_41</zorder>
+     <zorder>label_warning</zorder>
     </widget>
    </widget>
    <widget class="QWidget" name="Camera">
@@ -1504,6 +1727,13 @@
        <font>
         <family>Arial</family>
         <pointsize>9</pointsize>
+        <weight>75</weight>
+        <italic>false</italic>
+        <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="autoFillBackground">
@@ -1551,7 +1781,14 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <italic>false</italic>
+        <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="autoFillBackground">
@@ -1561,7 +1798,8 @@
        <string notr="true">background-color: rgb(128, 128, 128)</string>
       </property>
       <property name="text">
-       <string>Preview</string>
+       <string>     Real Video preview is 
+ ONLY local system</string>
       </property>
      </widget>
      <widget class="QRadioButton" name="rb_preview">
