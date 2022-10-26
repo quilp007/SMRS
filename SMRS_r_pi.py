@@ -44,8 +44,16 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-pub_root_topic = "R_PI/"
-sub_root_topic = "APP/"
+TEST = True
+
+if TEST == False:
+    MQTT_CLIENT_ID = 'client_r_pi'
+    pub_root_topic = "R_PI/"
+    sub_root_topic = "APP/"
+else:
+    MQTT_CLIENT_ID = 'client_r_pi_test'
+    pub_root_topic = "R_PI_test/"
+    sub_root_topic = "APP_test/"
 
 DEBUG_PRINT = False
 # DEBUG_PRINT = True
@@ -367,7 +375,7 @@ class qt(QMainWindow, form_class):
 
         # MQTT init ###############################################
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
-                                     _client='client_r_pi', _mqtt_debug = DEBUG_PRINT)
+                                     _client=MQTT_CLIENT_ID, _mqtt_debug = DEBUG_PRINT)
         ##########################################################
 
         # serial receive THREAD ##############################
@@ -419,9 +427,9 @@ class qt(QMainWindow, form_class):
 
 
         if key == 'heat_on_time':
-            HEATING_TIME = int(value)*60
+            HEATING_TIME = int(value)*60*1000
         elif key == 'pre_heat_on_time':
-            PRE_HEATING_TIME = int(value)*60
+            PRE_HEATING_TIME = int(value)*60*1000
 
 
         self.label_warning.setVisible(False)
