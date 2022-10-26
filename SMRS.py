@@ -52,8 +52,16 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-pub_root_topic = "APP/"
-sub_root_topic = "R_PI/"
+TEST = False
+
+if TEST == False:
+    MQTT_CLIENT_ID = 'client_pc'
+    pub_root_topic = "APP/"
+    sub_root_topic = "R_PI/"
+else:
+    MQTT_CLIENT_ID = 'client_pc_test'
+    pub_root_topic = "APP_test/"
+    sub_root_topic = "R_PI_test/"
 
 pre_heat_road_temp = 0
 heat_road_temp  = 0
@@ -227,7 +235,7 @@ class qt(QMainWindow, form_class):
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
         # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
         # self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc_1', _mqtt_debug = DEBUG_PRINT)
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client=MQTT_CLIENT_ID, _mqtt_debug = DEBUG_PRINT)
         # time.sleep(3)
         # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
