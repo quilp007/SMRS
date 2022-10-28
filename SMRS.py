@@ -286,7 +286,34 @@ class qt(QMainWindow, form_class):
         # 1. Display in lcdNumber => after receive mqtt msg
         # self.temp_lcdNumber.display(input_num)
 
-        lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key 
+        if 'temp' in self.temp_lcdNumber.objectName():
+            if int(input_num) < -30 or int(input_num) > 60:
+                QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+                return
+            elif self.temp_lcdNumber.objectName() == "pre_heat_road_temp":
+                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
+            elif self.temp_lcdNumber.objectName() == "heat_road_temp":
+                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
+            elif self.temp_lcdNumber.objectName() == "set_air_temp":
+                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
+
+        if 'humidity' in self.temp_lcdNumber.objectName():
+            if int(input_num) < 0 or int(input_num) > 9:
+                QMessageBox.warning(self, 'Humidity Error', ' 0 <= Humidity <= 9')
+                return
+            elif self.temp_lcdNumber.objectName() == "set_road_humidity":
+                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
+
+        if 'time' in self.temp_lcdNumber.objectName():
+            if int(input_num) < 1 or int(input_num) > 120:
+                QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
+                return
+            elif self.temp_lcdNumber.objectName() == "pre_heat_on_time":
+                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
+            elif self.temp_lcdNumber.objectName() == "heat_on_time":
+                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
+
+        lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key
         if (lcdNum is not None):
             lcdNum.display(input_num)
 
@@ -365,12 +392,12 @@ class qt(QMainWindow, form_class):
             print('Heat ON!!!')
             return
 
-        if('temp' in lcdNum.objectName()):
-            self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
-        if('humidity' in lcdNum.objectName()):
-            self.lineEdit.setValidator(QtGui.QIntValidator(0, 5, self))
-        if('time' in lcdNum.objectName()):
-            self.lineEdit.setValidator(QtGui.QIntValidator(1, 120, self))
+        # if('temp' in lcdNum.objectName()):
+            # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
+        # if('humidity' in lcdNum.objectName()):
+        #     self.lineEdit.setValidator(QtGui.QIntValidator(0, 5, self))
+        # if('time' in lcdNum.objectName()):
+        #     self.lineEdit.setValidator(QtGui.QIntValidator(1, 120, self))
 
         self.temp_lcdNumber = lcdNum
         self.lineEdit.setVisible(True)
