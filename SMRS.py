@@ -123,8 +123,10 @@ class qt(QMainWindow, form_class):
 
         super().__init__()
 
+
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
 
 
         self.tabWidget.setTabEnabled(1, False)
@@ -284,6 +286,16 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
+
+    def closeEvent(self, event):
+        quit_msg = "Want to exit?"
+        reply = QMessageBox.question(self, 'Message', quit_msg, QMessageBox.Yes, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            event.accept()
+        else:
+            event.ignore()
+
 
     def LineEdit_Login_2_RET(self, input_num):
         self.sub_mqtt.client1.username_pw_set(username="smrs",password=input_num)
