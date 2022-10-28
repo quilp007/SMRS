@@ -425,6 +425,9 @@ class qt(QMainWindow, form_class):
             'heat_on_time':       0 
         }
 
+        self.HEATING_TIME = 0
+        self.PRE_HEATING_TIME = 0
+
         # laod saved config data and display to QLCDNumber
         for key, value in self.config_dict.items():     # saved (LCDNumber name, value) in config.db
             temp = self.util_func.read_var(key)         # read config data from local db file
@@ -438,14 +441,10 @@ class qt(QMainWindow, form_class):
 
             print('key: {0}, value: {1}'.format(key, temp))
 
-
-        self.HEATING_TIME = 0
-        self.PRE_HEATING_TIME = 0
-
-        if key == 'heat_on_time':
-            self.HEATING_TIME = int(temp)*60*1000
-        elif key == 'pre_heat_on_time':
-            self.PRE_HEATING_TIME = int(temp)*60*1000
+            if key == 'heat_on_time':
+                self.HEATING_TIME = int(temp)*60*1000
+            elif key == 'pre_heat_on_time':
+                self.PRE_HEATING_TIME = int(temp)*60*1000
 
         print('=========================================================================')
         print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
