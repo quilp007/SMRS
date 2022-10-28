@@ -72,7 +72,31 @@ heat_on_time = 0
 
 DEBUG_PRINT = True
 
-form_class = uic.loadUiType('SMRS.ui')[0]
+def resource_path(*relative_Path_AND_File):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = getattr(
+            sys,
+            '_MEIPASS',
+            os.path.dirname(os.path.abspath(__file__))
+        )
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, *relative_Path_AND_File)
+
+
+
+# def resource_path(relative_path):
+#     """ Get absolute path to resource, works for dev and for PyInstaller """
+#     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+#     return os.path.join(base_path, relative_path)
+#
+# form = resource_path("SRMS.ui")
+form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
+
+# form_class = uic.loadUiType('SMRS.ui')[0]
 
 # --------------------------------------------------------------
 # [THREAD] 
