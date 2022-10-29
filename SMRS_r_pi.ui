@@ -71,7 +71,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -961,6 +961,9 @@
         <pointsize>20</pointsize>
        </font>
       </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
+      </property>
       <property name="text">
        <string>강제 예열 가동</string>
       </property>
@@ -978,6 +981,9 @@
        <font>
         <pointsize>20</pointsize>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
       </property>
       <property name="text">
        <string>강제 본 가동</string>
@@ -1021,6 +1027,9 @@
        <font>
         <pointsize>20</pointsize>
        </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(128, 128, 128)</string>
       </property>
       <property name="text">
        <string>설정  초기화</string>
@@ -1262,5 +1271,6 @@
    </widget>
   </widget>
  </widget>
+ <resources/>
  <connections/>
 </ui>

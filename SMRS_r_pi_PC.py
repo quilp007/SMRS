@@ -382,6 +382,8 @@ class qt(QMainWindow, form_class):
         # MQTT init ###############################################
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
                                      _client=MQTT_CLIENT_ID, _mqtt_debug = DEBUG_PRINT)
+        
+        self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ##########################################################
 
         # serial receive THREAD ##############################
@@ -398,6 +400,7 @@ class qt(QMainWindow, form_class):
 
         self.label_pre_heat_on.setStyleSheet("background-color: gray")
         self.label_heat_on.setStyleSheet("background-color: gray")
+        self.label_emc_heat_on.setStyleSheet("background-color: gray")
 
         self.temp_lcdNumber = None
 
