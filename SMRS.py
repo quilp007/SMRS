@@ -277,6 +277,9 @@ class qt(QMainWindow, form_class):
         # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
         self.lineEdit.setVisible(False)
 
+        # limit line to 150 (log textEdit) 
+        self.textEdit_log.document().setMaximumBlockCount(150)
+
         self.flag_HEAT_ON = False
 
     def label_warning_timeout_func(self):
