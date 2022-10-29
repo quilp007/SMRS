@@ -723,7 +723,8 @@ class qt(QMainWindow, form_class):
             self.PRE_HEAT_STATUS ^= 1
             if self.PRE_HEAT_STATUS == True:
                 print('PRE_HEAT_STATUS: ON')
-                self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
+                # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
+                # => heat_timeout_func() : change btn color, send_msg
                 self.label_pre_heat_on.setStyleSheet("background-color: yellow")
                 self.pre_heat_timer.start(self.PRE_HEATING_TIME)
                 self.heat_timeout_func(self.label_heat_on)
@@ -744,7 +745,8 @@ class qt(QMainWindow, form_class):
             self.HEAT_STATUS ^= 1
             if self.HEAT_STATUS == True:
                 print('HEAT_STATUS: ON')
-                self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': True}))
+                # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': True}))
+                # => heat_timeout_func() : change btn color, send_msg
                 self.label_heat_on.setStyleSheet("background-color: pink")
                 self.heat_timer.start(self.HEATING_TIME)
                 self.heat_timeout_func(self.label_pre_heat_on)
