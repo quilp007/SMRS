@@ -52,7 +52,7 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-TEST = False
+TEST = True
 
 if TEST == False:
     MQTT_CLIENT_ID = 'client_pc'
@@ -361,29 +361,14 @@ class qt(QMainWindow, form_class):
                 self.tabWidget.setTabEnabled(4, True)
                 # self.tabWidget.setCurrentIndex(1)
                 # TODO: DB Connection???????
+                
+                self.send_CMD('INIT')
                 return
 
             time.sleep(1) 
 
         self.Login_2.clear()
         QMessageBox.warning(self, 'Wrong Password', 'Try Again')
-
-    """
-    def LineEdit_Login_2_RET(self, input_num):
-        if input_num == PASSWORD_2:
-            # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
-            self.sub_mqtt.client1.username_pw_set(username="smrs",password="1234")
-            self.tabWidget.setTabVisible(0, False)
-            self.tabWidget.setTabEnabled(1, True)
-            self.tabWidget.setTabEnabled(2, True)
-            self.tabWidget.setTabEnabled(3, True)
-            self.tabWidget.setTabEnabled(4, True)
-            # self.tabWidget.setCurrentIndex(1)
-            # TODO: DB Connection???????
-        else:
-            self.Login_2.clear()
-            QMessageBox.warning(self, 'Wrong Password', 'Try Again')
-    """
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
@@ -406,7 +391,7 @@ class qt(QMainWindow, form_class):
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_1)
         self.sub_mqtt.loop_start_func()
-        self.send_CMD('INIT')
+        # self.send_CMD('INIT')
 
     @QtCore.pyqtSlot(str, str)
     def on_message_1(self, msg, topic):
