@@ -76,6 +76,8 @@ HEATING_TIME                = 10000 # ms -> timer setting
 
 LABEL_WARNING_TIME          = 3000 # ms -> timer setting
 
+CHECK_TEMP_INTERVAL_TIME    = 1000 # ms -> timer setting
+
 KEYPAD_TIME = 5000
 
 sensor_data_dict = {
@@ -420,12 +422,15 @@ class qt(QMainWindow, form_class):
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            'pre_heat_road_temp': 0, 
-            'heat_road_temp':     0,
-            'set_road_humidity':  0,
-            'set_air_temp':       0,
-            'pre_heat_on_time':   0,
-            'heat_on_time':       0 
+            'pre_heat_road_temp':   0, 
+            'heat_road_temp':       0,
+            'set_road_humidity':    0,
+            'set_air_temp':         0,
+            'pre_heat_on_time':     0,
+            'heat_on_time':         0,
+            'road_temp':            0,
+            'road_humidity':        0,
+            'air_temp':             0
         }
 
         self.HEATING_TIME = 0
@@ -477,10 +482,22 @@ class qt(QMainWindow, form_class):
         self.btn_capture.clicked.connect(self._capture)
         self.rb_preview.clicked.connect(self._preview)
 
+        self.check_temp_timer.start(CHECK_TEMP_INTERVAL_TIME)
+
 
     def check_temp(self):
-        print('TEST')
-        
+        if self.flag_HEAT_ON == True:
+            return
+
+        if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
+            self.change_STATUS(self.btn_HEAT_ON)
+        elif self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']:
+            self.change_STATUS(self.btn_HEAT_ON)
+        elif (self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']) and \
+            (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity']):
+            self.change_STATUS(self.btn_HEAT_ON)
+        elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
+            self.change_STATUS(self.btn_PRE_HEAT_ON)
 
 
     def _preview(self):
@@ -593,7 +610,15 @@ class qt(QMainWindow, form_class):
 
     # QLCDNumber input
     def input_value(self, lcdNum):
-        if self.flag_HEAT_ON == True:
+        # if self.flag_HEAT_ON == True:
+        print(lcdNum.objectName())
+        print(sensor_data_dict.keys())
+
+        print((lcdNum.objectName() in sensor_data_dict.keys()))
+        print(sensor_data_dict[lcdNum.objectName()])
+        print(sensor_data_dict.values())
+
+        if (not(lcdNum.objectName() in sensor_data_dict.keys())) and self.flag_HEAT_ON == True:
             self.label_warning.setVisible(True)
             self.label_warning_timer.start(LABEL_WARNING_TIME)
             print('Heat ON!!!')
