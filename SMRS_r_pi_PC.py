@@ -87,7 +87,22 @@ sensor_data_dict = {
 }
 
 
-form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
+def resource_path(*relative_Path_AND_File):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = getattr(
+            sys,
+            '_MEIPASS',
+            os.path.dirname(os.path.abspath(__file__))
+        )
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, *relative_Path_AND_File)
+
+# form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
+form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
 
 
 class VideoThread(QThread):
@@ -209,13 +224,13 @@ class Util_Function:
         QtTest.QTest.qWait(ms)
 
     def save_var(self, key, value):
-        with shelve.open('config') as f:
-            f[key] = value
+        with shelve.open('C:\work\SMRS\config') as f:
+            f[key] = int(value)
 
     def read_var(self, key):
-        with shelve.open('config') as f:
+        with shelve.open('C:\work\SMRS\config') as f:
             try:
-                temp = f[key]
+                temp = int(f[key])
                 # print(f[key])
                 return temp
             except:
@@ -325,6 +340,7 @@ class qt(QMainWindow, form_class):
 
         self.btn_HEAT_ON.clicked.connect(lambda: self.change_STATUS(self.btn_HEAT_ON))
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.change_STATUS(self.btn_PRE_HEAT_ON))
+        # self.btn_INIT_SETTING.clicked.connect(self._init_setting)
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
@@ -385,7 +401,7 @@ class qt(QMainWindow, form_class):
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
                                      _client=MQTT_CLIENT_ID, _mqtt_debug = DEBUG_PRINT)
         
-        self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
+        # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ##########################################################
 
         # serial receive THREAD ##############################
@@ -422,7 +438,7 @@ class qt(QMainWindow, form_class):
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            'pre_heat_road_temp':   0, 
+            'pre_heat_road_temp':   0,
             'heat_road_temp':       0,
             'set_road_humidity':    0,
             'set_air_temp':         0,
@@ -449,13 +465,14 @@ class qt(QMainWindow, form_class):
 
             print('key: {0}, value: {1}'.format(key, temp))
 
-            if key == 'heat_on_time':
+            if key == 'heat_on_time' and temp != None:
                 self.HEATING_TIME = int(temp)*60*1000
-            elif key == 'pre_heat_on_time':
+            elif key == 'pre_heat_on_time' and temp!= None:
                 self.PRE_HEATING_TIME = int(temp)*60*1000
 
         print('=========================================================================')
         print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
+
 
         self.label_warning.setVisible(False)
         # self.lineEdit.setVisible(False)
@@ -466,6 +483,8 @@ class qt(QMainWindow, form_class):
 
         self.PRE_HEAT_STATUS = False
         self.HEAT_STATUS = False
+
+        self.flag_EMC_HEAT_ON = False
 
         # CAM preview/caputre THREAD ##############################
         self.disply_width = 360
@@ -490,8 +509,9 @@ class qt(QMainWindow, form_class):
             return
 
         if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
+            self.flag_EMC_HEAT_ON = True
             self.change_STATUS(self.btn_HEAT_ON)
-        elif self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']:
+        elif int(self.config_dict['road_temp']) <= int(self.config_dict['heat_road_temp']):
             self.change_STATUS(self.btn_HEAT_ON)
         elif (self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']) and \
             (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity']):
@@ -525,6 +545,37 @@ class qt(QMainWindow, form_class):
               
             # changing text of label
             self.textEdit.setText("preview off")
+
+    def _init_setting(self):
+        self.config_dict['pre_heat_road_temp'] = 3
+        self.config_dict['heat_road_temp'] = 1
+        self.config_dict['set_road_humidity'] = 3
+        self.config_dict['set_air_temp'] = -15
+        self.config_dict['pre_heat_on_time'] = 60
+        self.config_dict['heat_on_time'] = 90
+
+        self.HEATING_TIME = 0
+        self.PRE_HEATING_TIME = 0
+
+        # laod saved config data and display to QLCDNumber
+        for key, value in self.config_dict.items():     # saved (LCDNumber name, value) in config.db
+            print('key: {0}, value: {1}'.format(key, value))
+            lcdNum = self.findChild(QLCDNumber, key)    # find LCDNumber with key
+            if (lcdNum is not None):
+                lcdNum.display(value)                        # display to LCDNumber
+
+            lcdNum = self.findChild(QLCDNumber, key+'_2')    # find LCDNumber with key
+            if (lcdNum is not None):
+                lcdNum.display(value)                        # display to LCDNumber
+
+            if key == 'heat_on_time' and value:
+                self.HEATING_TIME = int(value)*60*1000
+            elif key == 'pre_heat_on_time' and value:
+                self.PRE_HEATING_TIME = int(value)*60*1000
+
+        print('=========================================================================')
+        print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
+
 
     def _capture(self):
         new_cap = False
@@ -615,8 +666,8 @@ class qt(QMainWindow, form_class):
         print(sensor_data_dict.keys())
 
         print((lcdNum.objectName() in sensor_data_dict.keys()))
-        print(sensor_data_dict[lcdNum.objectName()])
-        print(sensor_data_dict.values())
+        # print(sensor_data_dict[lcdNum.objectName()])
+        # print(sensor_data_dict.values())
 
         if (not(lcdNum.objectName() in sensor_data_dict.keys())) and self.flag_HEAT_ON == True:
             self.label_warning.setVisible(True)
@@ -664,6 +715,9 @@ class qt(QMainWindow, form_class):
         elif topic == sub_root_topic+'CAPTURE':
             self._capture()
 
+        elif topic == sub_root_topic+'INIT_SETTING':
+            self._init_setting()
+
     # heat timeout function
     # 1. stop timer
     # 2. change button color -> gray
@@ -686,13 +740,25 @@ class qt(QMainWindow, form_class):
 
         inLabel.setStyleSheet("background-color: gray")
 
+        if self.flag_EMC_HEAT_ON == True:
+            self.PRE_HEAT_STATUS = True
+
         # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': False}))
         self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
         print('heat_timeout_func CH1: {}, CH2: {}'.format(self.PRE_HEAT_STATUS, self.HEAT_STATUS))
 
+        if self.flag_EMC_HEAT_ON == True:
+            self.PRE_HEAT_STATUS = False
+        self.flag_EMC_HEAT_ON = False
+
         self.flag_HEAT_ON = False
         self.label_warning_timer.stop()
         self.label_warning.setVisible(False)
+
+        if self.PRE_HEAT_STATUS == False and self.HEAT_STATUS == False:
+            self.label_emc_heat_on.setStyleSheet("background-color: gray")
+        # elif self.PRE_HEAT_STATUS == True and self.HEAT_STATUS == True:
+        #     self.label_emc_heat_on.setStyleSheet("background-color: red")
 
         # TODO: update DB for heating status -> OFF
 
@@ -773,6 +839,11 @@ class qt(QMainWindow, form_class):
                 # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': True}))
                 # => heat_timeout_func() : change btn color, send_msg
                 self.label_heat_on.setStyleSheet("background-color: pink")
+
+                if self.flag_EMC_HEAT_ON == True:
+                    self.label_emc_heat_on.setStyleSheet("background-color: red")
+                    # self.flag_EMC_HEAT_ON == False
+
                 self.heat_timer.start(self.HEATING_TIME)
                 self.heat_timeout_func(self.label_pre_heat_on)
                 self.flag_HEAT_ON = True

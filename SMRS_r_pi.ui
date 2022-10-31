@@ -39,10 +39,11 @@
    </property>
    <property name="font">
     <font>
-     <pointsize>20</pointsize>
-     <weight>75</weight>
+     <family>3DS Fonticon</family>
+     <pointsize>10</pointsize>
+     <weight>50</weight>
      <italic>false</italic>
-     <bold>true</bold>
+     <bold>false</bold>
      <underline>false</underline>
      <strikeout>false</strikeout>
      <stylestrategy>PreferDefault</stylestrategy>
@@ -71,7 +72,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="iconSize">
     <size>
@@ -106,9 +107,15 @@
     </property>
     <property name="font">
      <font>
+      <family>3DS Fonticon</family>
       <pointsize>30</pointsize>
       <weight>50</weight>
+      <italic>false</italic>
       <bold>false</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+      <stylestrategy>PreferDefault</stylestrategy>
+      <kerning>true</kerning>
      </font>
     </property>
     <attribute name="icon">
@@ -127,6 +134,19 @@
        <height>450</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>3DS Fonticon</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
+      </font>
+     </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -141,6 +161,19 @@
         <width>231</width>
         <height>71</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
@@ -163,7 +196,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -181,7 +222,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="text">
@@ -196,6 +238,19 @@
         <width>231</width>
         <height>71</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
@@ -218,7 +273,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="text">
@@ -233,6 +289,12 @@
         <width>221</width>
         <height>71</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+       </font>
       </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
@@ -253,6 +315,12 @@
         <height>41</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
       </property>
@@ -272,6 +340,19 @@
         <height>41</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
       </property>
@@ -290,6 +371,19 @@
         <width>121</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
@@ -312,7 +406,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>75</weight>
         <bold>true</bold>
         <underline>false</underline>
@@ -348,9 +443,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>75</weight>
+        <italic>false</italic>
         <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="frameShape">
@@ -374,9 +475,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>75</weight>
+        <italic>false</italic>
         <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="frameShape">
@@ -400,7 +507,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
        </font>
@@ -420,9 +528,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -440,9 +554,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -460,9 +580,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>9</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -477,6 +603,19 @@
         <width>121</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
       </property>
       <property name="smallDecimalPoint">
        <bool>false</bool>
@@ -499,7 +638,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -517,7 +664,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -535,7 +690,8 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
        </font>
       </property>
       <property name="text">
@@ -553,7 +709,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -571,7 +735,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -589,7 +761,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -607,7 +787,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>14</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -623,6 +811,12 @@
         <height>41</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -635,7 +829,15 @@
    <widget class="QWidget" name="settings">
     <property name="font">
      <font>
+      <family>3DS Fonticon</family>
       <pointsize>30</pointsize>
+      <weight>50</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+      <stylestrategy>PreferDefault</stylestrategy>
+      <kerning>true</kerning>
      </font>
     </property>
     <attribute name="icon">
@@ -656,7 +858,15 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <family>3DS Fonticon</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
       </font>
      </property>
      <property name="frameShape">
@@ -676,7 +886,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="smallDecimalPoint">
@@ -703,9 +921,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -723,9 +947,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -743,7 +973,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="smallDecimalPoint">
@@ -770,9 +1008,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -790,7 +1034,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="smallDecimalPoint">
@@ -817,9 +1069,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -837,9 +1095,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -857,7 +1121,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="smallDecimalPoint">
@@ -884,7 +1156,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="smallDecimalPoint">
@@ -911,9 +1191,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>18</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
         <weight>50</weight>
+        <italic>false</italic>
         <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -931,7 +1217,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="smallDecimalPoint">
@@ -958,7 +1252,10 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="styleSheet">
@@ -979,7 +1276,10 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="styleSheet">
@@ -1000,7 +1300,10 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
       </property>
       <property name="styleSheet">
@@ -1012,27 +1315,6 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btn_HEAT_ON_2">
-      <property name="geometry">
-       <rect>
-        <x>690</x>
-        <y>330</y>
-        <width>221</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>20</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color:rgb(128, 128, 128)</string>
-      </property>
-      <property name="text">
-       <string>설정  초기화</string>
       </property>
      </widget>
     </widget>
@@ -1056,7 +1338,15 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <family>3DS Fonticon</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
       </font>
      </property>
      <property name="frameShape">
@@ -1076,7 +1366,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>20</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -1091,6 +1389,14 @@
         <width>360</width>
         <height>240</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -1110,6 +1416,14 @@
         <width>480</width>
         <height>360</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -1132,7 +1446,15 @@
       </property>
       <property name="font">
        <font>
+        <family>3DS Fonticon</family>
         <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
      </widget>
@@ -1147,7 +1469,15 @@
       </property>
       <property name="font">
        <font>
-        <pointsize>11</pointsize>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
        </font>
       </property>
       <property name="text">
@@ -1162,6 +1492,14 @@
         <width>360</width>
         <height>240</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>3DS Fonticon</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>

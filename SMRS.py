@@ -94,7 +94,8 @@ def resource_path(*relative_Path_AND_File):
 #     return os.path.join(base_path, relative_path)
 #
 # form = resource_path("SRMS.ui")
-form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
+# form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
+form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
 
 # form_class = uic.loadUiType('SMRS.ui')[0]
 
@@ -162,6 +163,7 @@ class qt(QMainWindow, form_class):
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
         self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
         self.btn_capture.clicked.connect(lambda: self.send_CMD(self.btn_capture))
+        # self.btn_INIT_SETTING.clicked.connect(lambda: self.send_CMD(self.btn_INIT_SETTING))
 
         self.road_temp = []
         self.road_humidity = []
@@ -427,6 +429,14 @@ class qt(QMainWindow, form_class):
 
             time_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
 
+            if jsonData['CH1'] == True and jsonData['CH2'] == True:   # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
+                self.label_33.setStyleSheet("background-color: red")
+                self.label_8.setStyleSheet("background-color: pink")
+                self.btn_HEAT_ON.setStyleSheet("background-color: pink")
+                log_text = time_text + '비상 가동 시작'
+                self.textEdit_log.append(log_text)
+                return
+
             if jsonData['CH1'] == True:             # PRE HEAT ON
                 print("PRE HEAT: ON")
                 self.label_7.setStyleSheet("background-color: yellow")
@@ -437,6 +447,7 @@ class qt(QMainWindow, form_class):
                 print("PRE HEAT: OFF")
                 self.label_7.setStyleSheet("background-color: gray")
                 self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")
+                self.label_33.setStyleSheet("background-color: gray")
 
             if jsonData['CH2'] == True:             # HEAT ON
                 print("HEAT: ON")
@@ -447,9 +458,11 @@ class qt(QMainWindow, form_class):
                 print("HEAT: OFF")
                 self.label_8.setStyleSheet("background-color: gray")
                 self.btn_HEAT_ON.setStyleSheet("background-color: gray")
+                self.label_33.setStyleSheet("background-color: gray")
 
             if jsonData['CH1'] == False and jsonData['CH2'] == False:   # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
                 self.flag_HEAT_ON = False
+                # self.label_33.setStyleSheet("background-color: gray")
                 log_text = time_text + ' 가동 멈춤'
 
             self.textEdit_log.append(log_text)
@@ -580,6 +593,9 @@ class qt(QMainWindow, form_class):
         elif button == self.btn_capture:
             print('pressed capture button')
             self.sub_mqtt.send_msg(pub_root_topic+"CAPTURE", json.dumps({'CAPTURE': True}))
+        elif button == self.btn_INIT_SETTING:
+            print('pressed INIT SETTING')
+            self.sub_mqtt.send_msg(pub_root_topic+"INIT_SETTING", json.dumps({'INIT_SETTING': True}))
 
 
     @pyqtSlot(np.ndarray)
