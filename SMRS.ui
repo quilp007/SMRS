@@ -1425,7 +1425,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>20</pointsize>
+        <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>

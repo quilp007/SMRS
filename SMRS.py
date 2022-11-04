@@ -374,6 +374,11 @@ class qt(QMainWindow, form_class):
             return
         else:
             self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
+            self.findChild(QLCDNumber, "pre_heat_road_temp_2").display(input_num)
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"pre_heat_road_temp": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + input_num
+            self.textEdit_log.append(log_text)
+            self.lineEdit_pre_heat_road_temp.setText("")
 
     def LineEdit_heat_road_temp_RET(self, input_num):
         if int(input_num) < -30 or int(input_num) > 60:
@@ -381,6 +386,11 @@ class qt(QMainWindow, form_class):
             return
         else:
             self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
+            self.findChild(QLCDNumber, "heat_road_temp_2").display(input_num)
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"heat_road_temp": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "heat_road_temp" + ' ' + input_num
+            self.textEdit_log.append(log_text)
+            self.lineEdit_heat_road_temp.setText("")
 
     def LineEdit_set_road_humidity_RET(self, input_num):
         if int(input_num) < 0 or int(input_num) > 9:
@@ -388,6 +398,11 @@ class qt(QMainWindow, form_class):
             return
         else:
             self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
+            self.findChild(QLCDNumber, "set_road_humidity_2").display(input_num)
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"set_road_humidity": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "set_road_humidity" + ' ' + input_num
+            self.textEdit_log.append(log_text)
+            self.lineEdit_set_road_humidity.setText("")
 
     def LineEdit_pre_heat_on_time_RET(self, input_num):
         if int(input_num) < 1 or int(input_num) > 120:
@@ -395,6 +410,10 @@ class qt(QMainWindow, form_class):
             return
         else:
             self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"pre_heat_on_time": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "pre_heat_on_time" + ' ' + input_num
+            self.textEdit_log.append(log_text)
+            self.lineEdit_pre_heat_on_time.setText("")
 
     def LineEdit_heat_on_time_RET(self, input_num):
         if int(input_num) < 1 or int(input_num) > 120:
@@ -402,6 +421,10 @@ class qt(QMainWindow, form_class):
             return
         else:
             self.findChild(QLCDNumber, "heat_on_time").display(input_num)
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"heat_on_time": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "heat_on_time" + ' ' + input_num
+            self.textEdit_log.append(log_text)
+            self.lineEdit_heat_on_time.setText("")
 
     def LineEdit_set_air_temp_RET(self, input_num):
         if int(input_num) < -30 or int(input_num) > 60:
@@ -409,6 +432,11 @@ class qt(QMainWindow, form_class):
             return
         else:
             self.findChild(QLCDNumber, "set_air_temp").display(input_num)
+            self.findChild(QLCDNumber, "set_air_temp_2").display(input_num)
+            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"set_air_temp": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "set_air_temp" + ' ' + input_num
+            self.textEdit_log.append(log_text)
+            self.lineEdit_set_air_temp.setText("")
 
     def closeEvent(self, event):
         quit_msg = "Want to exit?"
