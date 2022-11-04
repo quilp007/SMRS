@@ -94,8 +94,8 @@ def resource_path(*relative_Path_AND_File):
 #     return os.path.join(base_path, relative_path)
 #
 # form = resource_path("SRMS.ui")
-# form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
-form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
+form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
+# form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
 
 # form_class = uic.loadUiType('SMRS.ui')[0]
 
@@ -140,6 +140,13 @@ class THREAD_RECEIVE_Data(QThread):
     def close(self):
         self.mySuspend()
 
+class LineEdit(QLineEdit):
+    def __int__(self):
+        QLineEdit.__init__(self)
+
+    def focusOutEvent(self, e):
+        print("====================")
+
 
 class qt(QMainWindow, form_class):
     def __init__(self):
@@ -148,11 +155,10 @@ class qt(QMainWindow, form_class):
 
         super().__init__()
 
-
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
         self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
-
+        # lineEdit = LineEdit(self)
 
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setTabEnabled(2, False)
@@ -204,9 +210,14 @@ class qt(QMainWindow, form_class):
         # self.road_humidity = np.zeros(x_size)
         # self.air_temp = np.zeros(x_size)
 
-        self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
-        self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
+        self.lineEdit_pre_heat_road_temp.returnPressed.connect(lambda: self.LineEdit_pre_heat_road_temp_RET(self.lineEdit_pre_heat_road_temp.text()))
+        self.lineEdit_heat_road_temp.returnPressed.connect(lambda: self.LineEdit_heat_road_temp_RET(self.lineEdit_heat_road_temp.text()))
+        self.lineEdit_set_road_humidity.returnPressed.connect(lambda: self.LineEdit_set_road_humidity_RET(self.lineEdit_set_road_humidity.text()))
+        self.lineEdit_pre_heat_on_time.returnPressed.connect(lambda: self.LineEdit_pre_heat_on_time_RET(self.lineEdit_pre_heat_on_time.text()))
+        self.lineEdit_heat_on_time.returnPressed.connect(lambda: self.LineEdit_heat_on_time_RET(self.lineEdit_heat_on_time.text()))
+        self.lineEdit_set_air_temp.returnPressed.connect(lambda: self.LineEdit_set_air_temp_RET(self.lineEdit_set_air_temp.text()))
 
+        self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
         self.textEdit_log.setReadOnly(True)
 
         # table Widget ------------------------------------------------------------------
@@ -271,13 +282,13 @@ class qt(QMainWindow, form_class):
         self.clickable(self.pre_heat_road_temp).connect(lambda: self.input_value(self.pre_heat_road_temp))      # pre_heat_road_temp
         self.clickable(self.heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))              # heat_road_temp
         self.clickable(self.set_road_humidity).connect(lambda: self.input_value(self.set_road_humidity))        # set_road_humidity
-        self.clickable(self.set_air_temp).connect(lambda: self.input_value(self.set_air_temp))                  # set_air_temp 
+        self.clickable(self.set_air_temp).connect(lambda: self.input_value(self.set_air_temp))                  # set_air_temp
         self.clickable(self.pre_heat_on_time).connect(lambda: self.input_value(self.pre_heat_on_time))          # pre_heat_on_time
         self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
 
         self.label_warning.setVisible(False)
         # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
-        self.lineEdit.setVisible(False)
+        # self.lineEdit.setVisible(False)
 
         # limit line to 150 (log textEdit) 
         self.textEdit_log.document().setMaximumBlockCount(150)
@@ -286,7 +297,7 @@ class qt(QMainWindow, form_class):
 
     def label_warning_timeout_func(self):
         self.label_warning.setVisible(False)
-
+    """
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber => after receive mqtt msg
         # self.temp_lcdNumber.display(input_num)
@@ -342,6 +353,47 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.setVisible(False)
         self.lineEdit.setText("")
+    """
+    def LineEdit_pre_heat_road_temp_RET(self, input_num):
+        if int(input_num) < -30 or int(input_num) > 60:
+            QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+            return
+        else:
+            self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
+
+    def LineEdit_heat_road_temp_RET(self, input_num):
+        if int(input_num) < -30 or int(input_num) > 60:
+            QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+            return
+        else:
+            self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
+    def LineEdit_set_road_humidity_RET(self, input_num):
+        if int(input_num) < 0 or int(input_num) > 9:
+            QMessageBox.warning(self, 'Humidity Error', ' 0 <= Humidity <= 9')
+            return
+        else:
+            self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
+
+    def LineEdit_pre_heat_on_time_RET(self, input_num):
+        if int(input_num) < 1 or int(input_num) > 120:
+            QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
+            return
+        else:
+            self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
+
+    def LineEdit_heat_on_time_RET(self, input_num):
+        if int(input_num) < 1 or int(input_num) > 120:
+            QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
+            return
+        else:
+            self.findChild(QLCDNumber, "heat_on_time").display(input_num)
+
+    def LineEdit_set_air_temp_RET(self, input_num):
+        if int(input_num) < -30 or int(input_num) > 60:
+            QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+            return
+        else:
+            self.findChild(QLCDNumber, "set_air_temp").display(input_num)
 
     def closeEvent(self, event):
         quit_msg = "Want to exit?"
@@ -389,9 +441,21 @@ class qt(QMainWindow, form_class):
         # if('time' in lcdNum.objectName()):
         #     self.lineEdit.setValidator(QtGui.QIntValidator(1, 120, self))
 
-        self.temp_lcdNumber = lcdNum
-        self.lineEdit.setVisible(True)
-        self.lineEdit.setFocus()
+        # self.temp_lcdNumber = lcdNum
+        # self.lineEdit.setVisible(True)
+        # self.lineEdit.setFocus()
+        if(lcdNum.objectName() == "pre_heat_road_temp"):
+            self.lineEdit_pre_heat_road_temp.setFocus()
+        if (lcdNum.objectName() == "heat_road_temp"):
+            self.lineEdit_heat_road_temp.setFocus()
+        if (lcdNum.objectName() == "set_road_humidity"):
+            self.lineEdit_set_road_humidity.setFocus()
+        if (lcdNum.objectName() == "pre_heat_on_time"):
+            self.lineEdit_pre_heat_on_time.setFocus()
+        if (lcdNum.objectName() == "heat_on_time"):
+            self.lineEdit_heat_on_time.setFocus()
+        if (lcdNum.objectName() == "set_air_temp"):
+            self.lineEdit_set_air_temp.setFocus()
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_1)
