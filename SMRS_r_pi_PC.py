@@ -55,6 +55,8 @@ else:
     pub_root_topic = "R_PI_test/"
     sub_root_topic = "APP_test/"
 
+# TTA version is TEST = True, MQTT ID no is 1
+
 DEBUG_PRINT = False
 # DEBUG_PRINT = True
 # ------------------------------------------------------------------------------
@@ -627,10 +629,23 @@ class qt(QMainWindow, form_class):
         p = convert_to_Qt_format.scaled(_width, _height, Qt.KeepAspectRatio)
         return QPixmap.fromImage(p)
 
-
     # Keypad 'OK' pressed event -> emit signal in keypad
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber
+        """
+        if not input_num.isnumeric():
+            print('input is not number!!')
+            return
+        """
+        try:
+            input_num = int(input_num)
+
+        except:
+            print('input is not number!!')
+            return
+
+        input_num = int(input_num)
+        print(type(input_num))
         self.temp_lcdNumber.display(input_num)
 
         lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key 
@@ -817,6 +832,7 @@ class qt(QMainWindow, form_class):
                 # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
                 # => heat_timeout_func() : change btn color, send_msg
                 self.label_pre_heat_on.setStyleSheet("background-color: yellow")
+                self.label_emc_heat_on.setStyleSheet("background-color: gray")
                 self.pre_heat_timer.start(self.PRE_HEATING_TIME)
                 self.heat_timeout_func(self.label_heat_on)
                 self.flag_HEAT_ON = True
