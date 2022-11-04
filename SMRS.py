@@ -115,6 +115,7 @@ class THREAD_RECEIVE_Data(QThread):
         self.__exit = False
         self.log_flag = False
 
+
     def run(self):
         while True:
             ### Suspend ###
@@ -152,6 +153,8 @@ class qt(QMainWindow, form_class):
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
         self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
+
+        self.setFixedSize(QSize(1000, 551))
 
 
         self.tabWidget.setTabEnabled(1, False)
@@ -206,6 +209,7 @@ class qt(QMainWindow, form_class):
 
         self.lineEdit.returnPressed.connect(lambda: self.LineEdit_RET(self.lineEdit.text()))
         self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
+        self.Login_2.setEchoMode(QLineEdit.Password)
 
         self.textEdit_log.setReadOnly(True)
 
@@ -283,6 +287,7 @@ class qt(QMainWindow, form_class):
         self.textEdit_log.document().setMaximumBlockCount(150)
 
         self.flag_HEAT_ON = False
+        self.login_fail_count = 0
 
     def label_warning_timeout_func(self):
         self.label_warning.setVisible(False)
@@ -344,19 +349,70 @@ class qt(QMainWindow, form_class):
         self.lineEdit.setText("")
 
     def closeEvent(self, event):
-        quit_msg = "Want to exit?"
-        reply = QMessageBox.question(self, 'Message', quit_msg, QMessageBox.Yes, QMessageBox.No)
+        quit_msg = "종료 하시겠습니까?"
+        reply = QMessageBox.question(self, '종료 알림', quit_msg, QMessageBox.Yes, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
             event.accept()
         else:
             event.ignore()
 
+    def password_check(self, passwd):
+        SpecialSym = ['$', '@', '#', '%']
+        val = True
 
+        if len(passwd) < 9:
+            print('length should be at least 6')
+            val = False
+
+        if len(passwd) > 13:
+            print('length should be not be greater than 8')
+            val = False
+
+        if not any(char.isdigit() for char in passwd):
+            print('Password should have at least one numeral')
+            val = False
+
+        if not any(char.isupper() for char in passwd):
+            print('Password should have at least one uppercase letter')
+            val = False
+
+        if not any(char.islower() for char in passwd):
+            print('Password should have at least one lowercase letter')
+            val = False
+
+        if not any(char in SpecialSym for char in passwd):
+            print('Password should have at least one of the symbols $@#')
+            val = False
+
+        return val
+            
     def LineEdit_Login_2_RET(self, input_num):
-        self.sub_mqtt.client1.username_pw_set(username="smrs",password=input_num)
+        # TODO:
+        # 0. 부팅 시 passwd 값을 로딩한다. (전역 변수에 카피) -> 없으면 초기 설정 모드
+        # 1. 최초 실행 시(처음 로그인) 패스워드를 설정한다. -> 패스워드 확인 라벨, 패스워드 학인 lineEdit 를 보여준다.(기본설정: 숨기기)
+        # 2. 패스워드 설정 시 패스워드, 패스워드 확인을 비교하고 동일하면 패스워드를 passwd 파일에 저장
+        # 3. 매 부팅 시 로딩된 패스워드와 입력 받은 패스워드를 비교
+        # 4. 5회 fail시 메시지 표시 10초 후 프로그램 강제 종료
+        # 5. 5회 패스워드 실패 후 프로그램 다시 실행해도 메시지만 표시하고 종료(로그인 입력 표시 X)
 
-        for x in range(5):
+        if self.password_check(input_num) == False:
+            self.login_fail_count +=1
+            if self.login_fail_count == 5:
+                QMessageBox.warning(self, '비밀번호 오류', '입력 오류 초과\n관리자에게 문의하세요.')
+                self.Login_2.setVisible(False)
+                return
+
+            print('invalid passwrod!!')
+            QMessageBox.warning(self, '비밀번호 오류', '패스워드 형식이 맞지 않습니다.')
+            self.Login_2.clear()
+            return
+
+
+        # self.sub_mqtt.client1.username_pw_set(username="smrs",password=input_num)
+        self.sub_mqtt.client1.username_pw_set(username="smrs",password='1234')
+
+        for x in range(10):
             print(x)
             if self.sub_mqtt.login_ok == True:
                 self.tabWidget.setTabVisible(0, False)
@@ -370,10 +426,10 @@ class qt(QMainWindow, form_class):
                 self.send_CMD('INIT')
                 return
 
-            time.sleep(1) 
+            time.sleep(0.5)
 
         self.Login_2.clear()
-        QMessageBox.warning(self, 'Wrong Password', 'Try Again')
+        QMessageBox.warning(self, '비밀번호 오류', '다시 입력 하세요.')
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:

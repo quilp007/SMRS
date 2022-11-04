@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
-    <height>570</height>
+    <width>1017</width>
+    <height>576</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,7 +75,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="iconSize">
     <size>
@@ -102,47 +102,12 @@
     <attribute name="title">
      <string>Login</string>
     </attribute>
-    <widget class="QLineEdit" name="Login_2">
-     <property name="geometry">
-      <rect>
-       <x>470</x>
-       <y>210</y>
-       <width>171</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <family>Arial</family>
-       <pointsize>9</pointsize>
-       <weight>50</weight>
-       <italic>false</italic>
-       <bold>false</bold>
-       <underline>false</underline>
-       <strikeout>false</strikeout>
-       <stylestrategy>PreferDefault</stylestrategy>
-       <kerning>true</kerning>
-      </font>
-     </property>
-     <property name="inputMethodHints">
-      <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
-     </property>
-     <property name="inputMask">
-      <string>0000</string>
-     </property>
-     <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_19">
      <property name="geometry">
       <rect>
-       <x>340</x>
-       <y>200</y>
-       <width>111</width>
+       <x>200</x>
+       <y>150</y>
+       <width>141</width>
        <height>61</height>
       </rect>
      </property>
@@ -160,7 +125,77 @@
       </font>
      </property>
      <property name="text">
-      <string>PASSWORD</string>
+      <string>비밀번호</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="Login_2">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>160</y>
+       <width>241</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="inputMask">
+      <string/>
+     </property>
+     <property name="maxLength">
+      <number>12</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::NoEcho</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="Login_3">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>230</y>
+       <width>241</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="inputMask">
+      <string/>
+     </property>
+     <property name="maxLength">
+      <number>12</number>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::NoEcho</enum>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_20">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>220</y>
+       <width>141</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>9</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
+      </font>
+     </property>
+     <property name="text">
+      <string>비밀번호확인</string>
      </property>
     </widget>
    </widget>
@@ -193,7 +228,7 @@
       <normalon>icon/main_on.png</normalon>icon/main_off.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Current Status</string>
+     <string>현재상태</string>
     </attribute>
     <widget class="QFrame" name="frame">
      <property name="enabled">
@@ -399,7 +434,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -425,7 +460,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -451,7 +486,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -468,9 +503,9 @@
      <widget class="QLCDNumber" name="pre_heat_road_temp_2">
       <property name="geometry">
        <rect>
-        <x>170</x>
+        <x>200</x>
         <y>310</y>
-        <width>121</width>
+        <width>91</width>
         <height>41</height>
        </rect>
       </property>
@@ -500,9 +535,9 @@
      <widget class="QLCDNumber" name="heat_road_temp_2">
       <property name="geometry">
        <rect>
-        <x>490</x>
+        <x>510</x>
         <y>309</y>
-        <width>121</width>
+        <width>101</width>
         <height>41</height>
        </rect>
       </property>
@@ -532,9 +567,9 @@
      <widget class="QLCDNumber" name="set_air_temp_2">
       <property name="geometry">
        <rect>
-        <x>800</x>
+        <x>820</x>
         <y>310</y>
-        <width>121</width>
+        <width>101</width>
         <height>41</height>
        </rect>
       </property>
@@ -833,9 +868,9 @@
      <widget class="QLCDNumber" name="set_road_humidity_2">
       <property name="geometry">
        <rect>
-        <x>490</x>
+        <x>510</x>
         <y>350</y>
-        <width>121</width>
+        <width>101</width>
         <height>41</height>
        </rect>
       </property>
@@ -874,7 +909,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>50</weight>
         <italic>false</italic>
         <bold>false</bold>
@@ -948,7 +983,7 @@
       <normaloff>icon/parameter_on.png</normaloff>icon/parameter_on.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Settings</string>
+     <string>설정</string>
     </attribute>
     <widget class="QFrame" name="frame_2">
      <property name="enabled">
@@ -956,9 +991,9 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>29</x>
        <y>20</y>
-       <width>960</width>
+       <width>961</width>
        <height>450</height>
       </rect>
      </property>
@@ -973,7 +1008,7 @@
        <rect>
         <x>260</x>
         <y>30</y>
-        <width>181</width>
+        <width>141</width>
         <height>60</height>
        </rect>
       </property>
@@ -1003,7 +1038,7 @@
      <widget class="QLabel" name="label_9">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>10</x>
         <y>30</y>
         <width>211</width>
         <height>60</height>
@@ -1012,7 +1047,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1029,7 +1064,7 @@
      <widget class="QLabel" name="label_10">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>10</x>
         <y>100</y>
         <width>241</width>
         <height>60</height>
@@ -1038,7 +1073,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1057,7 +1092,7 @@
        <rect>
         <x>260</x>
         <y>100</y>
-        <width>181</width>
+        <width>141</width>
         <height>60</height>
        </rect>
       </property>
@@ -1090,7 +1125,7 @@
      <widget class="QLabel" name="label_11">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>10</x>
         <y>170</y>
         <width>241</width>
         <height>60</height>
@@ -1099,7 +1134,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1118,7 +1153,7 @@
        <rect>
         <x>260</x>
         <y>170</y>
-        <width>181</width>
+        <width>141</width>
         <height>60</height>
        </rect>
       </property>
@@ -1160,7 +1195,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1177,7 +1212,7 @@
      <widget class="QLabel" name="label_13">
       <property name="geometry">
        <rect>
-        <x>540</x>
+        <x>530</x>
         <y>100</y>
         <width>231</width>
         <height>60</height>
@@ -1186,7 +1221,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1203,7 +1238,7 @@
      <widget class="QLCDNumber" name="pre_heat_on_time">
       <property name="geometry">
        <rect>
-        <x>750</x>
+        <x>730</x>
         <y>30</y>
         <width>181</width>
         <height>60</height>
@@ -1235,7 +1270,7 @@
      <widget class="QLCDNumber" name="heat_on_time">
       <property name="geometry">
        <rect>
-        <x>750</x>
+        <x>730</x>
         <y>100</y>
         <width>181</width>
         <height>60</height>
@@ -1267,7 +1302,7 @@
      <widget class="QLabel" name="label_17">
       <property name="geometry">
        <rect>
-        <x>480</x>
+        <x>530</x>
         <y>170</y>
         <width>231</width>
         <height>60</height>
@@ -1276,7 +1311,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1293,7 +1328,7 @@
      <widget class="QLCDNumber" name="set_air_temp">
       <property name="geometry">
        <rect>
-        <x>750</x>
+        <x>730</x>
         <y>170</y>
         <width>181</width>
         <height>60</height>
@@ -1334,7 +1369,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>11</pointsize>
+        <pointsize>10</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1363,7 +1398,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>11</pointsize>
+        <pointsize>10</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1392,10 +1427,10 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
-        <weight>50</weight>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
         <italic>false</italic>
-        <bold>false</bold>
+        <bold>true</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
         <stylestrategy>PreferDefault</stylestrategy>
@@ -1406,8 +1441,8 @@
        <string notr="true">background-color:rgb(255, 255, 0)</string>
       </property>
       <property name="text">
-       <string>Cannot change config value
-(Melting is working!!)</string>
+       <string>값을 변경할 수 없습니다.
+(융설시스템이 작동 중입니다!)</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -1416,8 +1451,8 @@
      <widget class="QLineEdit" name="lineEdit">
       <property name="geometry">
        <rect>
-        <x>520</x>
-        <y>50</y>
+        <x>430</x>
+        <y>60</y>
         <width>171</width>
         <height>71</height>
        </rect>
@@ -1442,7 +1477,7 @@
      <widget class="QLabel" name="label_36">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>410</x>
         <y>30</y>
         <width>31</width>
         <height>31</height>
@@ -1468,7 +1503,7 @@
      <widget class="QLabel" name="label_37">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>410</x>
         <y>100</y>
         <width>31</width>
         <height>31</height>
@@ -1494,7 +1529,7 @@
      <widget class="QLabel" name="label_38">
       <property name="geometry">
        <rect>
-        <x>940</x>
+        <x>920</x>
         <y>170</y>
         <width>31</width>
         <height>31</height>
@@ -1520,7 +1555,7 @@
      <widget class="QLabel" name="label_39">
       <property name="geometry">
        <rect>
-        <x>440</x>
+        <x>410</x>
         <y>170</y>
         <width>31</width>
         <height>31</height>
@@ -1546,7 +1581,7 @@
      <widget class="QLabel" name="label_40">
       <property name="geometry">
        <rect>
-        <x>930</x>
+        <x>910</x>
         <y>30</y>
         <width>31</width>
         <height>31</height>
@@ -1572,7 +1607,7 @@
      <widget class="QLabel" name="label_41">
       <property name="geometry">
        <rect>
-        <x>930</x>
+        <x>910</x>
         <y>100</y>
         <width>31</width>
         <height>31</height>
@@ -1595,6 +1630,7 @@
        <string>min</string>
       </property>
      </widget>
+     <zorder>label_17</zorder>
      <zorder>pre_heat_road_temp</zorder>
      <zorder>label_9</zorder>
      <zorder>label_10</zorder>
@@ -1605,7 +1641,6 @@
      <zorder>label_13</zorder>
      <zorder>pre_heat_on_time</zorder>
      <zorder>heat_on_time</zorder>
-     <zorder>label_17</zorder>
      <zorder>set_air_temp</zorder>
      <zorder>btn_PRE_HEAT_ON</zorder>
      <zorder>btn_HEAT_ON</zorder>
@@ -1625,7 +1660,7 @@
       <normaloff>icon/camera.png</normaloff>icon/camera.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Camera</string>
+     <string>카메라</string>
     </attribute>
     <widget class="QFrame" name="frame_3">
      <property name="enabled">
@@ -1670,10 +1705,10 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
-        <weight>75</weight>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
         <italic>false</italic>
-        <bold>true</bold>
+        <bold>false</bold>
         <underline>false</underline>
         <strikeout>false</strikeout>
         <stylestrategy>PreferDefault</stylestrategy>
@@ -1681,7 +1716,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Capture</string>
+       <string>사진촬영</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_cam_2">
@@ -1713,7 +1748,7 @@
        <string notr="true">background-color: rgb(128, 128, 128)</string>
       </property>
       <property name="text">
-       <string>Capture Preview</string>
+       <string>사진 미리 보기</string>
       </property>
      </widget>
      <widget class="QTextEdit" name="textEdit">
@@ -1747,7 +1782,7 @@
       <normaloff>icon/engineer_on.png</normaloff>icon/engineer_on.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Admin</string>
+     <string>기록</string>
     </attribute>
     <widget class="QTextEdit" name="textEdit_log">
      <property name="geometry">
