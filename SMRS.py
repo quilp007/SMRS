@@ -94,10 +94,10 @@ def resource_path(*relative_Path_AND_File):
 #     return os.path.join(base_path, relative_path)
 #
 # form = resource_path("SRMS.ui")
-form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
+# form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
 
 
-# form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
+form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
 
 # form_class = uic.loadUiType('SMRS.ui')[0]
 
