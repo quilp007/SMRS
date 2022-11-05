@@ -288,15 +288,15 @@ class qt(QMainWindow, form_class):
         # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
 
-        self.clickable(self.pre_heat_road_temp).connect(
+        self.clickable(self.lineEdit_pre_heat_road_temp).connect(
             lambda: self.input_value(self.pre_heat_road_temp))  # pre_heat_road_temp
-        self.clickable(self.heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))  # heat_road_temp
-        self.clickable(self.set_road_humidity).connect(
+        self.clickable(self.lineEdit_heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))  # heat_road_temp
+        self.clickable(self.lineEdit_set_road_humidity).connect(
             lambda: self.input_value(self.set_road_humidity))  # set_road_humidity
-        self.clickable(self.set_air_temp).connect(lambda: self.input_value(self.set_air_temp))  # set_air_temp
-        self.clickable(self.pre_heat_on_time).connect(
+        self.clickable(self.lineEdit_set_air_temp).connect(lambda: self.input_value(self.set_air_temp))  # set_air_temp
+        self.clickable(self.lineEdit_pre_heat_on_time).connect(
             lambda: self.input_value(self.pre_heat_on_time))  # pre_heat_on_time
-        self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))  # heat_on_time
+        self.clickable(self.lineEdit_heat_on_time).connect(lambda: self.input_value(self.heat_on_time))  # heat_on_time
 
         self.label_warning.setVisible(False)
         # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
