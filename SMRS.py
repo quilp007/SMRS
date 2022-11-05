@@ -94,10 +94,10 @@ def resource_path(*relative_Path_AND_File):
 #     return os.path.join(base_path, relative_path)
 #
 # form = resource_path("SRMS.ui")
-# form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
+form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
 
 
-form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
+# form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
 
 # form_class = uic.loadUiType('SMRS.ui')[0]
 
@@ -402,8 +402,13 @@ class qt(QMainWindow, form_class):
     """
 
     def LineEdit_pre_heat_road_temp_RET(self, input_num):
-        if int(input_num) < -30 or int(input_num) > 60:
-            QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+        if input_num.isdigit() == False:
+            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+            self.lineEdit_pre_heat_road_temp.setText("")
+            return
+        elif int(input_num) < -30 or int(input_num) > 60:
+            QMessageBox.warning(self, 'Temp Error', '-30 <= Temp <= 60')
+            self.lineEdit_pre_heat_road_temp.setText("")
             return
         else:
             self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
@@ -414,8 +419,13 @@ class qt(QMainWindow, form_class):
             self.lineEdit_pre_heat_road_temp.setText("")
 
     def LineEdit_heat_road_temp_RET(self, input_num):
-        if int(input_num) < -30 or int(input_num) > 60:
-            QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+        if input_num.isdigit() == False:
+            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+            self.lineEdit_heat_road_temp.setText("")
+            return
+        elif int(input_num) < -30 or int(input_num) > 60:
+            QMessageBox.warning(self, 'Temp Error', '-30 <= Temp <= 60')
+            self.lineEdit_heat_road_temp.setText("")
             return
         else:
             self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
@@ -426,8 +436,13 @@ class qt(QMainWindow, form_class):
             self.lineEdit_heat_road_temp.setText("")
 
     def LineEdit_set_road_humidity_RET(self, input_num):
-        if int(input_num) < 0 or int(input_num) > 9:
+        if input_num.isdigit() == False:
+            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+            self.lineEdit_set_road_humidity.setText("")
+            return
+        elif int(input_num) < 0 or int(input_num) > 9:
             QMessageBox.warning(self, 'Humidity Error', ' 0 <= Humidity <= 9')
+            self.lineEdit_set_road_humidity.setText("")
             return
         else:
             self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
@@ -438,8 +453,13 @@ class qt(QMainWindow, form_class):
             self.lineEdit_set_road_humidity.setText("")
 
     def LineEdit_pre_heat_on_time_RET(self, input_num):
-        if int(input_num) < 1 or int(input_num) > 120:
+        if input_num.isdigit() == False:
+            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+            self.lineEdit_pre_heat_on_time.setText("")
+            return
+        elif int(input_num) < 1 or int(input_num) > 120:
             QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
+            self.lineEdit_pre_heat_on_time.setText("")
             return
         else:
             self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
@@ -449,8 +469,13 @@ class qt(QMainWindow, form_class):
             self.lineEdit_pre_heat_on_time.setText("")
 
     def LineEdit_heat_on_time_RET(self, input_num):
-        if int(input_num) < 1 or int(input_num) > 120:
+        if input_num.isdigit() == False:
+            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+            self.lineEdit_heat_on_time.setText("")
+            return
+        elif int(input_num) < 1 or int(input_num) > 120:
             QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
+            self.lineEdit_heat_on_time.setText("")
             return
         else:
             self.findChild(QLCDNumber, "heat_on_time").display(input_num)
@@ -460,8 +485,13 @@ class qt(QMainWindow, form_class):
             self.lineEdit_heat_on_time.setText("")
 
     def LineEdit_set_air_temp_RET(self, input_num):
-        if int(input_num) < -30 or int(input_num) > 60:
+        if input_num.isdigit() == False:
+            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+            self.lineEdit_set_air_temp.setText("")
+            return
+        elif int(input_num) < -30 or int(input_num) > 60:
             QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
+            self.lineEdit_set_air_temp.setText("")
             return
         else:
             self.findChild(QLCDNumber, "set_air_temp").display(input_num)
