@@ -142,6 +142,23 @@ class THREAD_RECEIVE_Data(QThread):
     def close(self):
         self.mySuspend()
 
+class Util_Function:
+    def Qsleep(self, ms):
+        QtTest.QTest.qWait(ms)
+
+    def save_var(self, key, value):
+        with shelve.open('boot') as f:
+            f[key] = value
+
+    def read_var(self, key):
+        with shelve.open('boot') as f:
+            try:
+                temp = f[key]
+                # print(f[key])
+                return temp
+            except:
+                pass
+
 
 class LineEdit(QLineEdit):
     def __int__(self):
@@ -306,6 +323,22 @@ class qt(QMainWindow, form_class):
         self.textEdit_log.document().setMaximumBlockCount(150)
 
         self.flag_HEAT_ON = False
+
+        """
+        self.util_func = Util_Function()
+
+        self.BOOT_MODE = False
+
+        if not os.path.isfile('./boot.db'):
+            self.BOOT_MODE = True
+            print('No boot.db file')
+            # TODO
+            # 패스워드재입력 라인데이트 setVisible(True)
+        else:
+            print('boot.db file is exist')
+            # 패스워드재입력 라인데이트 setVisible(False)
+        """
+
 
     def label_warning_timeout_func(self):
         self.label_warning.setVisible(False)
@@ -621,10 +654,6 @@ class qt(QMainWindow, form_class):
         filter = Filter(widget)
         widget.installEventFilter(filter)
         return filter.clicked
-
-    def save_var(self, key, value):
-        with shelve.open('config.db') as f:
-            f[key] = value
 
     def drawLine(self, plot_name, val, color):
         line = pg.InfiniteLine(angle=0, movable=True, pen=color)
