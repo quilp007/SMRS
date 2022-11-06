@@ -52,12 +52,12 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-TEST = True
+TEST = False
 
 if TEST == False:
     MQTT_CLIENT_ID = 'client_pc'
-    pub_root_topic = "APP/"
-    sub_root_topic = "R_PI/"
+    pub_root_topic = "APP111/"
+    sub_root_topic = "R_PI111/"
 else:
     MQTT_CLIENT_ID = 'client_pc_test'
     pub_root_topic = "APP_test/"
@@ -352,8 +352,14 @@ class qt(QMainWindow, form_class):
         self.util_func = Util_Function()
 
         self.BOOT_MODE = False
+        self.BOOT_FAIL_COUNT = 0
 
-        if not os.path.isfile('./boot.db') or self.util_func.read_var('passwd') == None:
+        if not os.path.isdir('./video'):
+            os.mkdir('./video')
+
+
+        # if (not os.path.isfile('./boot.dat')) or (not os.path.isfile('boot.db')) or self.util_func.read_var('passwd') == None:
+        if not os.path.isfile('./boot.dat'):
             self.BOOT_MODE = True
             print('No boot.db file')
             # TODO
@@ -363,7 +369,22 @@ class qt(QMainWindow, form_class):
             self.label_26.setVisible(False)
             self.Login_3.setVisible(False)
             # 패스워드재입력 라인데이트 setVisible(False)
-        
+
+        try:
+            BOOT_FAIL_COUNT = self.util_func.read_var('BOOT_FAIL_COUNT')
+        except:
+            print('no BOOT_FAIL_COUNT')
+            pass
+
+        if BOOT_FAIL_COUNT == 5:
+            self.label_19.setVisible(False)
+            self.Login_2.setVisible(False)
+
+            self.label_26.setVisible(False)
+            self.Login_3.setVisible(False)
+            QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
+            return
+
         self.check_passwd = 0
         # -------------------------------------------------------------
 
@@ -447,6 +468,12 @@ class qt(QMainWindow, form_class):
     """
 
     def LineEdit_pre_heat_road_temp_RET(self, input_num):
+        if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
+            return
+
         REGEX = "-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]"
         if not re.fullmatch(REGEX, str(input_num)):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
@@ -460,6 +487,12 @@ class qt(QMainWindow, form_class):
             self.lineEdit_pre_heat_road_temp.setText("")
 
     def LineEdit_heat_road_temp_RET(self, input_num):
+        if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
+            return
+
         REGEX = "-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]"
         if not re.fullmatch(REGEX, str(input_num)):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
@@ -473,6 +506,12 @@ class qt(QMainWindow, form_class):
             self.lineEdit_heat_road_temp.setText("")
 
     def LineEdit_set_road_humidity_RET(self, input_num):
+        if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
+            return
+
         REGEX = "[0-9]"
         if not re.fullmatch(REGEX, str(input_num)):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
@@ -486,6 +525,12 @@ class qt(QMainWindow, form_class):
             self.lineEdit_set_road_humidity.setText("")
 
     def LineEdit_pre_heat_on_time_RET(self, input_num):
+        if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
+            return
+
         REGEX = "[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]"
         if not re.fullmatch(REGEX, str(input_num)):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
@@ -499,6 +544,12 @@ class qt(QMainWindow, form_class):
             self.lineEdit_pre_heat_on_time.setText("")
 
     def LineEdit_heat_on_time_RET(self, input_num):
+        if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
+            return
+
         REGEX = "[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]"
         if not re.fullmatch(REGEX, str(input_num)):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
@@ -511,6 +562,12 @@ class qt(QMainWindow, form_class):
             self.lineEdit_heat_on_time.setText("")
 
     def LineEdit_set_air_temp_RET(self, input_num):
+        if self.flag_HEAT_ON == True:
+            self.label_warning.setVisible(True)
+            self.label_warning_timer.start(LABEL_WARNING_TIME)
+            print('Heat ON!!!')
+            return
+
         REGEX = "-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]"
         if not re.fullmatch(REGEX, str(input_num)):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
@@ -538,7 +595,7 @@ class qt(QMainWindow, form_class):
         SpecialSym =['$', '@', '#', '%']
         val = True
 
-        if len(passwd) < 8:
+        if len(passwd) < 9:
             print('length should be at least 8')
             val = False
 
@@ -567,7 +624,7 @@ class qt(QMainWindow, form_class):
     def login_matt(self):
         self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
 
-        for x in range(10):
+        for x in range(15):
             print(x)
             if self.sub_mqtt.login_ok == True:
                 self.tabWidget.setTabVisible(0, False)
@@ -620,13 +677,23 @@ class qt(QMainWindow, form_class):
         else: # normal mode
             saved_passwd = self.util_func.read_var('passwd')
             if not saved_passwd == input_num:
+                self.BOOT_FAIL_COUNT += 1
+
+                if self.BOOT_FAIL_COUNT == 5:
+                    self.Login_2.setVisible(False)
+                    self.Login_3.setVisible(False)
+                    QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
+                    self.util_func.save_var('BOOT_FAIL_COUNT', 5)
+                    return
+
                 self.Login_2.clear()
                 QMessageBox.warning(self, '패스워드 오류', '패스워드가 맞지 않습니다.')
                 return
             
 
         # self.sub_mqtt.client1.username_pw_set(username="smrs", password=input_num)
-        self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
+        # self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
+        self.sub_mqtt.client1.username_pw_set(username="x2yenv1", password='aabc12#')
 
         for x in range(10):
             print(x)
@@ -877,6 +944,7 @@ class qt(QMainWindow, form_class):
             self.sub_mqtt.send_msg(pub_root_topic + "CMD", json.dumps({'CH1': False, 'CH2': True}))
         elif button == self.btn_capture:
             print('pressed capture button')
+            QMessageBox.warning(self, '사진촬영', '사진촬영 명령이 전송되었습니다.')
             self.sub_mqtt.send_msg(pub_root_topic + "CAPTURE", json.dumps({'CAPTURE': True}))
         elif button == self.btn_INIT_SETTING:
             print('pressed INIT SETTING')

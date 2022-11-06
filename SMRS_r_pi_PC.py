@@ -44,12 +44,12 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-TEST = True
+TEST = False
 
 if TEST == False:
-    MQTT_CLIENT_ID = 'client_r_pi'
-    pub_root_topic = "R_PI/"
-    sub_root_topic = "APP/"
+    MQTT_CLIENT_ID = 'client_r_pi1'
+    pub_root_topic = "R_PI111/"
+    sub_root_topic = "APP111/"
 else:
     MQTT_CLIENT_ID = 'client_r_pi_test'
     pub_root_topic = "R_PI_test/"
@@ -440,12 +440,12 @@ class qt(QMainWindow, form_class):
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            'pre_heat_road_temp':   0,
-            'heat_road_temp':       0,
-            'set_road_humidity':    0,
-            'set_air_temp':         0,
-            'pre_heat_on_time':     0,
-            'heat_on_time':         0,
+            'pre_heat_road_temp':   3,
+            'heat_road_temp':       1,
+            'set_road_humidity':    3,
+            'set_air_temp':         -15,
+            'pre_heat_on_time':     60,
+            'heat_on_time':         90,
             'road_temp':            0,
             'road_humidity':        0,
             'air_temp':             0
@@ -453,6 +453,10 @@ class qt(QMainWindow, form_class):
 
         self.HEATING_TIME = 0
         self.PRE_HEATING_TIME = 0
+
+        if not os.path.isfile('config.dat'):
+            for key, value in self.config_dict.items():
+                self.util_func.save_var(key, value)
 
         # laod saved config data and display to QLCDNumber
         for key, value in self.config_dict.items():     # saved (LCDNumber name, value) in config.db
