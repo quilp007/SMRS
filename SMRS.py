@@ -252,6 +252,7 @@ class qt(QMainWindow, form_class):
             lambda: self.LineEdit_set_air_temp_RET(self.lineEdit_set_air_temp.text()))
 
         self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
+        self.Login_3.returnPressed.connect(lambda: self.LineEdit_Login_3_RET(self.Login_3.text()))
         self.textEdit_log.setReadOnly(True)
 
         # table Widget ------------------------------------------------------------------
@@ -346,20 +347,25 @@ class qt(QMainWindow, form_class):
 
         self.flag_HEAT_ON = False
 
-        """
+
+        # -------------------------------------------------------------
         self.util_func = Util_Function()
 
         self.BOOT_MODE = False
 
-        if not os.path.isfile('./boot.db'):
+        if not os.path.isfile('./boot.db') or self.util_func.read_var('passwd') == None:
             self.BOOT_MODE = True
             print('No boot.db file')
             # TODO
             # 패스워드재입력 라인데이트 setVisible(True)
         else:
             print('boot.db file is exist')
+            self.label_26.setVisible(False)
+            self.Login_3.setVisible(False)
             # 패스워드재입력 라인데이트 setVisible(False)
-        """
+        
+        self.check_passwd = 0
+        # -------------------------------------------------------------
 
     def onChangeTab(self):
         self.lineEdit_pre_heat_road_temp.setText("")
@@ -526,10 +532,42 @@ class qt(QMainWindow, form_class):
         else:
             event.ignore()
 
-    def LineEdit_Login_2_RET(self, input_num):
-        self.sub_mqtt.client1.username_pw_set(username="smrs", password=input_num)
+    # Function to validate the password
+    def password_check(self, passwd):
 
-        for x in range(5):
+        SpecialSym =['$', '@', '#', '%']
+        val = True
+
+        if len(passwd) < 8:
+            print('length should be at least 8')
+            val = False
+
+        if len(passwd) > 13:
+            print('length should be not be greater than 12')
+            val = False
+
+        if not any(char.isdigit() for char in passwd):
+            print('Password should have at least one numeral')
+            val = False
+
+        if not any(char.isupper() for char in passwd):
+            print('Password should have at least one uppercase letter')
+            val = False
+
+        if not any(char.islower() for char in passwd):
+            print('Password should have at least one lowercase letter')
+            val = False
+
+        if not any(char in SpecialSym for char in passwd):
+            print('Password should have at least one of the symbols $@#')
+            val = False
+        if val:
+            return val
+
+    def login_matt(self):
+        self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
+
+        for x in range(10):
             print(x)
             if self.sub_mqtt.login_ok == True:
                 self.tabWidget.setTabVisible(0, False)
@@ -541,12 +579,75 @@ class qt(QMainWindow, form_class):
                 # TODO: DB Connection???????
 
                 self.send_CMD('INIT')
+                print('MQTT connection sucssess!!')
                 return
 
-            time.sleep(1)
+            time.sleep(0.5)
+
+        # self.Login_2.clear()
+        QMessageBox.warning(self, '네트워크 오류', '서버와의 연결이 원활하지 않습니다\n잠시후 다시 로그인해주세요')
+        
+
+    def LineEdit_Login_3_RET(self, input_num):
+        if not self.password_check(input_num):
+            self.Login_3.clear()
+            QMessageBox.warning(self, '패스워드 오류', '패스워드 형식이 맞지 않습니다.!')
+            return
+        else:
+            print('Login_3 OK')
+            if self.check_passwd == input_num:
+                self.util_func.save_var('passwd', input_num)
+                
+                self.login_matt()
+
+                print('passwd OK')
+            else:
+                QMessageBox.warning(self, '패스워드 오류', '패스워드가 맞지 않습니다.!!')
+                self.Login_3.clear()
+                return
+
+    def LineEdit_Login_2_RET(self, input_num):
+        if not self.password_check(input_num):
+            self.Login_2.clear()
+            QMessageBox.warning(self, '패스워드 오류', '패스워드 형식이 맞지 않습니다.!')
+            return
+
+        if self.BOOT_MODE == True:
+            print('Login_2 OK')
+            self.check_passwd = input_num 
+            self.Login_3.setFocus()
+            return
+        else: # normal mode
+            saved_passwd = self.util_func.read_var('passwd')
+            if not saved_passwd == input_num:
+                self.Login_2.clear()
+                QMessageBox.warning(self, '패스워드 오류', '패스워드가 맞지 않습니다.')
+                return
+            
+
+        # self.sub_mqtt.client1.username_pw_set(username="smrs", password=input_num)
+        self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
+
+        for x in range(10):
+            print(x)
+            if self.sub_mqtt.login_ok == True:
+                self.tabWidget.setTabVisible(0, False)
+                self.tabWidget.setTabEnabled(1, True)
+                self.tabWidget.setTabEnabled(2, True)
+                self.tabWidget.setTabEnabled(3, True)
+                self.tabWidget.setTabEnabled(4, True)
+                # self.tabWidget.setCurrentIndex(1)
+                # TODO: DB Connection???????
+
+                self.send_CMD('INIT')
+                print('MQTT connection sucssess!!')
+                return
+
+            time.sleep(0.5)
 
         self.Login_2.clear()
-        QMessageBox.warning(self, '비밀번호오류', '비밀번호가 일치하지않습니다.다시 시도하세요.')
+        # QMessageBox.warning(self, '비밀번호오류', '비밀번호가 일치하지않습니다.다시 시도하세요.')
+        QMessageBox.warning(self, '네트워크 오류', '서버와의 연결이 원활하지 않습니다\n잠시후 다시 로그인해주세요')
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
