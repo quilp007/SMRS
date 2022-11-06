@@ -17,7 +17,7 @@ import pandas as pd
 import pyqtgraph as pg
 
 import time
-import pymongo
+#import pymongo
 import pprint
 
 import mqtt.sub_class as sc
@@ -25,7 +25,7 @@ import json
 import base64
 
 import cv2
-
+import re
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -186,6 +186,15 @@ class qt(QMainWindow, form_class):
         self.tabWidget.setTabEnabled(4, False)
         self.Login_2.setFocus()
 
+        #jw0829변경분
+        self.tabWidget.currentChanged.connect(self.onChangeTab) #탭변경시 필요한 초기화설정
+        self.setFixedSize(QSize(1000, 530))                     #사이즈고정
+        self.btn_PRE_HEAT_ON.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))#버튼 및 탭 마우스오버시 커서변경
+        self.btn_HEAT_ON.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_capture.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.tabWidget.tabBar().installEventFilter(self)
+        self.tabWidget.tabBar().setMouseTracking(True)
+
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
         self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
         self.btn_capture.clicked.connect(lambda: self.send_CMD(self.btn_capture))
@@ -304,7 +313,20 @@ class qt(QMainWindow, form_class):
         # time.sleep(3)
         # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
+        re = QtCore.QRegExp("-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]")
+        self.lineEdit_pre_heat_road_temp.setValidator(QtGui.QRegExpValidator(re))
+        re = QtCore.QRegExp("-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]")
+        self.lineEdit_heat_road_temp.setValidator(QtGui.QRegExpValidator(re))
+        re = QtCore.QRegExp("[0-9]")
+        self.lineEdit_set_road_humidity.setValidator(QtGui.QRegExpValidator(re))
+        re = QtCore.QRegExp("[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]")
+        self.lineEdit_pre_heat_on_time.setValidator(QtGui.QRegExpValidator(re))
+        re = QtCore.QRegExp("[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]")
+        self.lineEdit_heat_on_time.setValidator(QtGui.QRegExpValidator(re))
+        re = QtCore.QRegExp("-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]")
+        self.lineEdit_set_air_temp.setValidator(QtGui.QRegExpValidator(re))
 
+        """
         self.clickable(self.lineEdit_pre_heat_road_temp).connect(
             lambda: self.input_value(self.pre_heat_road_temp))  # pre_heat_road_temp
         self.clickable(self.lineEdit_heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))  # heat_road_temp
@@ -314,7 +336,7 @@ class qt(QMainWindow, form_class):
         self.clickable(self.lineEdit_pre_heat_on_time).connect(
             lambda: self.input_value(self.pre_heat_on_time))  # pre_heat_on_time
         self.clickable(self.lineEdit_heat_on_time).connect(lambda: self.input_value(self.heat_on_time))  # heat_on_time
-
+        """
         self.label_warning.setVisible(False)
         # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
         # self.lineEdit.setVisible(False)
@@ -339,6 +361,23 @@ class qt(QMainWindow, form_class):
             # 패스워드재입력 라인데이트 setVisible(False)
         """
 
+    def onChangeTab(self):
+        self.lineEdit_pre_heat_road_temp.setText("")
+        self.lineEdit_heat_road_temp.setText("")
+        self.lineEdit_set_road_humidity.setText("")
+        self.lineEdit_pre_heat_on_time.setText("")
+        self.lineEdit_heat_on_time.setText("")
+        self.lineEdit_set_air_temp.setText("")
+
+    def eventFilter(self, source, event):
+        if (event.type() == QtCore.QEvent.MouseMove and
+                source is self.tabWidget.tabBar()):
+            index = source.tabAt(event.pos())
+            if index >= 0 and index != source.currentIndex():
+                source.setCursor(QtCore.Qt.PointingHandCursor)
+            else:
+                source.setCursor(QtCore.Qt.ArrowCursor)
+        return super(qt, self).eventFilter(source, event)
 
     def label_warning_timeout_func(self):
         self.label_warning.setVisible(False)
@@ -402,108 +441,85 @@ class qt(QMainWindow, form_class):
     """
 
     def LineEdit_pre_heat_road_temp_RET(self, input_num):
-        if input_num.isdigit() == False:
-            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+        REGEX = "-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]"
+        if not re.fullmatch(REGEX, str(input_num)):
+            QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_pre_heat_road_temp.setText("")
-            return
-        elif int(input_num) < -30 or int(input_num) > 60:
-            QMessageBox.warning(self, 'Temp Error', '-30 <= Temp <= 60')
-            self.lineEdit_pre_heat_road_temp.setText("")
-            return
         else:
             self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
             self.findChild(QLCDNumber, "pre_heat_road_temp_2").display(input_num)
-            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"pre_heat_road_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + input_num
+            self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_road_temp": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + input_num
             self.textEdit_log.append(log_text)
             self.lineEdit_pre_heat_road_temp.setText("")
 
     def LineEdit_heat_road_temp_RET(self, input_num):
-        if input_num.isdigit() == False:
-            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+        REGEX = "-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]"
+        if not re.fullmatch(REGEX, str(input_num)):
+            QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_heat_road_temp.setText("")
-            return
-        elif int(input_num) < -30 or int(input_num) > 60:
-            QMessageBox.warning(self, 'Temp Error', '-30 <= Temp <= 60')
-            self.lineEdit_heat_road_temp.setText("")
-            return
         else:
             self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
             self.findChild(QLCDNumber, "heat_road_temp_2").display(input_num)
-            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"heat_road_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "heat_road_temp" + ' ' + input_num
+            self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_road_temp": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_road_temp" + ' ' + input_num
             self.textEdit_log.append(log_text)
             self.lineEdit_heat_road_temp.setText("")
 
     def LineEdit_set_road_humidity_RET(self, input_num):
-        if input_num.isdigit() == False:
-            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+        REGEX = "[0-9]"
+        if not re.fullmatch(REGEX, str(input_num)):
+            QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_set_road_humidity.setText("")
-            return
-        elif int(input_num) < 0 or int(input_num) > 9:
-            QMessageBox.warning(self, 'Humidity Error', ' 0 <= Humidity <= 9')
-            self.lineEdit_set_road_humidity.setText("")
-            return
         else:
             self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
             self.findChild(QLCDNumber, "set_road_humidity_2").display(input_num)
-            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"set_road_humidity": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "set_road_humidity" + ' ' + input_num
+            self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_road_humidity": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_road_humidity" + ' ' + input_num
             self.textEdit_log.append(log_text)
             self.lineEdit_set_road_humidity.setText("")
 
     def LineEdit_pre_heat_on_time_RET(self, input_num):
-        if input_num.isdigit() == False:
-            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+        REGEX = "[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]"
+        if not re.fullmatch(REGEX, str(input_num)):
+            QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_pre_heat_on_time.setText("")
-            return
-        elif int(input_num) < 1 or int(input_num) > 120:
-            QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
-            self.lineEdit_pre_heat_on_time.setText("")
-            return
         else:
             self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
-            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"pre_heat_on_time": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "pre_heat_on_time" + ' ' + input_num
+            self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_on_time": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S',
+                                     time.localtime(time.time())) + ' ' + "pre_heat_on_time" + ' ' + input_num
             self.textEdit_log.append(log_text)
             self.lineEdit_pre_heat_on_time.setText("")
 
     def LineEdit_heat_on_time_RET(self, input_num):
-        if input_num.isdigit() == False:
-            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+        REGEX = "[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]"
+        if not re.fullmatch(REGEX, str(input_num)):
+            QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_heat_on_time.setText("")
-            return
-        elif int(input_num) < 1 or int(input_num) > 120:
-            QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
-            self.lineEdit_heat_on_time.setText("")
-            return
         else:
             self.findChild(QLCDNumber, "heat_on_time").display(input_num)
-            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"heat_on_time": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "heat_on_time" + ' ' + input_num
+            self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_on_time": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_on_time" + ' ' + input_num
             self.textEdit_log.append(log_text)
             self.lineEdit_heat_on_time.setText("")
 
     def LineEdit_set_air_temp_RET(self, input_num):
-        if input_num.isdigit() == False:
-            QMessageBox.warning(self, 'Input Error', '숫자만 입력해주세요.')
+        REGEX = "-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]"
+        if not re.fullmatch(REGEX, str(input_num)):
+            QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_set_air_temp.setText("")
-            return
-        elif int(input_num) < -30 or int(input_num) > 60:
-            QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
-            self.lineEdit_set_air_temp.setText("")
-            return
         else:
             self.findChild(QLCDNumber, "set_air_temp").display(input_num)
             self.findChild(QLCDNumber, "set_air_temp_2").display(input_num)
-            self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({"set_air_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "set_air_temp" + ' ' + input_num
+            self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_air_temp": input_num}))
+            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_air_temp" + ' ' + input_num
             self.textEdit_log.append(log_text)
             self.lineEdit_set_air_temp.setText("")
 
     def closeEvent(self, event):
-        quit_msg = "Want to exit?"
-        reply = QMessageBox.question(self, 'Message', quit_msg, QMessageBox.Yes, QMessageBox.No)
+        quit_msg = "종료하시겠습니까?"
+        reply = QMessageBox.question(self, '종료알림', quit_msg, QMessageBox.Yes, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
             event.accept()
@@ -530,7 +546,7 @@ class qt(QMainWindow, form_class):
             time.sleep(1)
 
         self.Login_2.clear()
-        QMessageBox.warning(self, 'Wrong Password', 'Try Again')
+        QMessageBox.warning(self, '비밀번호오류', '비밀번호가 일치하지않습니다.다시 시도하세요.')
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
