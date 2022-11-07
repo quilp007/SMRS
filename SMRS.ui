@@ -100,7 +100,7 @@
    </property>
    <widget class="QWidget" name="Login">
     <attribute name="title">
-     <string>Login</string>
+     <string>로그인</string>
     </attribute>
     <widget class="QLabel" name="label_19">
      <property name="geometry">
@@ -260,7 +260,7 @@
       <normalon>icon/main_on.png</normalon>icon/main_off.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Current Status</string>
+     <string>현재상태</string>
     </attribute>
     <widget class="QFrame" name="frame">
      <property name="enabled">
@@ -1102,7 +1102,7 @@
       <normaloff>icon/parameter_on.png</normaloff>icon/parameter_on.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Settings</string>
+     <string>설정</string>
     </attribute>
     <widget class="QFrame" name="frame_2">
      <property name="enabled">
@@ -1147,14 +1147,14 @@
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="2" column="8" rowspan="2">
+        <item row="3" column="8" rowspan="2">
          <widget class="QLabel" name="label_64">
           <property name="text">
            <string>min</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="2" rowspan="2">
+        <item row="6" column="2" rowspan="2">
          <widget class="QLCDNumber" name="set_road_humidity">
           <property name="font">
            <font>
@@ -1171,7 +1171,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="5" rowspan="2">
+        <item row="6" column="5" rowspan="2">
          <widget class="QLabel" name="label_63">
           <property name="font">
            <font>
@@ -1192,7 +1192,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="5" rowspan="2">
+        <item row="3" column="5" rowspan="2">
          <widget class="QLabel" name="label_59">
           <property name="font">
            <font>
@@ -1213,7 +1213,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="7" column="1">
          <widget class="QLineEdit" name="lineEdit_set_road_humidity">
           <property name="minimumSize">
            <size>
@@ -1236,7 +1236,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="7" rowspan="2">
+        <item row="6" column="7" rowspan="2">
          <widget class="QLCDNumber" name="set_air_temp">
           <property name="minimumSize">
            <size>
@@ -1259,7 +1259,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="6">
+        <item row="7" column="6">
          <widget class="QLineEdit" name="lineEdit_set_air_temp">
           <property name="minimumSize">
            <size>
@@ -1282,7 +1282,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="7" rowspan="2">
+        <item row="3" column="7" rowspan="2">
          <widget class="QLCDNumber" name="heat_on_time">
           <property name="minimumSize">
            <size>
@@ -1305,7 +1305,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="8" rowspan="2">
+        <item row="6" column="8" rowspan="2">
          <widget class="QLabel" name="label_58">
           <property name="text">
            <string>℃</string>
@@ -1351,7 +1351,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0" rowspan="2">
+        <item row="6" column="0" rowspan="2">
          <widget class="QLabel" name="label_57">
           <property name="font">
            <font>
@@ -1393,7 +1393,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2" rowspan="2">
+        <item row="3" column="2" rowspan="2">
          <widget class="QLCDNumber" name="heat_road_temp">
           <property name="minimumSize">
            <size>
@@ -1416,7 +1416,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="6">
+        <item row="6" column="6">
          <widget class="QLabel" name="label_66">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1458,7 +1458,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QLabel" name="label_70">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1477,7 +1477,7 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="6">
+        <item row="3" column="6">
          <widget class="QLabel" name="label_69">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1561,7 +1561,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="6">
+        <item row="4" column="6">
          <widget class="QLineEdit" name="lineEdit_heat_on_time">
           <property name="minimumSize">
            <size>
@@ -1597,7 +1597,7 @@
           </property>
          </spacer>
         </item>
-        <item row="2" column="0" rowspan="2">
+        <item row="3" column="0" rowspan="2">
          <widget class="QLabel" name="label_61">
           <property name="font">
            <font>
@@ -1618,14 +1618,14 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="3" rowspan="2">
+        <item row="6" column="3" rowspan="2">
          <widget class="QLabel" name="label_65">
           <property name="text">
            <string>LV</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="6" column="1">
          <widget class="QLabel" name="label_74">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1640,18 +1640,18 @@
            </size>
           </property>
           <property name="text">
-           <string>범위(-30~60)</string>
+           <string>범위(0~9)</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="3" rowspan="2">
+        <item row="3" column="3" rowspan="2">
          <widget class="QLabel" name="label_67">
           <property name="text">
            <string>℃</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="4" rowspan="2">
+        <item row="3" column="4" rowspan="2">
          <spacer name="horizontalSpacer_8">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -1664,7 +1664,7 @@
           </property>
          </spacer>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <widget class="QLineEdit" name="lineEdit_heat_road_temp">
           <property name="minimumSize">
            <size>
@@ -1708,7 +1708,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="4" rowspan="2">
+        <item row="6" column="4" rowspan="2">
          <spacer name="horizontalSpacer_9">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -1750,8 +1750,8 @@
      <widget class="QPushButton" name="btn_HEAT_ON">
       <property name="geometry">
        <rect>
-        <x>500</x>
-        <y>360</y>
+        <x>620</x>
+        <y>340</y>
         <width>251</width>
         <height>91</height>
        </rect>
@@ -1776,44 +1776,11 @@
        <string>강제 본 가동</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_warning">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>270</y>
-        <width>311</width>
-        <height>131</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Arial</family>
-        <pointsize>10</pointsize>
-        <weight>50</weight>
-        <italic>false</italic>
-        <bold>false</bold>
-        <underline>false</underline>
-        <strikeout>false</strikeout>
-        <stylestrategy>PreferDefault</stylestrategy>
-        <kerning>true</kerning>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color:rgb(255, 255, 0)</string>
-      </property>
-      <property name="text">
-       <string>값을 변경할 수 없습니다.
-(율성시스템이 작동 중입니다!)</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
      <widget class="QPushButton" name="btn_PRE_HEAT_ON">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>360</y>
+        <x>100</x>
+        <y>340</y>
         <width>271</width>
         <height>91</height>
        </rect>
@@ -1838,6 +1805,39 @@
        <string>강제 예열 가동</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label_warning">
+      <property name="geometry">
+       <rect>
+        <x>400</x>
+        <y>350</y>
+        <width>183</width>
+        <height>79</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Arial</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <stylestrategy>PreferDefault</stylestrategy>
+        <kerning>true</kerning>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(255, 255, 0)</string>
+      </property>
+      <property name="text">
+       <string>값을 변경할 수 없습니다.
+(융설시스템이 작동 중입니다!)</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="Camera">
@@ -1846,7 +1846,7 @@
       <normaloff>icon/camera.png</normaloff>icon/camera.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Camera</string>
+     <string>카메라</string>
     </attribute>
     <widget class="QFrame" name="frame_3">
      <property name="enabled">
@@ -1891,7 +1891,7 @@
       <property name="font">
        <font>
         <family>Arial</family>
-        <pointsize>9</pointsize>
+        <pointsize>10</pointsize>
         <weight>75</weight>
         <italic>false</italic>
         <bold>true</bold>
@@ -1902,7 +1902,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Capture</string>
+       <string>사진촬영</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_cam_2">
@@ -1968,7 +1968,7 @@
       <normaloff>icon/engineer_on.png</normaloff>icon/engineer_on.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Admin</string>
+     <string>로그</string>
     </attribute>
     <widget class="QTextEdit" name="textEdit_log">
      <property name="geometry">

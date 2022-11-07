@@ -26,6 +26,8 @@ import base64
 
 import cv2
 import re
+from winreg import *
+
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -55,7 +57,7 @@ mqtt_port = 1883
 TEST = False
 
 if TEST == False:
-    MQTT_CLIENT_ID = 'client_pc'
+    MQTT_CLIENT_ID = 'client_pc1'
     pub_root_topic = "APP111/"
     sub_root_topic = "R_PI111/"
 else:
@@ -349,19 +351,27 @@ class qt(QMainWindow, form_class):
 
 
         # -------------------------------------------------------------
-        self.util_func = Util_Function()
+        _key = HKEY_CURRENT_USER
+        _subkey = "Software\\JinTechTex\\Program"
+        # 레지스트리 등록 or Open
+        self.registry = CreateKey(_key, _subkey)
+
+        # self.util_func = Util_Function()
 
         self.BOOT_MODE = False
         self.BOOT_FAIL_COUNT = 0
 
-        if not os.path.isdir('./video'):
-            os.mkdir('./video')
+        # if not os.path.isdir('./video'):
+        #     os.mkdir('./video')
 
 
         # if (not os.path.isfile('./boot.dat')) or (not os.path.isfile('boot.db')) or self.util_func.read_var('passwd') == None:
-        if not os.path.isfile('./boot.dat'):
+        # if not os.path.isfile('./boot.dat'):
+        (dataValue, dataType) = QueryValueEx(self.registry, "boot_mode")
+        if dataValue == 1:
             self.BOOT_MODE = True
             print('No boot.db file')
+            SetValueEx(self.registry, "boot_mode", 0, REG_DWORD, 0)
             # TODO
             # 패스워드재입력 라인데이트 setVisible(True)
         else:
@@ -371,12 +381,13 @@ class qt(QMainWindow, form_class):
             # 패스워드재입력 라인데이트 setVisible(False)
 
         try:
-            BOOT_FAIL_COUNT = self.util_func.read_var('BOOT_FAIL_COUNT')
+            # BOOT_FAIL_COUNT = self.util_func.read_var('BOOT_FAIL_COUNT')
+            (self.BOOT_FAIL_COUNT, dataType) = QueryValueEx(self.registry, "boot_fail_count")
         except:
             print('no BOOT_FAIL_COUNT')
             pass
 
-        if BOOT_FAIL_COUNT == 5:
+        if self.BOOT_FAIL_COUNT == 5:
             self.label_19.setVisible(False)
             self.Login_2.setVisible(False)
 
@@ -592,7 +603,7 @@ class qt(QMainWindow, form_class):
     # Function to validate the password
     def password_check(self, passwd):
 
-        SpecialSym =['$', '@', '#', '%']
+        SpecialSym =['!', '@', '#', '$', '%', '^', '&', '*']
         val = True
 
         if len(passwd) < 9:
@@ -653,8 +664,9 @@ class qt(QMainWindow, form_class):
         else:
             print('Login_3 OK')
             if self.check_passwd == input_num:
-                self.util_func.save_var('passwd', input_num)
-                
+                # self.util_func.save_var('passwd', input_num)
+                SetValueEx(self.registry, "password", 0, REG_SZ, input_num)
+
                 self.login_matt()
 
                 print('passwd OK')
@@ -675,7 +687,8 @@ class qt(QMainWindow, form_class):
             self.Login_3.setFocus()
             return
         else: # normal mode
-            saved_passwd = self.util_func.read_var('passwd')
+            # saved_passwd = self.util_func.read_var('passwd')
+            (saved_passwd, dataType) = QueryValueEx(self.registry, "password")
             if not saved_passwd == input_num:
                 self.BOOT_FAIL_COUNT += 1
 
@@ -683,7 +696,8 @@ class qt(QMainWindow, form_class):
                     self.Login_2.setVisible(False)
                     self.Login_3.setVisible(False)
                     QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
-                    self.util_func.save_var('BOOT_FAIL_COUNT', 5)
+                    # self.util_func.save_var('BOOT_FAIL_COUNT', 5)
+                    SetValueEx(self.registry, "boot_fail_count", 0, REG_DWORD, self.BOOT_FAIL_COUNT)
                     return
 
                 self.Login_2.clear()
