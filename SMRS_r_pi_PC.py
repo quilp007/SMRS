@@ -103,9 +103,11 @@ def resource_path(*relative_Path_AND_File):
 
     return os.path.join(base_path, *relative_Path_AND_File)
 
-# form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
-form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
-
+os_name = os.uname()[0]
+if os_name == 'Darwin' or os_name == 'Linux':
+    form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
+else:
+    form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
