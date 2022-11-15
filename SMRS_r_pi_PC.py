@@ -103,11 +103,7 @@ def resource_path(*relative_Path_AND_File):
 
     return os.path.join(base_path, *relative_Path_AND_File)
 
-os_name = os.uname()[0]
-if os_name == 'Darwin' or os_name == 'Linux':
-    form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
-else:
-    form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
+form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -652,6 +648,19 @@ class qt(QMainWindow, form_class):
 
         input_num = int(input_num)
         print(type(input_num))
+
+        if self.temp_lcdNumber == self.pre_heat_road_temp or self.temp_lcdNumber == self.heat_road_temp or self.temp_lcdNumber == self.set_air_temp:
+            if input_num > 60 or input_num < -30:
+                return
+        elif self.temp_lcdNumber == self.set_road_humidity:
+            if input_num > 9 or input_num < 0:
+                return
+        elif self.temp_lcdNumber == self.pre_heat_on_time or self.temp_lcdNumber == self.heat_on_time:
+            if input_num > 120 or input_num < 1:
+                return
+
+
+
         self.temp_lcdNumber.display(input_num)
 
         lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key 
