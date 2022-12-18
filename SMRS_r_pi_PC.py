@@ -27,6 +27,23 @@ import mqtt.sub_class as sc
 import json
 import serial
 import base64
+import argparse
+import platform
+
+ARG_TEST = False
+TEST = False
+CERTI = True
+
+if ARG_TEST:
+    parser = argparse.ArgumentParser(description='SMRS raspberry pi for PC')
+    parser.add_argument('-id', '--arg1', help='arg for mqtt id/publisher topic')
+    args = parser.parse_args()
+    if args.arg1 != None:
+        print('arg1=', args.arg1)
+        DEVICE_ID = args.arg1
+    else:
+        print('arg is None!! please input arg!!')
+        exit(1)
 
 USB_SERIAL = False
 
@@ -44,16 +61,22 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-TEST = False
+if ARG_TEST:
+    MQTT_CLIENT_ID = 'client_' + DEVICE_ID
+    pub_root_topic = "PUB_" + DEVICE_ID + "/"
+    sub_root_topic = "SUB_" + DEVICE_ID + "/"
 
-if TEST == False:
-    MQTT_CLIENT_ID = 'client_r_pi1'
-    pub_root_topic = "R_PI111/"
-    sub_root_topic = "APP111/"
+    print(pub_root_topic)
+    print(sub_root_topic)
 else:
-    MQTT_CLIENT_ID = 'client_r_pi_test'
-    pub_root_topic = "R_PI_test/"
-    sub_root_topic = "APP_test/"
+    if TEST == False:
+        MQTT_CLIENT_ID = 'client_r_pi1'
+        pub_root_topic = "R_PI111/"
+        sub_root_topic = "APP111/"
+    else:
+        MQTT_CLIENT_ID = 'client_r_pi_test'
+        pub_root_topic = "R_PI_test/"
+        sub_root_topic = "APP_test/"
 
 # TTA version is TEST = True, MQTT ID no is 1
 
@@ -103,7 +126,12 @@ def resource_path(*relative_Path_AND_File):
 
     return os.path.join(base_path, *relative_Path_AND_File)
 
-form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
+
+if CERTI == True and platform.system() == 'Windows':
+    form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS_r_pi.ui"))[0]
+else:
+    form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
+
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)

@@ -17,7 +17,7 @@ import pandas as pd
 import pyqtgraph as pg
 
 import time
-#import pymongo
+import pymongo
 import pprint
 
 import mqtt.sub_class as sc
@@ -26,13 +26,17 @@ import base64
 
 import cv2
 import re
-from winreg import *
+import platform
+
+if platform.system() == 'Windows':
+    from winreg import *
 
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-ENABLE_MONGODB = False
+# ENABLE_MONGODB = False
+ENABLE_MONGODB = True
 PASSWORD_2 = "1234"
 
 # x_size = 360# graph's x size
@@ -55,6 +59,7 @@ mongo_port = 27017
 mqtt_port = 1883
 
 TEST = False
+CERTI = True
 
 if TEST == False:
     MQTT_CLIENT_ID = 'client_pc1'
@@ -99,9 +104,10 @@ def resource_path(*relative_Path_AND_File):
 # form_class = uic.loadUiType(resource_path("SMRS.ui"))[0]
 
 
-form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
-
-# form_class = uic.loadUiType('SMRS.ui')[0]
+if CERTI == True and platform.system() == 'Windows':
+    form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
+else:
+    form_class = uic.loadUiType('SMRS.ui')[0]
 
 # --------------------------------------------------------------
 # [THREAD]
@@ -308,55 +314,40 @@ class qt(QMainWindow, form_class):
         self.log_flag = False
 
         ################################################
-        # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + 'DATA')
-        # self.sub_mqtt = sc.SUB_MQTT(_topic = sub_root_topic + '+', _mqtt_debug = False)
-        # self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+', _client='client_pc', _mqtt_debug = DEBUG_PRINT)
         self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
                                     _mqtt_debug=DEBUG_PRINT)
         # time.sleep(3)
         # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
+
+        # check validation of input value
         re = QtCore.QRegExp("-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]")
         self.lineEdit_pre_heat_road_temp.setValidator(QtGui.QRegExpValidator(re))
-        re = QtCore.QRegExp("-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]")
         self.lineEdit_heat_road_temp.setValidator(QtGui.QRegExpValidator(re))
-        re = QtCore.QRegExp("[0-9]")
-        self.lineEdit_set_road_humidity.setValidator(QtGui.QRegExpValidator(re))
-        re = QtCore.QRegExp("[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]")
-        self.lineEdit_pre_heat_on_time.setValidator(QtGui.QRegExpValidator(re))
-        re = QtCore.QRegExp("[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]")
-        self.lineEdit_heat_on_time.setValidator(QtGui.QRegExpValidator(re))
-        re = QtCore.QRegExp("-[3][0]|-[1-2][0-9]|-[1-9]|[0-9]|[1-5][0-9]|[6][0]")
         self.lineEdit_set_air_temp.setValidator(QtGui.QRegExpValidator(re))
 
-        """
-        self.clickable(self.lineEdit_pre_heat_road_temp).connect(
-            lambda: self.input_value(self.pre_heat_road_temp))  # pre_heat_road_temp
-        self.clickable(self.lineEdit_heat_road_temp).connect(lambda: self.input_value(self.heat_road_temp))  # heat_road_temp
-        self.clickable(self.lineEdit_set_road_humidity).connect(
-            lambda: self.input_value(self.set_road_humidity))  # set_road_humidity
-        self.clickable(self.lineEdit_set_air_temp).connect(lambda: self.input_value(self.set_air_temp))  # set_air_temp
-        self.clickable(self.lineEdit_pre_heat_on_time).connect(
-            lambda: self.input_value(self.pre_heat_on_time))  # pre_heat_on_time
-        self.clickable(self.lineEdit_heat_on_time).connect(lambda: self.input_value(self.heat_on_time))  # heat_on_time
-        """
+        re = QtCore.QRegExp("[1-9]|[1-9][0-9]|[1][0-1][0-9]|[1][2][0]")
+        self.lineEdit_pre_heat_on_time.setValidator(QtGui.QRegExpValidator(re))
+        self.lineEdit_heat_on_time.setValidator(QtGui.QRegExpValidator(re))
+
+        re = QtCore.QRegExp("[0-9]")
+        self.lineEdit_set_road_humidity.setValidator(QtGui.QRegExpValidator(re))
+
         self.label_warning.setVisible(False)
-        # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
-        # self.lineEdit.setVisible(False)
 
         # limit line to 150 (log textEdit)
         self.textEdit_log.document().setMaximumBlockCount(150)
 
         self.flag_HEAT_ON = False
 
-
         # -------------------------------------------------------------
-        _key = HKEY_CURRENT_USER
-        _subkey = "Software\\JinTechTex\\Program"
-        # 레지스트리 등록 or Open
-        self.registry = CreateKey(_key, _subkey)
+        if platform.system() == 'Windows':
+            _key = HKEY_CURRENT_USER
+            _subkey = "Software\\JinTechTex\\Program"
+            # 레지스트리 등록 or Open
+            self.registry = CreateKey(_key, _subkey)
 
-        # self.util_func = Util_Function()
+        self.util_func = Util_Function()
 
         self.BOOT_MODE = False
         self.BOOT_FAIL_COUNT = 0
@@ -364,25 +355,12 @@ class qt(QMainWindow, form_class):
         # if not os.path.isdir('./video'):
         #     os.mkdir('./video')
 
-
-        # if (not os.path.isfile('./boot.dat')) or (not os.path.isfile('boot.db')) or self.util_func.read_var('passwd') == None:
-        # if not os.path.isfile('./boot.dat'):
-        (dataValue, dataType) = QueryValueEx(self.registry, "boot_mode")
-        if dataValue == 1:
-            self.BOOT_MODE = True
-            print('No boot.db file')
-            SetValueEx(self.registry, "boot_mode", 0, REG_DWORD, 0)
-            # TODO
-            # 패스워드재입력 라인데이트 setVisible(True)
-        else:
-            print('boot.db file is exist')
-            self.label_26.setVisible(False)
-            self.Login_3.setVisible(False)
-            # 패스워드재입력 라인데이트 setVisible(False)
-
+        # check login fail ( if over 5, return) --------------------------------------------------------------------------------
         try:
-            # BOOT_FAIL_COUNT = self.util_func.read_var('BOOT_FAIL_COUNT')
-            (self.BOOT_FAIL_COUNT, dataType) = QueryValueEx(self.registry, "boot_fail_count")
+            if platform.system() == 'Windows':
+                (self.BOOT_FAIL_COUNT, dataType) = QueryValueEx(self.registry, "boot_fail_count")
+            else:
+                BOOT_FAIL_COUNT = self.util_func.read_var('BOOT_FAIL_COUNT')
         except:
             print('no BOOT_FAIL_COUNT')
             pass
@@ -395,6 +373,33 @@ class qt(QMainWindow, form_class):
             self.Login_3.setVisible(False)
             QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
             return
+
+        # load BOOT_MODE ------------------------------------------------------------------------------------------------------
+        if platform.system() == 'Windows':
+            (dataValue, dataType) = QueryValueEx(self.registry, "boot_mode")
+            if dataValue == 1:
+                self.BOOT_MODE = True
+                print('No boot.db file')
+                SetValueEx(self.registry, "boot_mode", 0, REG_DWORD, 0)
+                # TODO
+                # 패스워드재입력 라인데이트 setVisible(True)
+            else:
+                print('boot.db file is exist')
+                self.label_26.setVisible(False)
+                self.Login_3.setVisible(False)
+                # 패스워드재입력 라인데이트 setVisible(False)
+
+        else:   # Linux, Mac
+            # if not os.path.isfile('./boot.dat'):
+            if (platform.system()== 'Linux' and (not os.path.isfile('./boot.dat'))) or (platform.system() == 'Darwin' and  (not os.path.isfile('./boot.db'))) or self.util_func.read_var('passwd') == None:
+                self.BOOT_MODE = True
+                print('No boot.db file')
+            else:
+                print('boot.db file is exist')
+                self.label_26.setVisible(False)
+                self.Login_3.setVisible(False)
+
+
 
         self.check_passwd = 0
         # -------------------------------------------------------------
@@ -423,59 +428,13 @@ class qt(QMainWindow, form_class):
     """
     def LineEdit_RET(self, input_num):
         # 1. Display in lcdNumber => after receive mqtt msg
-        # self.temp_lcdNumber.display(input_num)
-
-        if 'temp' in self.temp_lcdNumber.objectName():
-            if int(input_num) < -30 or int(input_num) > 60:
-                QMessageBox.warning(self, 'Temp Error', ' -30 <= Temp <= 60')
-                return
-            elif self.temp_lcdNumber.objectName() == "pre_heat_road_temp":
-                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
-            elif self.temp_lcdNumber.objectName() == "heat_road_temp":
-                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
-            elif self.temp_lcdNumber.objectName() == "set_air_temp":
-                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
-
-        if 'humidity' in self.temp_lcdNumber.objectName():
-            if int(input_num) < 0 or int(input_num) > 9:
-                QMessageBox.warning(self, 'Humidity Error', ' 0 <= Humidity <= 9')
-                return
-            elif self.temp_lcdNumber.objectName() == "set_road_humidity":
-                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
-
-        if 'time' in self.temp_lcdNumber.objectName():
-            if int(input_num) < 1 or int(input_num) > 120:
-                QMessageBox.warning(self, 'Time Error', ' 1 <= Temp <= 120')
-                return
-            elif self.temp_lcdNumber.objectName() == "pre_heat_on_time":
-                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
-            elif self.temp_lcdNumber.objectName() == "heat_on_time":
-                self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()).display(input_num)
-
-        lcdNum = self.findChild(QLCDNumber, self.temp_lcdNumber.objectName()+'_2')    # find LCDNumber with key
-        if (lcdNum is not None):
-            lcdNum.display(input_num)
-
         # 2. update Global Config Variable
-        variable_name = self.temp_lcdNumber.objectName()
-
         # 3. send mqtt msg
-        self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps({variable_name: input_num}))
-
         # 4. update DB
-
         # 5. save config 
-
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
-
         # log
-        log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + variable_name + ' ' + input_num
-        self.textEdit_log.append(log_text)
-
-
-        self.lineEdit.setVisible(False)
-        self.lineEdit.setText("")
     """
 
     def LineEdit_pre_heat_road_temp_RET(self, input_num):
@@ -632,7 +591,7 @@ class qt(QMainWindow, form_class):
         if val:
             return val
 
-    def login_matt(self):
+    def login_mqtt(self):
         self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
 
         for x in range(15):
@@ -664,10 +623,12 @@ class qt(QMainWindow, form_class):
         else:
             print('Login_3 OK')
             if self.check_passwd == input_num:
-                # self.util_func.save_var('passwd', input_num)
-                SetValueEx(self.registry, "password", 0, REG_SZ, input_num)
+                if platform.system() == 'Windows':
+                    SetValueEx(self.registry, "password", 0, REG_SZ, input_num)
+                else:
+                    self.util_func.save_var('passwd', input_num)
 
-                self.login_matt()
+                self.login_mqtt()
 
                 print('passwd OK')
             else:
@@ -687,8 +648,11 @@ class qt(QMainWindow, form_class):
             self.Login_3.setFocus()
             return
         else: # normal mode
-            # saved_passwd = self.util_func.read_var('passwd')
-            (saved_passwd, dataType) = QueryValueEx(self.registry, "password")
+            if platform.system() == 'Windows':
+                (saved_passwd, dataType) = QueryValueEx(self.registry, "password")
+            else:
+                saved_passwd = self.util_func.read_var('passwd')
+
             if not saved_passwd == input_num:
                 self.BOOT_FAIL_COUNT += 1
 
@@ -696,8 +660,12 @@ class qt(QMainWindow, form_class):
                     self.Login_2.setVisible(False)
                     self.Login_3.setVisible(False)
                     QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
-                    # self.util_func.save_var('BOOT_FAIL_COUNT', 5)
-                    SetValueEx(self.registry, "boot_fail_count", 0, REG_DWORD, self.BOOT_FAIL_COUNT)
+
+                    if platform.system() == 'Windows':
+                        SetValueEx(self.registry, "boot_fail_count", 0, REG_DWORD, self.BOOT_FAIL_COUNT)
+                    else:
+                        self.util_func.save_var('BOOT_FAIL_COUNT', 5)
+
                     return
 
                 self.Login_2.clear()
@@ -1008,6 +976,7 @@ if __name__ == "__main__":
 
         db = conn.get_database('road_1')
         collection = db.get_collection('device_1')
+        signup_col = db.get_collection('signup')
 
     # results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     # for result in results:
