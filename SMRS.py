@@ -35,6 +35,7 @@ if platform.system() == 'Windows':
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
+ENABLE_MQTT = False
 # ENABLE_MONGODB = False
 ENABLE_MONGODB = True
 PASSWORD_2 = "1234"
@@ -155,11 +156,11 @@ class Util_Function:
         QtTest.QTest.qWait(ms)
 
     def save_var(self, key, value):
-        with shelve.open('boot') as f:
+        with shelve.open('config') as f:
             f[key] = value
 
     def read_var(self, key):
-        with shelve.open('boot') as f:
+        with shelve.open('config') as f:
             try:
                 temp = f[key]
                 # print(f[key])
@@ -192,7 +193,8 @@ class qt(QMainWindow, form_class):
         self.tabWidget.setTabEnabled(2, False)
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
-        self.Login_2.setFocus()
+        # self.Login_2.setFocus()
+        self.le_id.setFocus()
 
         #jw0829변경분
         self.tabWidget.currentChanged.connect(self.onChangeTab) #탭변경시 필요한 초기화설정
@@ -259,6 +261,9 @@ class qt(QMainWindow, form_class):
         self.lineEdit_set_air_temp.returnPressed.connect(
             lambda: self.LineEdit_set_air_temp_RET(self.lineEdit_set_air_temp.text()))
 
+        self.le_id.returnPressed.connect(lambda: self.LineEdit_Login_id_RET(self.le_id.text()))
+        self.le_id.editingFinished.connect(lambda: self.LineEdit_Login_id_RET(self.le_id.text()))
+
         self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
         self.Login_3.returnPressed.connect(lambda: self.LineEdit_Login_3_RET(self.Login_3.text()))
         self.textEdit_log.setReadOnly(True)
@@ -314,7 +319,8 @@ class qt(QMainWindow, form_class):
         self.log_flag = False
 
         ################################################
-        self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
+        if ENABLE_MQTT:
+            self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
                                     _mqtt_debug=DEBUG_PRINT)
         # time.sleep(3)
         # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
@@ -341,67 +347,21 @@ class qt(QMainWindow, form_class):
         self.flag_HEAT_ON = False
 
         # -------------------------------------------------------------
-        if platform.system() == 'Windows':
-            _key = HKEY_CURRENT_USER
-            _subkey = "Software\\JinTechTex\\Program"
-            # 레지스트리 등록 or Open
-            self.registry = CreateKey(_key, _subkey)
+        self.NO_PASSWD_MODE = False
+
+        self.check_passwd = 0
+        self.login_id = 0
 
         self.util_func = Util_Function()
 
-        self.BOOT_MODE = False
-        self.BOOT_FAIL_COUNT = 0
+        passwd = self.util_func.read_var('enerpia_1')
+        if passwd == None:
+            print('no cfg file or no id\passwd')
+            self.NO_PASSWD_MODE = True
 
-        # if not os.path.isdir('./video'):
-        #     os.mkdir('./video')
-
-        # check login fail ( if over 5, return) --------------------------------------------------------------------------------
-        try:
-            if platform.system() == 'Windows':
-                (self.BOOT_FAIL_COUNT, dataType) = QueryValueEx(self.registry, "boot_fail_count")
-            else:
-                BOOT_FAIL_COUNT = self.util_func.read_var('BOOT_FAIL_COUNT')
-        except:
-            print('no BOOT_FAIL_COUNT')
-            pass
-
-        if self.BOOT_FAIL_COUNT == 5:
-            self.label_19.setVisible(False)
-            self.Login_2.setVisible(False)
-
+        else:
             self.label_26.setVisible(False)
             self.Login_3.setVisible(False)
-            QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
-            return
-
-        # load BOOT_MODE ------------------------------------------------------------------------------------------------------
-        if platform.system() == 'Windows':
-            (dataValue, dataType) = QueryValueEx(self.registry, "boot_mode")
-            if dataValue == 1:
-                self.BOOT_MODE = True
-                print('No boot.db file')
-                SetValueEx(self.registry, "boot_mode", 0, REG_DWORD, 0)
-                # TODO
-                # 패스워드재입력 라인데이트 setVisible(True)
-            else:
-                print('boot.db file is exist')
-                self.label_26.setVisible(False)
-                self.Login_3.setVisible(False)
-                # 패스워드재입력 라인데이트 setVisible(False)
-
-        else:   # Linux, Mac
-            # if not os.path.isfile('./boot.dat'):
-            if (platform.system()== 'Linux' and (not os.path.isfile('./boot.dat'))) or (platform.system() == 'Darwin' and  (not os.path.isfile('./boot.db'))) or self.util_func.read_var('passwd') == None:
-                self.BOOT_MODE = True
-                print('No boot.db file')
-            else:
-                print('boot.db file is exist')
-                self.label_26.setVisible(False)
-                self.Login_3.setVisible(False)
-
-
-
-        self.check_passwd = 0
         # -------------------------------------------------------------
 
     def onChangeTab(self):
@@ -431,7 +391,7 @@ class qt(QMainWindow, form_class):
         # 2. update Global Config Variable
         # 3. send mqtt msg
         # 4. update DB
-        # 5. save config 
+        # 5. save config
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
         # log
@@ -591,29 +551,41 @@ class qt(QMainWindow, form_class):
         if val:
             return val
 
+    def set_Tab_visible(self):
+                self.tabWidget.setTabVisible(0, False)
+                self.tabWidget.setTabEnabled(1, True)
+                self.tabWidget.setTabEnabled(2, True)
+                self.tabWidget.setTabEnabled(3, True)
+                self.tabWidget.setTabEnabled(4, True)
+
     def login_mqtt(self):
         self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
 
         for x in range(15):
             print(x)
             if self.sub_mqtt.login_ok == True:
-                self.tabWidget.setTabVisible(0, False)
-                self.tabWidget.setTabEnabled(1, True)
-                self.tabWidget.setTabEnabled(2, True)
-                self.tabWidget.setTabEnabled(3, True)
-                self.tabWidget.setTabEnabled(4, True)
+                self.set_Tab_visible()
                 # self.tabWidget.setCurrentIndex(1)
                 # TODO: DB Connection???????
 
                 self.send_CMD('INIT')
                 print('MQTT connection sucssess!!')
-                return
+                return True
 
             time.sleep(0.5)
 
         # self.Login_2.clear()
         QMessageBox.warning(self, '네트워크 오류', '서버와의 연결이 원활하지 않습니다\n잠시후 다시 로그인해주세요')
-        
+        return False
+
+
+    def LineEdit_Login_id_RET(self, input_num):
+        if ENABLE_MONGODB:
+            if signup_col.find_one({'id': input_num}) == None:
+                QMessageBox.warning(self, '아이디 오류', '입력하신 아디이가 없습니다.')
+            else:
+                self.login_id = input_num
+
 
     def LineEdit_Login_3_RET(self, input_num):
         if not self.password_check(input_num):
@@ -623,12 +595,12 @@ class qt(QMainWindow, form_class):
         else:
             print('Login_3 OK')
             if self.check_passwd == input_num:
-                if platform.system() == 'Windows':
-                    SetValueEx(self.registry, "password", 0, REG_SZ, input_num)
-                else:
-                    self.util_func.save_var('passwd', input_num)
+                self.util_func.save_var(self.login_id, input_num)
 
-                self.login_mqtt()
+                self.set_Tab_visible()
+
+                if ENABLE_MQTT:
+                    self.login_mqtt()
 
                 print('passwd OK')
             else:
@@ -642,61 +614,33 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '패스워드 오류', '패스워드 형식이 맞지 않습니다.!')
             return
 
-        if self.BOOT_MODE == True:
+        if self.NO_PASSWD_MODE == True:
             print('Login_2 OK')
-            self.check_passwd = input_num 
+            self.check_passwd = input_num
             self.Login_3.setFocus()
             return
         else: # normal mode
-            if platform.system() == 'Windows':
-                (saved_passwd, dataType) = QueryValueEx(self.registry, "password")
-            else:
-                saved_passwd = self.util_func.read_var('passwd')
+            saved_passwd = self.util_func.read_var(self.login_id)
 
-            if not saved_passwd == input_num:
-                self.BOOT_FAIL_COUNT += 1
-
-                if self.BOOT_FAIL_COUNT == 5:
-                    self.Login_2.setVisible(False)
-                    self.Login_3.setVisible(False)
-                    QMessageBox.warning(self, '패스워드 오류', '패스워드 입력횟수 초과\n관리자에게 문의 하세요!')
-
-                    if platform.system() == 'Windows':
-                        SetValueEx(self.registry, "boot_fail_count", 0, REG_DWORD, self.BOOT_FAIL_COUNT)
-                    else:
-                        self.util_func.save_var('BOOT_FAIL_COUNT', 5)
-
-                    return
-
+            if saved_passwd != input_num:
                 self.Login_2.clear()
                 QMessageBox.warning(self, '패스워드 오류', '패스워드가 맞지 않습니다.')
                 return
-            
+
 
         # self.sub_mqtt.client1.username_pw_set(username="smrs", password=input_num)
         # self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
-        self.sub_mqtt.client1.username_pw_set(username="x2yenv1", password='aabc12#')
+        # self.sub_mqtt.client1.username_pw_set(username="x2yenv1", password='aabc12#')
 
-        for x in range(10):
-            print(x)
-            if self.sub_mqtt.login_ok == True:
-                self.tabWidget.setTabVisible(0, False)
-                self.tabWidget.setTabEnabled(1, True)
-                self.tabWidget.setTabEnabled(2, True)
-                self.tabWidget.setTabEnabled(3, True)
-                self.tabWidget.setTabEnabled(4, True)
-                # self.tabWidget.setCurrentIndex(1)
-                # TODO: DB Connection???????
+        if ENABLE_MQTT:
+            if self.login_mqtt():
+                self.set_Tab_visible()
+            else:
+                self.Login_2.clear()
+                QMessageBox.warning(self, '네트워크 오류', '서버와의 연결이 원활하지 않습니다\n잠시후 다시 로그인해주세요')
+        else:
+            self.set_Tab_visible()
 
-                self.send_CMD('INIT')
-                print('MQTT connection sucssess!!')
-                return
-
-            time.sleep(0.5)
-
-        self.Login_2.clear()
-        # QMessageBox.warning(self, '비밀번호오류', '비밀번호가 일치하지않습니다.다시 시도하세요.')
-        QMessageBox.warning(self, '네트워크 오류', '서버와의 연결이 원활하지 않습니다\n잠시후 다시 로그인해주세요')
 
     def input_value(self, lcdNum):
         if self.flag_HEAT_ON == True:
@@ -954,7 +898,9 @@ def run():
     widget = qt()
     widget.show()
 
-    widget.loop_start_func()
+    if ENABLE_MQTT:
+        widget.loop_start_func()
+
     sys.exit(app.exec_())
 
 
