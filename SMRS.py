@@ -27,6 +27,7 @@ import base64
 import cv2
 import re
 import platform
+import uuid
 
 if platform.system() == 'Windows':
     from winreg import *
@@ -37,8 +38,7 @@ if platform.system() == 'Windows':
 
 ENABLE_MQTT = False
 # ENABLE_MONGODB = False
-ENABLE_MONGODB = True
-PASSWORD_2 = "1234"
+ENABLE_MONGODB = False
 
 # x_size = 360# graph's x size
 x_size = 720  # graph's x size
@@ -319,11 +319,12 @@ class qt(QMainWindow, form_class):
         self.log_flag = False
 
         ################################################
-        if ENABLE_MQTT:
-            self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
-                                    _mqtt_debug=DEBUG_PRINT)
-        # time.sleep(3)
-        # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
+        self.sub_mqtt = 0
+        # if ENABLE_MQTT:
+        #     self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
+        #                             _mqtt_debug=DEBUG_PRINT)
+        # # time.sleep(3)
+        # # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
         ################################################
 
         # check validation of input value
@@ -595,7 +596,7 @@ class qt(QMainWindow, form_class):
         else:
             print('Login_3 OK')
             if self.check_passwd == input_num:
-                self.util_func.save_var(self.login_id, input_num)
+                self.util_func.save_var(str(self.login_id), input_num)
 
                 self.set_Tab_visible()
 
@@ -620,11 +621,18 @@ class qt(QMainWindow, form_class):
             self.Login_3.setFocus()
             return
         else: # normal mode
-            saved_passwd = self.util_func.read_var(self.login_id)
+            # load passwd
+            if ENABLE_MONGODB:
+                saved_passwd = signup_col.find_one({'id': self.login_id})['pwd']
+                print('mongoDB id/pwd: ', self.login_id, '/', saved_passwd)
+            else:
+                saved_passwd = self.util_func.read_var(self.login_id)
 
+            # check passwd
             if saved_passwd != input_num:
                 self.Login_2.clear()
                 QMessageBox.warning(self, '패스워드 오류', '패스워드가 맞지 않습니다.')
+                # wrong passwd, return
                 return
 
 
@@ -633,6 +641,16 @@ class qt(QMainWindow, form_class):
         # self.sub_mqtt.client1.username_pw_set(username="x2yenv1", password='aabc12#')
 
         if ENABLE_MQTT:
+            global pub_root_topic, sub_root_topic
+            mac_address = str(hex(uuid.getnode()))
+            MQTT_CLIENT_ID = mac_address + '_' + self.login_id
+            sub_root_topic = 'PUB_' + self.login_id + '/'
+            pub_root_topic = 'SUB_' + self.login_id + '/'
+            self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
+                                        _mqtt_debug=DEBUG_PRINT)
+
+            self.loop_start_func()
+
             if self.login_mqtt():
                 self.set_Tab_visible()
             else:
@@ -898,8 +916,8 @@ def run():
     widget = qt()
     widget.show()
 
-    if ENABLE_MQTT:
-        widget.loop_start_func()
+    # if ENABLE_MQTT:
+    #     widget.loop_start_func()
 
     sys.exit(app.exec_())
 

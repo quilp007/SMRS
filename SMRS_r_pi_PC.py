@@ -30,7 +30,7 @@ import base64
 import argparse
 import platform
 
-ARG_TEST = False
+ARG_TEST = True 
 TEST = False
 CERTI = True
 
