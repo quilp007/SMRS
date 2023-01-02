@@ -37,7 +37,6 @@ if platform.system() == 'Windows':
 # ------------------------------------------------------------------------------
 
 ENABLE_MQTT = False
-# ENABLE_MONGODB = False
 ENABLE_MONGODB = False
 
 # x_size = 360# graph's x size
@@ -355,14 +354,19 @@ class qt(QMainWindow, form_class):
 
         self.util_func = Util_Function()
 
-        passwd = self.util_func.read_var('enerpia_1')
-        if passwd == None:
-            print('no cfg file or no id\passwd')
-            self.NO_PASSWD_MODE = True
+        if not ENABLE_MONGODB:
+            passwd = self.util_func.read_var('enerpia_1')
+            if passwd == None:
+                print('no cfg file or no id\passwd')
+                self.NO_PASSWD_MODE = True
 
+            else:
+                self.label_26.setVisible(False)
+                self.Login_3.setVisible(False)
         else:
             self.label_26.setVisible(False)
             self.Login_3.setVisible(False)
+
         # -------------------------------------------------------------
 
     def onChangeTab(self):
