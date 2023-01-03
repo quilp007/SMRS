@@ -36,8 +36,8 @@ if platform.system() == 'Windows':
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
-ENABLE_MQTT = False
-ENABLE_MONGODB = False
+ENABLE_MQTT = True
+ENABLE_MONGODB = True
 
 # x_size = 360# graph's x size
 x_size = 720  # graph's x size
@@ -108,6 +108,17 @@ if CERTI == True and platform.system() == 'Windows':
     form_class = uic.loadUiType(resource_path("C:\work\SMRS\SMRS.ui"))[0]
 else:
     form_class = uic.loadUiType('SMRS.ui')[0]
+
+if ENABLE_MONGODB:
+    conn = pymongo.MongoClient('mongodb://' + server_ip,
+                               username=userid,
+                               password=passwd,
+                               authSource='road_1')
+
+    db = conn.get_database('road_1')
+    collection = db.get_collection('device_1')
+    signup_col = db.get_collection('signup')
+
 
 # --------------------------------------------------------------
 # [THREAD]
@@ -915,6 +926,7 @@ class qt(QMainWindow, form_class):
         return QPixmap.fromImage(p)
 
 
+
 def run():
     app = QApplication(sys.argv)
     widget = qt()
@@ -934,18 +946,9 @@ userid = 'smrs_1'
 passwd = 'smrs2580_1!'
 
 if __name__ == "__main__":
+    # initMongoDB()
+
     # conn = pymongo.MongoClient('203.251.78.135', 27017)
-
-    if ENABLE_MONGODB:
-        conn = pymongo.MongoClient('mongodb://' + ip,
-                                   username=userid,
-                                   password=passwd,
-                                   authSource='road_1')
-
-        db = conn.get_database('road_1')
-        collection = db.get_collection('device_1')
-        signup_col = db.get_collection('signup')
-
     # results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     # for result in results:
     #    print(result)

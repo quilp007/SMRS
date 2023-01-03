@@ -1,4 +1,5 @@
 import gradio as gr
+import SMRS
 
 title = "Multiple Interfaces"
 
@@ -208,6 +209,14 @@ with gr.Blocks() as app4:
 #     if is_login == 1:
 #         login.close()
 #         break
+def check_auth_mongodb(username, password):
+    saved_passwd = SMRS.signup_col.find_one({'id': username})['pwd']
+    if saved_passwd == password:
+        print('password is correct!!')
+        return True
+    else:
+        return False
+
 def check_auth(username, password):
     if username == "user1" and password == "123":
         return True
@@ -216,5 +225,6 @@ def check_auth(username, password):
 
 
 smrs = gr.TabbedInterface([app1, app2, app3, app4], ["현재상태", "설정", "카메라", "로그"])
-smrs.launch(auth=check_auth, auth_message="Please Enter ID and Password")
+# smrs.launch(auth=check_auth, auth_message="Please Enter ID and Password")
+smrs.launch(auth=check_auth_mongodb, auth_message="Please Enter ID and Password", server_name='192.168.0.26', server_port=7860)
 # demo.launch(share=True)
