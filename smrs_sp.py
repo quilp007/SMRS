@@ -1,7 +1,11 @@
 import gradio as gr
 import SMRS
+from PyQt5 import QtCore
+import json
 
 title = "Multiple Interfaces"
+
+LOGIN_FLAG = False
 
 
 # global is_login
@@ -86,6 +90,8 @@ def update_value(val):
 
 
 def pre_heat():
+    widget.send_CMD(widget.btn_PRE_HEAT_ON)
+
     return f'pre_heat'
 
 
@@ -210,9 +216,17 @@ with gr.Blocks() as app4:
 #         login.close()
 #         break
 def check_auth_mongodb(username, password):
+    global LOGIN_FLAG
+    if LOGIN_FLAG:
+        print('someone login')
+        return
     saved_passwd = SMRS.signup_col.find_one({'id': username})['pwd']
+
+
     if saved_passwd == password:
         print('password is correct!!')
+        widget.initMqtt(username, on_message_1)
+        # LOGIN_FLAG = True
         return True
     else:
         return False
@@ -223,6 +237,47 @@ def check_auth(username, password):
     else:
         return False
 
+@QtCore.pyqtSlot(str, str)
+def on_message_1(self, msg, topic):
+    jsonData = json.loads(msg)
+    # print('on_message_callback: ', msg)
+    if topic == SMRS.sub_root_topic + 'STATUS':
+        print("CMD: ", "CH1: ", str(jsonData['CH1']))
+        print("CMD: ", "CH2: ", str(jsonData['CH2']))
+
+        if jsonData['CH1'] == True and jsonData[ 'CH2'] == True:
+            return
+
+        if jsonData['CH1'] == True:  # PRE HEAT ON
+            print("PRE HEAT: ON")
+        elif jsonData['CH1'] == False:  # PRE HEAT OFF
+            print("PRE HEAT: OFF")
+
+        if jsonData['CH2'] == True:  # HEAT ON
+            print("HEAT: ON")
+        elif jsonData['CH2'] == False:  # HEAT OFF
+            print("HEAT: OFF")
+
+        if jsonData['CH1'] == False and jsonData[ 'CH2'] == False:
+            print("PRE HEAT: OFF")
+            print("HEAT: OFF")
+            # self.flag_HEAT_ON = False
+
+    elif topic == SMRS.sub_root_topic + 'CONFIG':
+        print('received CONFIG')
+        for key, value in jsonData.items():
+            print(key, value)
+            # TODO:
+            # display the value
+
+    elif topic == SMRS.sub_root_topic + 'IMAGE':
+        print('image captured')
+
+widget = SMRS.run(pc_app = False)
+password = widget.util_func.read_var('enerpia_1')
+print(password)
+
+# widget.initMqtt('enerpia_1', on_message_1)
 
 smrs = gr.TabbedInterface([app1, app2, app3, app4], ["현재상태", "설정", "카메라", "로그"])
 # smrs.launch(auth=check_auth, auth_message="Please Enter ID and Password")

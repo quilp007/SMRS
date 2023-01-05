@@ -656,6 +656,8 @@ class qt(QMainWindow, form_class):
         # self.sub_mqtt.client1.username_pw_set(username="x2yenv1", password='aabc12#')
 
         if ENABLE_MQTT:
+            self.initMqtt(self.login_id, self.on_message_1)
+            """
             global pub_root_topic, sub_root_topic
             mac_address = str(hex(uuid.getnode()))
             MQTT_CLIENT_ID = mac_address + '_' + self.login_id
@@ -663,8 +665,9 @@ class qt(QMainWindow, form_class):
             pub_root_topic = 'SUB_' + self.login_id + '/'
             self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
                                         _mqtt_debug=DEBUG_PRINT)
+            self.loop_start_func(self.on_message_1)
+            """
 
-            self.loop_start_func()
 
             if self.login_mqtt():
                 self.set_Tab_visible()
@@ -673,6 +676,18 @@ class qt(QMainWindow, form_class):
                 QMessageBox.warning(self, '네트워크 오류', '서버와의 연결이 원활하지 않습니다\n잠시후 다시 로그인해주세요')
         else:
             self.set_Tab_visible()
+
+    
+    def initMqtt(self, login_id, on_message):
+        global pub_root_topic, sub_root_topic
+        mac_address = str(hex(uuid.getnode()))
+        MQTT_CLIENT_ID = mac_address + '_' + login_id
+        sub_root_topic = 'PUB_' + login_id + '/'
+        pub_root_topic = 'SUB_' + login_id + '/'
+        self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
+                                    _mqtt_debug=DEBUG_PRINT)
+
+        self.loop_start_func(on_message)
 
 
     def input_value(self, lcdNum):
@@ -705,8 +720,8 @@ class qt(QMainWindow, form_class):
         if (lcdNum.objectName() == "set_air_temp"):
             self.lineEdit_set_air_temp.setFocus()
 
-    def loop_start_func(self):
-        self.sub_mqtt.messageSignal.connect(self.on_message_1)
+    def loop_start_func(self, on_message):
+        self.sub_mqtt.messageSignal.connect(on_message)
         self.sub_mqtt.loop_start_func()
         # self.send_CMD('INIT')
 
@@ -894,7 +909,7 @@ class qt(QMainWindow, form_class):
             self.sub_mqtt.send_msg(pub_root_topic + "INIT", json.dumps({'REQUEST': 'INIT'}))
             return
 
-        button.setStyleSheet("background-color: green; border: 1px solid black")
+        # button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.btn_PRE_HEAT_ON:
             print('pressed PRE HEAT BUtton')
             self.sub_mqtt.send_msg(pub_root_topic + "CMD", json.dumps({'CH1': True, 'CH2': False}))
@@ -926,24 +941,19 @@ class qt(QMainWindow, form_class):
         return QPixmap.fromImage(p)
 
 
-
-def run():
+def run(pc_app):
     app = QApplication(sys.argv)
     widget = qt()
-    widget.show()
 
-    # if ENABLE_MQTT:
-    #     widget.loop_start_func()
+    if pc_app:
+        widget.show()
 
-    sys.exit(app.exec_())
+        # if ENABLE_MQTT:
+        #     widget.loop_start_func()
 
+        sys.exit(app.exec_())
 
-ip = '203.251.78.135'
-mongo_port = 27017
-mqtt_port = 1883
-
-userid = 'smrs_1'
-passwd = 'smrs2580_1!'
+    return widget
 
 if __name__ == "__main__":
     # initMongoDB()
@@ -953,4 +963,4 @@ if __name__ == "__main__":
     # for result in results:
     #    print(result)
 
-    run()
+    run(pc_app = True)
