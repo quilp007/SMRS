@@ -568,11 +568,11 @@ class qt(QMainWindow, form_class):
             return val
 
     def set_Tab_visible(self):
-                self.tabWidget.setTabVisible(0, False)
-                self.tabWidget.setTabEnabled(1, True)
-                self.tabWidget.setTabEnabled(2, True)
-                self.tabWidget.setTabEnabled(3, True)
-                self.tabWidget.setTabEnabled(4, True)
+        self.tabWidget.setTabVisible(0, False)
+        self.tabWidget.setTabEnabled(1, True)
+        self.tabWidget.setTabEnabled(2, True)
+        self.tabWidget.setTabEnabled(3, True)
+        self.tabWidget.setTabEnabled(4, True)
 
     def login_mqtt(self):
         self.sub_mqtt.client1.username_pw_set(username="smrs", password='1234')
@@ -657,17 +657,6 @@ class qt(QMainWindow, form_class):
 
         if ENABLE_MQTT:
             self.initMqtt(self.login_id, self.on_message_1)
-            """
-            global pub_root_topic, sub_root_topic
-            mac_address = str(hex(uuid.getnode()))
-            MQTT_CLIENT_ID = mac_address + '_' + self.login_id
-            sub_root_topic = 'PUB_' + self.login_id + '/'
-            pub_root_topic = 'SUB_' + self.login_id + '/'
-            self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
-                                        _mqtt_debug=DEBUG_PRINT)
-            self.loop_start_func(self.on_message_1)
-            """
-
 
             if self.login_mqtt():
                 self.set_Tab_visible()
@@ -678,14 +667,15 @@ class qt(QMainWindow, form_class):
             self.set_Tab_visible()
 
     
-    def initMqtt(self, login_id, on_message):
+    def initMqtt(self, login_id, on_message, on_message_cb = None):
+        print('on_message', on_message)
         global pub_root_topic, sub_root_topic
         mac_address = str(hex(uuid.getnode()))
         MQTT_CLIENT_ID = mac_address + '_' + login_id
         sub_root_topic = 'PUB_' + login_id + '/'
         pub_root_topic = 'SUB_' + login_id + '/'
         self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
-                                    _mqtt_debug=DEBUG_PRINT)
+                                    _mqtt_debug=DEBUG_PRINT, _on_message = on_message_cb)
 
         self.loop_start_func(on_message)
 
@@ -756,8 +746,7 @@ class qt(QMainWindow, form_class):
 
             time_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
 
-            if jsonData['CH1'] == True and jsonData[
-                'CH2'] == True:  # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
+            if jsonData['CH1'] == True and jsonData['CH2'] == True:  # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
                 self.label_33.setStyleSheet("background-color: red")
                 self.label_8.setStyleSheet("background-color: pink")
                 self.btn_HEAT_ON.setStyleSheet("background-color: pink")
@@ -963,4 +952,5 @@ if __name__ == "__main__":
     # for result in results:
     #    print(result)
 
+    # run(pc_app = True)
     run(pc_app = True)

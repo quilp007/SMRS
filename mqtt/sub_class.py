@@ -14,7 +14,8 @@ class SUB_MQTT(QtCore.QObject):
     messageSignal = QtCore.pyqtSignal(str, str)
 
     # def __init__(self, _on_message, broker_addr = broker_address, _port = port, _topic = topic):
-    def __init__(self, _broker_address = broker_address, _port = port, _topic = topic, _client = client, _mqtt_debug = False):
+    def __init__(self, _broker_address = broker_address, _port = port, _topic = topic, _client = client, _mqtt_debug = False, _on_message = None):
+        print('mqtt init:', _on_message)
         super().__init__()
         self.topic = _topic
         print(_topic, _client)
@@ -32,7 +33,11 @@ class SUB_MQTT(QtCore.QObject):
         global MQTT_DEBUG
         MQTT_DEBUG = _mqtt_debug
 
-        self.client1.on_message = self.on_message
+        if _on_message == None:
+            self.client1.on_message = self.on_message
+        else:
+            self.client1.on_message = _on_message
+
         self.client1.on_log = self.on_log
         self.client1.on_disconnect = self.on_disconnect
         self.client1.on_connect = self.on_connect
