@@ -668,7 +668,6 @@ class qt(QMainWindow, form_class):
 
     
     def initMqtt(self, login_id, on_message, on_message_cb = None):
-        print('on_message', on_message)
         global pub_root_topic, sub_root_topic
         mac_address = str(hex(uuid.getnode()))
         MQTT_CLIENT_ID = mac_address + '_' + login_id
@@ -952,5 +951,4 @@ if __name__ == "__main__":
     # for result in results:
     #    print(result)
 
-    # run(pc_app = True)
     run(pc_app = True)

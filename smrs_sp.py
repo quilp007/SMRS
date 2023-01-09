@@ -42,6 +42,7 @@ def get_pos_heat_set_hum():
 def get_emer_heat_set_temp():
     return "7777"
 
+i = 0
 
 app1 = gr.Interface(fn=dummy, inputs=None, outputs="text")
 app2 = gr.Interface(fn=dummy, inputs=None, outputs="text")
@@ -82,6 +83,14 @@ with gr.Blocks() as app1:
         refresh_btn.click(fn=get_pos_heat_set_temp, inputs=None, outputs=pos_heat_set_temp)
         refresh_btn.click(fn=get_pos_heat_set_hum, inputs=None, outputs=pos_heat_set_hum)
         refresh_btn.click(fn=get_emer_heat_set_temp, inputs=None, outputs=emer_heat_set_temp)
+
+    def test():
+        global i
+        i += 1
+        return i
+
+    app1.load(test, inpupts=None, outputs=pre_heat_set_temp, every=1)
+
 
 
 def update_value(val):
@@ -217,16 +226,13 @@ with gr.Blocks() as app4:
 #         break
 def check_auth_mongodb(username, password):
     global LOGIN_FLAG
-    if LOGIN_FLAG:
-        print('someone login')
-        return
     saved_passwd = SMRS.signup_col.find_one({'id': username})['pwd']
-
 
     if saved_passwd == password:
         print('password is correct!!')
-        widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
-        # LOGIN_FLAG = True
+        if not LOGIN_FLAG:
+            widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
+            LOGIN_FLAG = True
         return True
     else:
         return False
@@ -271,12 +277,28 @@ def on_message_sp(msg, topic):
             print("HEAT: OFF")
             # self.flag_HEAT_ON = False
 
+        """
+        self.config_dict = {
+            'pre_heat_road_temp':   3,
+            'heat_road_temp':       1,
+            'set_road_humidity':    3,
+            'set_air_temp':         -15,
+            'pre_heat_on_time':     60,
+            'heat_on_time':         90,
+            'road_temp':            0,
+            'road_humidity':        0,
+            'air_temp':             0
+        }
+        """
+
     elif topic == SMRS.sub_root_topic + 'CONFIG':
         print('received CONFIG')
         for key, value in jsonData.items():
             print(key, value)
             # TODO:
             # display the value
+            if key == 'pre_heat_road_temp':
+                pre_heat_set_temp = value
 
     elif topic == SMRS.sub_root_topic + 'IMAGE':
         print('image captured')
@@ -287,5 +309,6 @@ widget = SMRS.run(pc_app = False)
 
 smrs = gr.TabbedInterface([app1, app2, app3, app4], ["현재상태", "설정", "카메라", "로그"])
 # smrs.launch(auth=check_auth, auth_message="Please Enter ID and Password")
-smrs.launch(auth=check_auth_mongodb, auth_message="Please Enter ID and Password", server_name='192.168.0.26', server_port=7860)
+smrs.launch(auth=check_auth_mongodb, auth_message="Please Enter ID and Password", 
+            server_name='192.168.0.26', server_port=7860, enable_queue=True)
 # demo.launch(share=True)
