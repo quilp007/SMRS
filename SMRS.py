@@ -36,6 +36,7 @@ if platform.system() == 'Windows':
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
 
+WEB_APP_MODE = False
 ENABLE_MQTT = True
 ENABLE_MONGODB = True
 
@@ -425,12 +426,14 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_pre_heat_road_temp.setText("")
         else:
-            self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
-            self.findChild(QLCDNumber, "pre_heat_road_temp_2").display(input_num)
+            # self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
+            # self.findChild(QLCDNumber, "pre_heat_road_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_road_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + input_num
-            self.textEdit_log.append(log_text)
-            self.lineEdit_pre_heat_road_temp.setText("")
+            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + str(input_num)
+
+            if WEB_APP_MODE == False:
+                self.textEdit_log.append(log_text)
+                self.lineEdit_pre_heat_road_temp.setText("")
 
     def LineEdit_heat_road_temp_RET(self, input_num):
         if self.flag_HEAT_ON == True:
@@ -444,8 +447,8 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_heat_road_temp.setText("")
         else:
-            self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
-            self.findChild(QLCDNumber, "heat_road_temp_2").display(input_num)
+            # self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
+            # self.findChild(QLCDNumber, "heat_road_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_road_temp": input_num}))
             log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_road_temp" + ' ' + input_num
             self.textEdit_log.append(log_text)
@@ -463,8 +466,8 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_set_road_humidity.setText("")
         else:
-            self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
-            self.findChild(QLCDNumber, "set_road_humidity_2").display(input_num)
+            # self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
+            # self.findChild(QLCDNumber, "set_road_humidity_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_road_humidity": input_num}))
             log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_road_humidity" + ' ' + input_num
             self.textEdit_log.append(log_text)
@@ -482,7 +485,7 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_pre_heat_on_time.setText("")
         else:
-            self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
+            # self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_on_time": input_num}))
             log_text = time.strftime('%y%m%d_%H%M%S',
                                      time.localtime(time.time())) + ' ' + "pre_heat_on_time" + ' ' + input_num
@@ -501,7 +504,7 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_heat_on_time.setText("")
         else:
-            self.findChild(QLCDNumber, "heat_on_time").display(input_num)
+            # self.findChild(QLCDNumber, "heat_on_time").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_on_time": input_num}))
             log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_on_time" + ' ' + input_num
             self.textEdit_log.append(log_text)
@@ -519,8 +522,8 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_set_air_temp.setText("")
         else:
-            self.findChild(QLCDNumber, "set_air_temp").display(input_num)
-            self.findChild(QLCDNumber, "set_air_temp_2").display(input_num)
+            # self.findChild(QLCDNumber, "set_air_temp").display(input_num)
+            # self.findChild(QLCDNumber, "set_air_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_air_temp": input_num}))
             log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_air_temp" + ' ' + input_num
             self.textEdit_log.append(log_text)
@@ -940,6 +943,9 @@ def run(pc_app):
         #     widget.loop_start_func()
 
         sys.exit(app.exec_())
+    else:
+        global WEB_APP_MODE
+        WEB_APP_MODE = True
 
     return widget
 

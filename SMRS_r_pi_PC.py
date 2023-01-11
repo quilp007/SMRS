@@ -543,6 +543,15 @@ class qt(QMainWindow, form_class):
         if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
             self.flag_EMC_HEAT_ON = True
             self.change_STATUS(self.btn_HEAT_ON)
+
+        elif (self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']) and \
+            (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity']):
+            self.change_STATUS(self.btn_HEAT_ON)
+
+        elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
+            self.change_STATUS(self.btn_PRE_HEAT_ON)
+
+        """
         elif int(self.config_dict['road_temp']) <= int(self.config_dict['heat_road_temp']):
             self.change_STATUS(self.btn_HEAT_ON)
         elif (self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']) and \
@@ -550,6 +559,7 @@ class qt(QMainWindow, form_class):
             self.change_STATUS(self.btn_HEAT_ON)
         elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
             self.change_STATUS(self.btn_PRE_HEAT_ON)
+        """
 
 
     def _preview(self):

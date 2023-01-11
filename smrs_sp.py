@@ -6,6 +6,15 @@ title = "Multiple Interfaces"
 
 LOGIN_FLAG = False
 
+g_pre_heat_road_temp    = 0
+g_heat_road_temp        = 0
+g_set_road_humidity     = 0
+g_set_air_temp          = 0
+g_pre_heat_on_time      = 0
+g_heat_on_time          = 0
+g_road_temp             = 0
+g_road_humidity         = 0
+g_air_temp              = 0
 
 # global is_login
 # is_login = 0
@@ -42,7 +51,9 @@ def get_pos_heat_set_hum():
 def get_emer_heat_set_temp():
     return "7777"
 
-i = 0
+def update_pre_heat_set_temp(value):
+    widget.LineEdit_pre_heat_road_temp_RET(value)
+
 
 app1 = gr.Interface(fn=dummy, inputs=None, outputs="text")
 app2 = gr.Interface(fn=dummy, inputs=None, outputs="text")
@@ -84,12 +95,27 @@ with gr.Blocks() as app1:
         refresh_btn.click(fn=get_pos_heat_set_hum, inputs=None, outputs=pos_heat_set_hum)
         refresh_btn.click(fn=get_emer_heat_set_temp, inputs=None, outputs=emer_heat_set_temp)
 
-    def test():
-        global i
-        i += 1
-        return i
 
-    app1.load(test, inpupts=None, outputs=pre_heat_set_temp, every=1)
+    def fn_pre_heat_set_temp():
+        global g_pre_heat_road_temp
+        return g_pre_heat_road_temp
+
+    def fn_pos_heat_set_temp():
+        global g_heat_road_temp
+        return g_heat_road_temp
+
+    def fn_pos_heat_set_hum():
+        global g_set_road_humidity
+        return g_set_road_humidity
+
+    def fn_emer_heat_set_temp():
+        global g_set_air_temp
+        return g_set_air_temp
+
+    app1.load(fn_pre_heat_set_temp,  inpupts=None, outputs=pre_heat_set_temp,  every=1)
+    app1.load(fn_pos_heat_set_temp,  inpupts=None, outputs=pos_heat_set_temp,  every=1)
+    app1.load(fn_pos_heat_set_hum,   inpupts=None, outputs=pos_heat_set_hum,   every=1)
+    app1.load(fn_emer_heat_set_temp, inpupts=None, outputs=emer_heat_set_temp, every=1)
 
 
 
@@ -144,13 +170,20 @@ with gr.Blocks() as app2:
     with gr.Row():
         with gr.Column():
             gr.Markdown("자동 설정")
-            pre_heat_set_temp = gr.Slider(0, 50, step=1, label="예열 설정 노면 온도 (℃)")
+            with gr.Row():
+                l_pre_heat_set_temp = gr.Textbox(label="예열 설정 노면 온도")
+                pre_heat_set_temp = gr.Slider(0, 50, step=1, label="[설정]예열 노면 온도 (℃)")
+                app2.load(fn_pre_heat_set_temp,  inpupts=None, outputs=l_pre_heat_set_temp,  every=1)
+
             pre_heat_dur_time = gr.Slider(0, 60, step=1, label="예열 가동 지속 시간 (Min)")
             pos_heat_set_temp = gr.Slider(0, 50, step=1, label="본 가동 설정 노면 온도 (℃)")
             pos_heat_set_hum = gr.Slider(0, 7, step=1, label="본 가동 설정 노면 습도 (Level)")
             pos_heat_dur_time = gr.Slider(0, 60, step=1, label="본 가동 지속 시간 (Min)")
             emer_heat_set_temp = gr.Slider(0, 50, step=1, label="비상 가동 대기 온도(℃)")
             md = gr.Markdown()
+
+            pre_heat_set_temp.change(fn=update_pre_heat_set_temp,  inputs=pre_heat_set_temp , outputs=None)
+
             # pre_heat_set_temp.change(fn=update_value,  inputs=pre_heat_set_temp , outputs=md)
             # pre_heat_dur_time.change(fn=update_value,  inputs=pre_heat_dur_time , outputs=md)
             # pos_heat_set_temp.change(fn=update_value,  inputs=pos_heat_set_temp , outputs=md)
@@ -185,6 +218,28 @@ with gr.Blocks() as app2:
     with gr.Row():
         init_set_btn = gr.Button("설정초기화")
         init_set_btn.click(fn=init_set, inputs=None, outputs=md)
+
+
+    def fn_pre_heat_set_temp():
+        global g_pre_heat_road_temp
+        return g_pre_heat_road_temp
+
+    def fn_pos_heat_set_temp():
+        global g_heat_road_temp
+        return g_heat_road_temp
+
+    def fn_pos_heat_set_hum():
+        global g_set_road_humidity
+        return g_set_road_humidity
+
+    def fn_emer_heat_set_temp():
+        global g_set_air_temp
+        return g_set_air_temp
+
+    # app2.load(fn_pre_heat_set_temp,  inpupts=None, outputs=pre_heat_set_temp,  every=5)
+    app2.load(fn_pos_heat_set_temp,  inpupts=None, outputs=pos_heat_set_temp,  every=5)
+    app2.load(fn_pos_heat_set_hum,   inpupts=None, outputs=pos_heat_set_hum,   every=5)
+    app2.load(fn_emer_heat_set_temp, inpupts=None, outputs=emer_heat_set_temp, every=5)
 
 
 def take_picture():
@@ -249,6 +304,16 @@ def on_message_sp_rcv(client, userdata, message):
     on_message_sp(rcvData, message.topic)
 
 def on_message_sp(msg, topic):
+    global g_pre_heat_road_temp
+    global g_heat_road_temp    
+    global g_set_road_humidity
+    global g_set_air_temp     
+    global g_pre_heat_on_time
+    global g_heat_on_time   
+    global g_road_temp     
+    global g_road_humidity 
+    global g_air_temp     
+
     jsonData = json.loads(msg)
     print('on_message_callback: ', msg)
     if topic == SMRS.sub_root_topic + 'STATUS':
@@ -298,7 +363,13 @@ def on_message_sp(msg, topic):
             # TODO:
             # display the value
             if key == 'pre_heat_road_temp':
-                pre_heat_set_temp = value
+                g_pre_heat_road_temp = value
+            elif key == 'heat_road_temp':
+                g_heat_road_temp = value
+            elif key == 'set_road_humidity':
+                g_set_road_humidity= value
+            elif key == 'set_air_temp':
+                g_set_air_temp = value
 
     elif topic == SMRS.sub_root_topic + 'IMAGE':
         print('image captured')
