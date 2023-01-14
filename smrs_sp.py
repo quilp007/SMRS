@@ -23,37 +23,51 @@ g_air_temp              = 0
 def dummy():
     return 0
 
-
-def get_cur_road_temp():
-    return "1111"
-
-
-def get_cur_road_hum():
-    return "2222"
-
-
-def get_cur_air_temp():
-    return "3333"
-
-
-def get_pre_heat_set_temp():
-    return "4444"
-
-
-def get_pos_heat_set_temp():
-    return "5555"
-
-
-def get_pos_heat_set_hum():
-    return "6666"
-
-
-def get_emer_heat_set_temp():
-    return "7777"
-
 def update_pre_heat_set_temp(value):
     widget.LineEdit_pre_heat_road_temp_RET(value)
 
+def update_pre_heat_dur_time(value):
+    widget.LineEdit_pre_heat_on_time_RET(value)
+
+def update_pos_heat_set_temp(value):
+    widget.LineEdit_heat_road_temp_RET(value)
+
+def update_pos_heat_set_hum(value):
+    widget.LineEdit_set_road_humidity_RET(value)
+
+def update_pos_heat_dur_time(value):
+    widget.LineEdit_heat_on_time_RET(value)
+
+def update_emer_heat_set_temp(value):
+    widget.LineEdit_set_air_temp_RET(value)
+
+
+def fn_pre_heat_set_temp():
+    return g_pre_heat_road_temp
+
+def fn_pre_heat_dur_time():
+    return g_pre_heat_on_time
+
+def fn_pos_heat_set_temp():
+    return g_heat_road_temp
+
+def fn_pos_heat_set_hum():
+    return g_set_road_humidity
+
+def fn_pos_heat_dur_time():
+    return g_heat_on_time
+
+def fn_emer_heat_set_temp():
+    return g_set_air_temp
+
+def fn_road_temp():
+    return g_road_temp
+
+def fn_road_humidity():
+    return g_road_humidity
+
+def fn_air_temp():
+    return g_air_temp
 
 app1 = gr.Interface(fn=dummy, inputs=None, outputs="text")
 app2 = gr.Interface(fn=dummy, inputs=None, outputs="text")
@@ -83,45 +97,19 @@ with gr.Blocks() as app1:
         gr.Box()
         gr.Box()
         gr.Box()
-    with gr.Row():
-        refresh_btn = gr.Button("Refresh")
-        # column 1
-        refresh_btn.click(fn=get_cur_road_temp, inputs=None, outputs=cur_road_temp)
-        refresh_btn.click(fn=get_cur_road_hum, inputs=None, outputs=cur_road_hum)
-        refresh_btn.click(fn=get_cur_air_temp, inputs=None, outputs=cur_air_temp)
-        # column 2
-        refresh_btn.click(fn=get_pre_heat_set_temp, inputs=None, outputs=pre_heat_set_temp)
-        refresh_btn.click(fn=get_pos_heat_set_temp, inputs=None, outputs=pos_heat_set_temp)
-        refresh_btn.click(fn=get_pos_heat_set_hum, inputs=None, outputs=pos_heat_set_hum)
-        refresh_btn.click(fn=get_emer_heat_set_temp, inputs=None, outputs=emer_heat_set_temp)
 
+    app1.load(fn_road_temp,             inpupts=None, outputs=cur_road_temp,        every=1)
+    app1.load(fn_road_humidity,         inpupts=None, outputs=cur_road_hum,         every=1)
+    app1.load(fn_air_temp,              inpupts=None, outputs=cur_air_temp,         every=1)
 
-    def fn_pre_heat_set_temp():
-        global g_pre_heat_road_temp
-        return g_pre_heat_road_temp
-
-    def fn_pos_heat_set_temp():
-        global g_heat_road_temp
-        return g_heat_road_temp
-
-    def fn_pos_heat_set_hum():
-        global g_set_road_humidity
-        return g_set_road_humidity
-
-    def fn_emer_heat_set_temp():
-        global g_set_air_temp
-        return g_set_air_temp
-
-    app1.load(fn_pre_heat_set_temp,  inpupts=None, outputs=pre_heat_set_temp,  every=1)
-    app1.load(fn_pos_heat_set_temp,  inpupts=None, outputs=pos_heat_set_temp,  every=1)
-    app1.load(fn_pos_heat_set_hum,   inpupts=None, outputs=pos_heat_set_hum,   every=1)
-    app1.load(fn_emer_heat_set_temp, inpupts=None, outputs=emer_heat_set_temp, every=1)
-
+    app1.load(fn_pre_heat_set_temp,     inpupts=None, outputs=pre_heat_set_temp,    every=1)
+    app1.load(fn_pos_heat_set_temp,     inpupts=None, outputs=pos_heat_set_temp,    every=1)
+    app1.load(fn_pos_heat_set_hum,      inpupts=None, outputs=pos_heat_set_hum,     every=1)
+    app1.load(fn_emer_heat_set_temp,    inpupts=None, outputs=emer_heat_set_temp,   every=1)
 
 
 def update_value(val):
     return f'Value is set to {val}'
-
 
 def pre_heat():
     widget.send_CMD(widget.btn_PRE_HEAT_ON)
@@ -170,39 +158,73 @@ with gr.Blocks() as app2:
     with gr.Row():
         with gr.Column():
             gr.Markdown("자동 설정")
+
             with gr.Row():
-                l_pre_heat_set_temp = gr.Textbox(label="예열 설정 노면 온도")
-                pre_heat_set_temp = gr.Slider(0, 50, step=1, label="[설정]예열 노면 온도 (℃)")
+                with gr.Column(scale=1, min_width=70):
+                    l_pre_heat_set_temp = gr.Textbox(label="")
+                with gr.Column(scale=10):
+                    pre_heat_set_temp = gr.Slider(0, 10, step=1, label="[설정] 예열 설정 노면 온도")
                 app2.load(fn_pre_heat_set_temp,  inpupts=None, outputs=l_pre_heat_set_temp,  every=1)
 
-            pre_heat_dur_time = gr.Slider(0, 60, step=1, label="예열 가동 지속 시간 (Min)")
-            pos_heat_set_temp = gr.Slider(0, 50, step=1, label="본 가동 설정 노면 온도 (℃)")
-            pos_heat_set_hum = gr.Slider(0, 7, step=1, label="본 가동 설정 노면 습도 (Level)")
-            pos_heat_dur_time = gr.Slider(0, 60, step=1, label="본 가동 지속 시간 (Min)")
-            emer_heat_set_temp = gr.Slider(0, 50, step=1, label="비상 가동 대기 온도(℃)")
+            with gr.Row():
+                with gr.Column(scale=1, min_width=70):
+                    l_pre_heat_dur_time = gr.Textbox(label="")
+                with gr.Column(scale=10):
+                    pre_heat_dur_time = gr.Slider(0, 6, step=1, label="[설정] 예열 가동 지속 횟수 (회)")
+                app2.load(fn_pre_heat_dur_time,  inpupts=None, outputs=l_pre_heat_dur_time,  every=1)
+
+            with gr.Row():
+                with gr.Column(scale=1, min_width=70):
+                    l_pos_heat_set_temp = gr.Textbox(label="")
+                with gr.Column(scale=10):
+                    pos_heat_set_temp = gr.Slider(-10, 10, step=1, label="[설정] 본 가동 설정 노면 온도 (℃)")
+                app2.load(fn_pos_heat_set_temp,  inpupts=None, outputs=l_pos_heat_set_temp,  every=1)
+
+            with gr.Row():
+                with gr.Column(scale=1, min_width=70):
+                    l_pos_heat_set_hum = gr.Textbox(label="")
+                with gr.Column(scale=10):
+                    pos_heat_set_hum = gr.Slider(0, 9, step=1, label="[설정] 본 가동 설정 노면 습도 (Lev)")
+                app2.load(fn_pos_heat_set_hum,  inpupts=None, outputs=l_pos_heat_set_hum,  every=1)
+
+            with gr.Row():
+                with gr.Column(scale=1, min_width=70):
+                    l_pos_heat_dur_time = gr.Textbox(label="")
+                with gr.Column(scale=10):
+                    pos_heat_dur_time = gr.Slider(0, 4, step=1, label="[설정] 본 가동 지속 횟수 (회)")
+                app2.load(fn_pos_heat_dur_time,  inpupts=None, outputs=l_pos_heat_dur_time,  every=1)
+
+            with gr.Row():
+                with gr.Column(scale=1, min_width=70):
+                    l_emer_heat_set_temp = gr.Textbox(label="")
+                with gr.Column(scale=10):
+                    emer_heat_set_temp = gr.Slider(-30, -20, step=1, label="비상 가동 대기 온도(℃)")
+                app2.load(fn_emer_heat_set_temp,  inpupts=None, outputs=l_emer_heat_set_temp,  every=1)
+
             md = gr.Markdown()
 
-            pre_heat_set_temp.change(fn=update_pre_heat_set_temp,  inputs=pre_heat_set_temp , outputs=None)
+            pre_heat_set_temp.change(fn=update_pre_heat_set_temp,  inputs=pre_heat_set_temp,  outputs=None)
+            pre_heat_dur_time.change(fn=update_pre_heat_dur_time,  inputs=pre_heat_dur_time,  outputs=None)
+            pos_heat_set_temp.change(fn=update_pos_heat_set_temp,  inputs=pos_heat_set_temp,  outputs=None)
+            pos_heat_set_hum.change(fn=update_pos_heat_set_hum,    inputs=pos_heat_set_hum,   outputs=None)
+            pos_heat_dur_time.change(fn=update_pos_heat_dur_time,  inputs=pos_heat_dur_time,  outputs=None)
+            emer_heat_set_temp.change(fn=update_emer_heat_set_temp,inputs=emer_heat_set_temp, outputs=None)
 
-            # pre_heat_set_temp.change(fn=update_value,  inputs=pre_heat_set_temp , outputs=md)
-            # pre_heat_dur_time.change(fn=update_value,  inputs=pre_heat_dur_time , outputs=md)
-            # pos_heat_set_temp.change(fn=update_value,  inputs=pos_heat_set_temp , outputs=md)
-            # pos_heat_set_hum.change(fn=update_value,   inputs=pos_heat_set_hum  , outputs=md)
-            # pos_heat_dur_time.change(fn=update_value,  inputs=pos_heat_dur_time , outputs=md)
-            # emer_heat_set_temp.change(fn=update_value, inputs=emer_heat_set_temp, outputs=md)
             pre_heat_btn = gr.Button("강제 예열 가동")
             pos_heat_btn = gr.Button("강제 본 가동")
+
             pre_heat_btn.click(fn=pre_heat, inputs=None, outputs=md)
             pos_heat_btn.click(fn=pos_heat, inputs=None, outputs=md)
+
         with gr.Column():
             gr.Markdown("수동 설정")
-            pre_heat_dur_time = gr.Slider(0, 60, step=1, label="예열 가동 지속 시간 (Min)")
-            pre_heat_end_btn = gr.Button("예열 가동 후 종료")
+            pre_heat_dur_time = gr.Slider(0, 60, step=1, label="예열 가동 횟수 (회)")
+            pre_heat_end_btn = gr.Button("예열 가동 후 정지")
             pre_heat_end_btn.click(fn=pre_heat_end, inputs=None, outputs=md)
             pre_heat_auto_change_btn = gr.Button("예열 가동 후 자동 전환")
             pre_heat_auto_change_btn.click(fn=pre_heat_auto_change, inputs=None, outputs=md)
-            pos_heat_dur_time = gr.Slider(0, 60, step=1, label="본 가동 지속 시간 (Min)")
-            pos_heat_end_btn = gr.Button("본 가동 후 종료")
+            pos_heat_dur_time = gr.Slider(0, 60, step=1, label="본 가동 횟수 (회)")
+            pos_heat_end_btn = gr.Button("본 가동 후 정지")
             pos_heat_end_btn.click(fn=pos_heat_end, inputs=None, outputs=md)
             pos_heat_auto_change_btn = gr.Button("본 가동 후 자동 전환")
             pos_heat_auto_change_btn.click(fn=pos_heat_auto_change, inputs=None, outputs=md)
@@ -213,33 +235,11 @@ with gr.Blocks() as app2:
         auto_btn.click(fn=auto, inputs=None, outputs=md)
         man_btn = gr.Button("수동")
         man_btn.click(fn=man, inputs=None, outputs=md)
-        end_btn = gr.Button("종료")
+        end_btn = gr.Button("정지")
         end_btn.click(fn=end, inputs=None, outputs=md)
     with gr.Row():
         init_set_btn = gr.Button("설정초기화")
         init_set_btn.click(fn=init_set, inputs=None, outputs=md)
-
-
-    def fn_pre_heat_set_temp():
-        global g_pre_heat_road_temp
-        return g_pre_heat_road_temp
-
-    def fn_pos_heat_set_temp():
-        global g_heat_road_temp
-        return g_heat_road_temp
-
-    def fn_pos_heat_set_hum():
-        global g_set_road_humidity
-        return g_set_road_humidity
-
-    def fn_emer_heat_set_temp():
-        global g_set_air_temp
-        return g_set_air_temp
-
-    # app2.load(fn_pre_heat_set_temp,  inpupts=None, outputs=pre_heat_set_temp,  every=5)
-    app2.load(fn_pos_heat_set_temp,  inpupts=None, outputs=pos_heat_set_temp,  every=5)
-    app2.load(fn_pos_heat_set_hum,   inpupts=None, outputs=pos_heat_set_hum,   every=5)
-    app2.load(fn_emer_heat_set_temp, inpupts=None, outputs=emer_heat_set_temp, every=5)
 
 
 def take_picture():
@@ -287,6 +287,7 @@ def check_auth_mongodb(username, password):
         print('password is correct!!')
         if not LOGIN_FLAG:
             widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
+            widget.send_CMD('INIT')
             LOGIN_FLAG = True
         return True
     else:
@@ -370,6 +371,14 @@ def on_message_sp(msg, topic):
                 g_set_road_humidity= value
             elif key == 'set_air_temp':
                 g_set_air_temp = value
+            elif key == 'pre_heat_on_time':
+                g_pre_heat_on_time = value
+            elif key == 'road_temp':
+                g_road_temp = value
+            elif key == 'road_humidity':
+                g_road_humidity = value
+            elif key == 'air_temp':
+                g_air_temp = value
 
     elif topic == SMRS.sub_root_topic + 'IMAGE':
         print('image captured')

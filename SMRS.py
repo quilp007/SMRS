@@ -429,9 +429,9 @@ class qt(QMainWindow, form_class):
             # self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
             # self.findChild(QLCDNumber, "pre_heat_road_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_road_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + str(input_num)
 
             if WEB_APP_MODE == False:
+                log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "pre_heat_road_temp" + ' ' + str(input_num)
                 self.textEdit_log.append(log_text)
                 self.lineEdit_pre_heat_road_temp.setText("")
 
@@ -450,9 +450,11 @@ class qt(QMainWindow, form_class):
             # self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
             # self.findChild(QLCDNumber, "heat_road_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_road_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_road_temp" + ' ' + input_num
-            self.textEdit_log.append(log_text)
-            self.lineEdit_heat_road_temp.setText("")
+
+            if WEB_APP_MODE == False:
+                log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_road_temp" + ' ' + str(input_num)
+                self.textEdit_log.append(log_text)
+                self.lineEdit_heat_road_temp.setText("")
 
     def LineEdit_set_road_humidity_RET(self, input_num):
         if self.flag_HEAT_ON == True:
@@ -469,9 +471,11 @@ class qt(QMainWindow, form_class):
             # self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
             # self.findChild(QLCDNumber, "set_road_humidity_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_road_humidity": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_road_humidity" + ' ' + input_num
-            self.textEdit_log.append(log_text)
-            self.lineEdit_set_road_humidity.setText("")
+
+            if WEB_APP_MODE == False:
+                log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_road_humidity" + ' ' + str(input_num)
+                self.textEdit_log.append(log_text)
+                self.lineEdit_set_road_humidity.setText("")
 
     def LineEdit_pre_heat_on_time_RET(self, input_num):
         if self.flag_HEAT_ON == True:
@@ -487,10 +491,11 @@ class qt(QMainWindow, form_class):
         else:
             # self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_on_time": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',
-                                     time.localtime(time.time())) + ' ' + "pre_heat_on_time" + ' ' + input_num
-            self.textEdit_log.append(log_text)
-            self.lineEdit_pre_heat_on_time.setText("")
+
+            if WEB_APP_MODE == False:
+                log_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time())) + ' ' + "pre_heat_on_time" + ' ' + str(input_num)
+                self.textEdit_log.append(log_text)
+                self.lineEdit_pre_heat_on_time.setText("")
 
     def LineEdit_heat_on_time_RET(self, input_num):
         if self.flag_HEAT_ON == True:
@@ -506,9 +511,11 @@ class qt(QMainWindow, form_class):
         else:
             # self.findChild(QLCDNumber, "heat_on_time").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_on_time": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_on_time" + ' ' + input_num
-            self.textEdit_log.append(log_text)
-            self.lineEdit_heat_on_time.setText("")
+            
+            if WEB_APP_MODE == False:
+                log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "heat_on_time" + ' ' + str(input_num)
+                self.textEdit_log.append(log_text)
+                self.lineEdit_heat_on_time.setText("")
 
     def LineEdit_set_air_temp_RET(self, input_num):
         if self.flag_HEAT_ON == True:
@@ -525,9 +532,11 @@ class qt(QMainWindow, form_class):
             # self.findChild(QLCDNumber, "set_air_temp").display(input_num)
             # self.findChild(QLCDNumber, "set_air_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_air_temp": input_num}))
-            log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_air_temp" + ' ' + input_num
-            self.textEdit_log.append(log_text)
-            self.lineEdit_set_air_temp.setText("")
+
+            if WEB_APP_MODE == False:
+                log_text = time.strftime('%y%m%d_%H%M%S',time.localtime(time.time())) + ' ' + "set_air_temp" + ' ' + str(input_num)
+                self.textEdit_log.append(log_text)
+                self.lineEdit_set_air_temp.setText("")
 
     def closeEvent(self, event):
         quit_msg = "종료하시겠습니까?"
