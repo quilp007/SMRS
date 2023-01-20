@@ -368,6 +368,10 @@ class qt(QMainWindow, form_class):
 
         self.btn_HEAT_ON.clicked.connect(lambda: self.change_STATUS(self.btn_HEAT_ON))
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.change_STATUS(self.btn_PRE_HEAT_ON))
+
+        self.btn_HEAT_ON_AND_STOP.clicked.connect(lambda: self.change_STATUS(self.btn_HEAT_ON_AND_STOP))
+        self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.change_STATUS(self.btn_PRE_HEAT_ON_AND_STOP))
+
         # self.btn_INIT_SETTING.clicked.connect(self._init_setting)
 
         # qeury(read) from start date (time) to end date (time)
@@ -512,6 +516,7 @@ class qt(QMainWindow, form_class):
         # GLOBAL VARIABLE --------------------------------------------------
         # BLOCK change config during HEAT ON time
         self.flag_HEAT_ON = False
+        self.flag_AUTO_MODE = False
 
         self.PRE_HEAT_STATUS = False
         self.HEAT_STATUS = False
@@ -537,7 +542,10 @@ class qt(QMainWindow, form_class):
 
 
     def check_temp(self):
-        if self.flag_HEAT_ON == True:
+        # flag_HEAT_ON <= True: 1. pre heat on 2. heat on 3. emergency heat on
+        # flag_AUTO_MODE <= True: 1. set auto mode 2. auto mode after pre/heat on
+        # flag_AUTO_MODE <= False: 1. Stop 2. stop after pre/heat on
+        if self.flag_HEAT_ON == True or self.flag_AUTO_MODE == False:
             return
 
         if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
@@ -793,15 +801,17 @@ class qt(QMainWindow, form_class):
     # 4. send mqtt msg to PC/SP APP
     # 5. update mongoDB
     def heat_timeout_func(self, inLabel):
+        self.change_btn_color("gray")
+
         if inLabel == self.label_pre_heat_on:
             self.pre_heat_timer.stop()
-            self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
+            # self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
             self.PRE_HEAT_STATUS = False
             if USB_SERIAL == True:
                 mcuSerial.write(b'2')
         else:
             self.heat_timer.stop()
-            self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
+            # self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
             self.HEAT_STATUS = False
             if USB_SERIAL == True:
                 mcuSerial.write(b'4')
@@ -866,6 +876,14 @@ class qt(QMainWindow, form_class):
 
         self.idx += 1
 
+
+    def change_btn_color(self, btn_color):
+        self.btn_PRE_HEAT_ON.setStyleSheet(f"background-color: {btn_color}; border: 1px solid black")
+        self.btn_PRE_HEAT_ON_AND_STOP.setStyleSheet(f"background-color: {btn_color}; border: 1px solid black")
+        self.btn_HEAT_ON.setStyleSheet(f"background-color: {btn_color}; border: 1px solid black")
+        self.btn_HEAT_ON_AND_STOP.setStyleSheet(f"background-color: {btn_color}; border: 1px solid black")
+
+
     # press the button for Thermal Film ON in R/pi or receive Film ON command from PC/APP
     # sned STATUS by mqtt
     def change_STATUS(self, button):
@@ -875,20 +893,18 @@ class qt(QMainWindow, form_class):
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
             return
 
-        # button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.btn_PRE_HEAT_ON:
-            button.setStyleSheet("background-color: yellow; border: 1px solid black")
             print('pressed btn_PRE_HEAT')
             self.PRE_HEAT_STATUS ^= 1
             if self.PRE_HEAT_STATUS == True:
                 print('PRE_HEAT_STATUS: ON')
-                # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': True, 'CH2': False}))
-                # => heat_timeout_func() : change btn color, send_msg
-                self.label_pre_heat_on.setStyleSheet("background-color: yellow")
-                self.label_emc_heat_on.setStyleSheet("background-color: gray")
-                self.pre_heat_timer.start(self.PRE_HEATING_TIME)
                 self.heat_timeout_func(self.label_heat_on)
+                self.pre_heat_timer.start(self.PRE_HEATING_TIME)
+                # => heat_timeout_func() : change btn color, send_msg
                 self.flag_HEAT_ON = True
+
+                button.setStyleSheet("background-color: yellow; border: 1px solid black")
+                self.label_pre_heat_on.setStyleSheet("background-color: yellow")
 
                 if USB_SERIAL == True:
                     mcuSerial.write(b'1')
@@ -901,21 +917,23 @@ class qt(QMainWindow, form_class):
 
         elif button == self.btn_HEAT_ON:
             print('send CH1 & CH2 on')
-            button.setStyleSheet("background-color: pink; border: 1px solid black")
+            # button.setStyleSheet("background-color: pink; border: 1px solid black")
             self.HEAT_STATUS ^= 1
             if self.HEAT_STATUS == True:
                 print('HEAT_STATUS: ON')
                 # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': False, 'CH2': True}))
                 # => heat_timeout_func() : change btn color, send_msg
-                self.label_heat_on.setStyleSheet("background-color: pink")
 
                 if self.flag_EMC_HEAT_ON == True:
                     self.label_emc_heat_on.setStyleSheet("background-color: red")
                     # self.flag_EMC_HEAT_ON == False
 
-                self.heat_timer.start(self.HEATING_TIME)
                 self.heat_timeout_func(self.label_pre_heat_on)
+                self.heat_timer.start(self.HEATING_TIME)
                 self.flag_HEAT_ON = True
+
+                button.setStyleSheet("background-color: pink; border: 1px solid black")
+                self.label_heat_on.setStyleSheet("background-color: pink")
 
                 if USB_SERIAL == True:
                     mcuSerial.write(b'3')
