@@ -1868,7 +1868,7 @@
        <string>설정 초기화</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btn_STOP_MODE">
+     <widget class="QPushButton" name="btn_HEAT_STOP">
       <property name="geometry">
        <rect>
         <x>490</x>
