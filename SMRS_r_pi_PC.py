@@ -382,7 +382,7 @@ class qt(QMainWindow, form_class):
         self.btn_AUTO_MODE.clicked.connect(self.func_btn_AUTO_MODE)
         self.btn_HEAT_STOP.clicked.connect(lambda: self.heat_timeout_func(self.btn_HEAT_STOP))
 
-        # self.btn_INIT_SETTING.clicked.connect(self._init_setting)
+        self.btn_INIT_MODE.clicked.connect(self._init_setting)
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
@@ -419,7 +419,6 @@ class qt(QMainWindow, form_class):
         # self.timer.timeout.connect(self.send_msg_loop_timer)
 
         # self.timer.start()
-        ##################################################
 
         # HEAT TIMER setting ##############################
         self.heat_timer = QtCore.QTimer()
@@ -429,25 +428,20 @@ class qt(QMainWindow, form_class):
 
         self.heating_timer = QtCore.QTimer()
         self.heating_timer.timeout.connect(lambda: self.heat_timeout_func(None))
-        ##################################################
 
         # Warning label TIMER setting ##############################
         self.label_warning_timer = QtCore.QTimer()
         self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
-        ##################################################
 
         # Check Temp and ON/OFF HEAT TIMER setting ##############################
         self.check_temp_timer = QtCore.QTimer()
         self.check_temp_timer.timeout.connect(self.check_temp)
-        ##################################################
-
 
         # MQTT init ###############################################
         self.sub_mqtt = sc.SUB_MQTT(_broker_address = server_ip, _topic = sub_root_topic+'+',\
                                      _client=MQTT_CLIENT_ID, _mqtt_debug = DEBUG_PRINT)
         
         # self.sub_mqtt.client1.username_pw_set(username="steve",password="password")
-        ##########################################################
 
         # serial receive THREAD ##############################
         self.thread_rcv_data = THREAD_RECEIVE_Data(self, self.sub_mqtt)
@@ -459,7 +453,6 @@ class qt(QMainWindow, form_class):
 
         self.resist_data = []
         self.log_flag = False
-
 
         self.label_pre_heat_on.setStyleSheet("background-color: gray")
         self.label_heat_on.setStyleSheet("background-color: gray")
@@ -473,11 +466,10 @@ class qt(QMainWindow, form_class):
         self.clickable(self.set_air_temp).connect(lambda: self.input_value(self.set_air_temp))                  # set_air_temp 
         self.clickable(self.pre_heat_on_time).connect(lambda: self.input_value(self.pre_heat_on_time))          # pre_heat_on_time
         self.clickable(self.heat_on_time).connect(lambda: self.input_value(self.heat_on_time))                  # heat_on_time
-
         
-        self.clickable(self.road_temp).connect(lambda: self.input_value(self.road_temp))                  # heat_on_time
-        self.clickable(self.road_humidity).connect(lambda: self.input_value(self.road_humidity))                  # heat_on_time
-        self.clickable(self.air_temp).connect(lambda: self.input_value(self.air_temp))                  # heat_on_time
+        self.clickable(self.road_temp).connect(lambda: self.input_value(self.road_temp))
+        self.clickable(self.road_humidity).connect(lambda: self.input_value(self.road_humidity))
+        self.clickable(self.air_temp).connect(lambda: self.input_value(self.air_temp))
 
 
         # TODO: connect all lcdNums
@@ -558,7 +550,9 @@ class qt(QMainWindow, form_class):
         # flag_HEAT_ON <= True: 1. pre heat on 2. heat on 3. emergency heat on
         # flag_AUTO_MODE <= True: 1. set auto mode 2. auto mode after pre/heat on
         # flag_AUTO_MODE <= False: 1. Stop 2. stop after pre/heat on
-        if self.flag_HEAT_ON == True or self.flag_AUTO_MODE == False:
+
+        # if self.flag_HEAT_ON == True or self.flag_AUTO_MODE == False:
+        if self.flag_AUTO_MODE == False:
             return
 
         if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
@@ -574,16 +568,6 @@ class qt(QMainWindow, form_class):
         elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
             # self.change_STATUS(self.btn_PRE_HEAT_ON)
             self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON)
-
-        """
-        elif int(self.config_dict['road_temp']) <= int(self.config_dict['heat_road_temp']):
-            self.change_STATUS(self.btn_HEAT_ON)
-        elif (self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']) and \
-            (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity']):
-            self.change_STATUS(self.btn_HEAT_ON)
-        elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
-            self.change_STATUS(self.btn_PRE_HEAT_ON)
-        """
 
 
     def _preview(self):
@@ -613,12 +597,12 @@ class qt(QMainWindow, form_class):
             self.textEdit.setText("preview off")
 
     def _init_setting(self):
-        self.config_dict['pre_heat_road_temp'] = 3
+        self.config_dict['pre_heat_road_temp'] = 5
+        self.config_dict['pre_heat_on_time'] = 1 
         self.config_dict['heat_road_temp'] = 1
         self.config_dict['set_road_humidity'] = 3
-        self.config_dict['set_air_temp'] = -15
-        self.config_dict['pre_heat_on_time'] = 60
-        self.config_dict['heat_on_time'] = 90
+        self.config_dict['heat_on_time'] = 2
+        self.config_dict['set_air_temp'] = -20
 
         self.HEATING_TIME = 0
         self.PRE_HEATING_TIME = 0
@@ -635,9 +619,9 @@ class qt(QMainWindow, form_class):
                 lcdNum.display(value)                        # display to LCDNumber
 
             if key == 'heat_on_time' and value:
-                self.HEATING_TIME = int(value)*60*1000
+                self.HEATING_TIME = int(value)*20*60*1000   # 1 time -> 20min
             elif key == 'pre_heat_on_time' and value:
-                self.PRE_HEATING_TIME = int(value)*60*1000
+                self.PRE_HEATING_TIME = int(value)*20*60*1000
 
         print('=========================================================================')
         print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
@@ -782,7 +766,8 @@ class qt(QMainWindow, form_class):
         if topic == sub_root_topic + 'INIT':
             if jsonData['REQUEST'] == 'INIT':
                 print('received: ', 'INIT')
-                self.change_STATUS('INIT')
+                # self.change_STATUS('INIT')
+                self.current_STATUS()
                 return
 
         elif topic == sub_root_topic + 'CMD':
@@ -791,11 +776,13 @@ class qt(QMainWindow, form_class):
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
             if jsonData['CH1'] == True and jsonData['CH2'] == False:
                 print("pressed pre-heat-on")
-                self.change_STATUS(self.btn_PRE_HEAT_ON)
+                # self.change_STATUS(self.btn_PRE_HEAT_ON)
+                self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON)
                 # TODO: update DB for heating status
             elif jsonData['CH1'] == False and jsonData['CH2'] == True:
                 print("pressed heat-on")
-                self.change_STATUS(self.btn_HEAT_ON)
+                # self.change_STATUS(self.btn_HEAT_ON)
+                self.func_btn_HEAT_ON(self.btn_HEAT_ON)
                 # TODO: update DB for heating status
 
         elif topic == sub_root_topic+'CONFIG':
@@ -962,7 +949,7 @@ class qt(QMainWindow, form_class):
         self.HEAT_STATUS = False
 
         if USB_SERIAL == True:
-            mcuSerial.write(b'2')
+            mcuSerial.write(b'1')
 
         if MQTT_ENABLE:
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
@@ -984,6 +971,9 @@ class qt(QMainWindow, form_class):
             self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
             self.btn_HEAT_ON_AND_STOP.setStyleSheet("background-color: pink; border: 1px solid black")
 
+        if self.flag_EMC_HEAT_ON == True:
+            self.label_emc_heat_on.setStyleSheet("background-color: red")
+
         self.heating_timer.start(HEATING_TIME)
 
         self.flag_HEAT_ON = True
@@ -991,11 +981,15 @@ class qt(QMainWindow, form_class):
         self.HEAT_STATUS = True
 
         if USB_SERIAL == True:
-            mcuSerial.write(b'2')
+            mcuSerial.write(b'3')
 
         if MQTT_ENABLE:
             self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
 
+    def current_STATUS(self):
+        print("request current STATUS")
+        self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps(self.config_dict))
+        self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
 
     # press the button for Thermal Film ON in R/pi or receive Film ON command from PC/APP
     # sned STATUS by mqtt
@@ -1057,20 +1051,9 @@ class qt(QMainWindow, form_class):
 
             # TODO: send 'HEAT ON' msg to MCU
 
-        
-
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
         self.sub_mqtt.loop_start_func()
-
-    @QtCore.pyqtSlot(str, str)
-    def on_message_1(self, msg, topic):
-        if topic == sub_root_topic + 'DATA':
-            jsonData = json.loads(msg) 
-            roadTemp = jsonData['road_temp']
-            roadHumidity = jsonData['road_humidity']
-            airTemp = jsonData['air_temp']
-
 
     def clickable(self, widget):
         class Filter(QObject):
