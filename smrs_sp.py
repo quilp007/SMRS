@@ -249,7 +249,7 @@ def take_picture():
 with gr.Blocks() as app3:
     md = gr.Markdown()
     with gr.Row():
-        gr.Image("logo1.png")
+        gr.Image("./icon/logo1.png")
     with gr.Row():
         take_picture_btn = gr.Button("사진 촬영")
         take_picture_btn.click(fn=take_picture, inputs=None, outputs=md)
