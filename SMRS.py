@@ -216,9 +216,22 @@ class qt(QMainWindow, form_class):
         self.tabWidget.tabBar().installEventFilter(self)
         self.tabWidget.tabBar().setMouseTracking(True)
 
-        self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
-        self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
-        self.btn_capture.clicked.connect(lambda: self.send_CMD(self.btn_capture))
+        # self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
+        # self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON_AND_STOP))
+        # self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
+        # self.btn_HEAT_ON_AND_STOP.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON_AND_STOP))
+
+        self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.pressed_button(self.btn_PRE_HEAT_ON))
+        self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.pressed_button(self.btn_PRE_HEAT_ON_AND_STOP))
+        self.btn_HEAT_ON.clicked.connect(lambda: self.pressed_button(self.btn_HEAT_ON))
+        self.btn_HEAT_ON_AND_STOP.clicked.connect(lambda: self.pressed_button(self.btn_HEAT_ON_AND_STOP))
+
+        self.btn_AUTO_MODE.clicked.connect(lambda: self.pressed_button(self.btn_AUTO_MODE))
+        self.btn_INIT_MODE.clicked.connect(lambda: self.pressed_button(self.btn_INIT_MODE))
+        self.btn_HEAT_STOP.clicked.connect(lambda: self.pressed_button(self.btn_HEAT_STOP))
+        self.btn_capture.clicked.connect(lambda: self.pressed_button(self.btn_capture))
+
+        # self.btn_capture.clicked.connect(lambda: self.send_CMD(self.btn_capture))
         # self.btn_INIT_SETTING.clicked.connect(lambda: self.send_CMD(self.btn_INIT_SETTING))
 
         self.road_temp = []
@@ -794,6 +807,7 @@ class qt(QMainWindow, form_class):
                 # self.label_33.setStyleSheet("background-color: gray")
                 log_text = time_text + ' 가동 멈춤'
 
+
             self.textEdit_log.append(log_text)
 
         elif topic == sub_root_topic + 'CONFIG':
@@ -824,6 +838,18 @@ class qt(QMainWindow, form_class):
             self.btn_capture.setStyleSheet("background-color: gray; border: 1px solid black")
 
             self.textEdit.append('captured ' + filename)
+
+        # elif topic == sub_root_topic + 'MODE':
+        #     if jsonData['MODE'] == 'AUTO':
+        #         self.btn_AUTO_MODE.setStyleSheet("background-color: blue")
+        #     else:
+        #         self.btn_AUTO_MODE.setStyleSheet("background-color: gray")
+
+        elif topic == sub_root_topic + 'BUTTON':
+            self.findChild(QPushButton, jsonData['btn'][0]).setStyleSheet("background-color: {}".format(jsonData['btn'][1]))
+
+        elif topic == sub_root_topic + 'LABEL':
+            self.findChild(QLabel, jsonData['label'][0]).setStyleSheet("background-color: {}".format(jsonData['label'][1]))
 
     def clickable(self, widget):
         class Filter(QObject):
@@ -902,6 +928,10 @@ class qt(QMainWindow, form_class):
         self.curve_road_humidity.setData(self.road_humidity)
         self.curve_air_temp.setData(self.air_temp)
 
+
+    def pressed_button(self, button):
+        self.sub_mqtt.send_msg(pub_root_topic + "BUTTON", json.dumps({'btn': button.objectName()}))
+
     # sned CMD by mqtt
     def send_CMD(self, button):
         if button == 'INIT':
@@ -910,8 +940,8 @@ class qt(QMainWindow, form_class):
             return
 
         # button.setStyleSheet("background-color: green; border: 1px solid black")
-        if button == self.btn_PRE_HEAT_ON:
-            print('pressed PRE HEAT BUtton')
+        if button == self.btn_PRE_HEAT_ON :
+            print('pressed PRE/ HEAT BUtton')
             self.sub_mqtt.send_msg(pub_root_topic + "CMD", json.dumps({'CH1': True, 'CH2': False}))
         elif button == self.btn_HEAT_ON:
             print('pressed HEAT BUtton')

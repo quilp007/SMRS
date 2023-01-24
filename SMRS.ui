@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1156</width>
+    <width>1049</width>
     <height>612</height>
    </rect>
   </property>
@@ -75,7 +75,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -641,7 +641,7 @@
       <property name="title">
        <string>현재상태</string>
       </property>
-      <widget class="QLabel" name="label_33">
+      <widget class="QLabel" name="label_emc_heat_on">
        <property name="geometry">
         <rect>
          <x>700</x>
@@ -679,7 +679,7 @@
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="label_heat_on">
        <property name="geometry">
         <rect>
          <x>360</x>
@@ -717,7 +717,7 @@
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_pre_heat_on">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1258,7 +1258,7 @@
            </font>
           </property>
           <property name="text">
-           <string>범위(1~120)</string>
+           <string>(1~120)</string>
           </property>
          </widget>
         </item>
@@ -1327,7 +1327,7 @@
            </font>
           </property>
           <property name="text">
-           <string>범위(-30~60)</string>
+           <string>(-30~60)</string>
           </property>
          </widget>
         </item>
@@ -1442,7 +1442,7 @@
            </font>
           </property>
           <property name="text">
-           <string>범위(-30~60)</string>
+           <string>(-30~60)</string>
           </property>
          </widget>
         </item>
@@ -1558,7 +1558,7 @@
            </font>
           </property>
           <property name="text">
-           <string>범위(1~120)</string>
+           <string>(1~120)</string>
           </property>
          </widget>
         </item>
@@ -1629,7 +1629,7 @@
            </font>
           </property>
           <property name="text">
-           <string>범위(-30~60)</string>
+           <string>(-30~60)</string>
           </property>
          </widget>
         </item>
@@ -1701,7 +1701,7 @@
            </font>
           </property>
           <property name="text">
-           <string>범위(0~9)</string>
+           <string>(0~9)</string>
           </property>
          </widget>
         </item>

@@ -6,8 +6,7 @@
 
 import os, sys, time, datetime, warnings, signal
 from PyQt5.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot, Qt, QEvent, QTimer, QProcess
-from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, \
-    QListView
+from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, QListView
 from PyQt5.QtWidgets import QPushButton, QGridLayout, QLCDNumber
 from PyQt5.QtWidgets import *
 from PyQt5 import uic, QtTest, QtGui, QtCore
@@ -373,16 +372,18 @@ class qt(QMainWindow, form_class):
         # self.btn_HEAT_ON_AND_STOP.clicked.connect(lambda: self.change_STATUS(self.btn_HEAT_ON_AND_STOP))
         # self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.change_STATUS(self.btn_PRE_HEAT_ON_AND_STOP))
 
-        self.btn_HEAT_ON.clicked.connect(lambda: self.func_btn_HEAT_ON(self.btn_HEAT_ON))
-        self.btn_HEAT_ON_AND_STOP.clicked.connect(lambda: self.func_btn_HEAT_ON(self.btn_HEAT_ON_AND_STOP))
+        self.btn_HEAT_ON.clicked.connect(self.func_btn_HEAT_ON)
+        self.btn_HEAT_ON_AND_STOP.clicked.connect(self.func_btn_HEAT_ON_AND_STOP)
         
-        self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON))
-        self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON_AND_STOP))
+        # self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON))
+        # self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON_AND_STOP))
+        self.btn_PRE_HEAT_ON.clicked.connect(self.func_btn_PRE_HEAT_ON)
+        self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(self.func_btn_PRE_HEAT_ON_AND_STOP)
         
         self.btn_AUTO_MODE.clicked.connect(self.func_btn_AUTO_MODE)
-        self.btn_HEAT_STOP.clicked.connect(lambda: self.heat_timeout_func(self.btn_HEAT_STOP))
+        self.btn_HEAT_STOP.clicked.connect(self.func_btn_HEAT_STOP)
 
-        self.btn_INIT_MODE.clicked.connect(self._init_setting)
+        self.btn_INIT_MODE.clicked.connect(self.func_btn_INIT_MODE)
 
         # qeury(read) from start date (time) to end date (time)
         # TODO: need to modify "query_time" as a user input
@@ -486,6 +487,19 @@ class qt(QMainWindow, form_class):
             'air_temp':             0
         }
 
+        self.btn_list = [
+            self.btn_HEAT_ON,
+            self.btn_HEAT_ON_AND_STOP,
+            self.btn_PRE_HEAT_ON,
+            self.btn_PRE_HEAT_ON_AND_STOP
+        ]
+
+        self.label_list = [
+            self.label_pre_heat_on,
+            self.label_heat_on,
+            self.label_emc_heat_on
+        ]
+
         self.HEATING_TIME = 0
         self.PRE_HEATING_TIME = 0
 
@@ -540,7 +554,7 @@ class qt(QMainWindow, form_class):
         self.V_thread.start()
         self.V_thread.stop()
 
-        self.btn_capture.clicked.connect(self._capture)
+        self.btn_capture.clicked.connect(self.func_btn_capture)
         self.rb_preview.clicked.connect(self._preview)
 
         self.check_temp_timer.start(CHECK_TEMP_INTERVAL_TIME)
@@ -558,16 +572,17 @@ class qt(QMainWindow, form_class):
         if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
             self.flag_EMC_HEAT_ON = True
             # self.change_STATUS(self.btn_HEAT_ON)
-            self.func_btn_HEAT_ON(self.btn_HEAT_ON)
+            self.func_btn_HEAT_ON()
 
         elif (self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']) and \
             (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity']):
             # self.change_STATUS(self.btn_HEAT_ON)
-            self.func_btn_HEAT_ON(self.btn_HEAT_ON)
+            self.func_btn_HEAT_ON()
 
         elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
             # self.change_STATUS(self.btn_PRE_HEAT_ON)
-            self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON)
+            # self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON)
+            self.func_btn_PRE_HEAT_ON()
 
 
     def _preview(self):
@@ -596,13 +611,13 @@ class qt(QMainWindow, form_class):
             # changing text of label
             self.textEdit.setText("preview off")
 
-    def _init_setting(self):
-        self.config_dict['pre_heat_road_temp'] = 5
-        self.config_dict['pre_heat_on_time'] = 1 
-        self.config_dict['heat_road_temp'] = 1
-        self.config_dict['set_road_humidity'] = 3
-        self.config_dict['heat_on_time'] = 2
-        self.config_dict['set_air_temp'] = -20
+    def func_btn_INIT_MODE(self):
+        self.config_dict['pre_heat_road_temp']  = 5
+        self.config_dict['pre_heat_on_time']    = 1 
+        self.config_dict['heat_road_temp']      = 1
+        self.config_dict['set_road_humidity']   = 3
+        self.config_dict['heat_on_time']        = 2
+        self.config_dict['set_air_temp']        = -20
 
         self.HEATING_TIME = 0
         self.PRE_HEATING_TIME = 0
@@ -627,7 +642,7 @@ class qt(QMainWindow, form_class):
         print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
 
 
-    def _capture(self):
+    def func_btn_capture(self):
         new_cap = False
         ret, img = self.V_thread.cap.read()
 
@@ -777,13 +792,17 @@ class qt(QMainWindow, form_class):
             if jsonData['CH1'] == True and jsonData['CH2'] == False:
                 print("pressed pre-heat-on")
                 # self.change_STATUS(self.btn_PRE_HEAT_ON)
-                self.func_btn_PRE_HEAT_ON(self.btn_PRE_HEAT_ON)
+                self.func_btn_PRE_HEAT_ON()
                 # TODO: update DB for heating status
             elif jsonData['CH1'] == False and jsonData['CH2'] == True:
                 print("pressed heat-on")
                 # self.change_STATUS(self.btn_HEAT_ON)
-                self.func_btn_HEAT_ON(self.btn_HEAT_ON)
+                self.func_btn_HEAT_ON()
                 # TODO: update DB for heating status
+
+        elif topic == sub_root_topic + 'BUTTON':
+            func_btn_xxx = getattr(self, 'func_' + jsonData['btn'])
+            func_btn_xxx()
 
         elif topic == sub_root_topic+'CONFIG':
             for key, value in jsonData.items():
@@ -792,10 +811,10 @@ class qt(QMainWindow, form_class):
                 self.LineEdit_RET(value)
 
         elif topic == sub_root_topic+'CAPTURE':
-            self._capture()
+            self.func_btn_capture()
 
         elif topic == sub_root_topic+'INIT_SETTING':
-            self._init_setting()
+            self.func_btn_INIT_MODE()
 
     # heat timeout function
     # 1. stop timer
@@ -849,6 +868,9 @@ class qt(QMainWindow, form_class):
             self.flag_AUTO_MODE = False
             self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
 
+            if MQTT_ENABLE:
+                self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_AUTO_MODE.objectName(), 'gray']}))
+
         self.heating_timer.stop()
 
         self.flag_HEAT_ON = False
@@ -857,14 +879,11 @@ class qt(QMainWindow, form_class):
         self.PRE_HEAT_STATUS = False
         self.HEAT_STATUS = False
 
-        self.btn_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
-        self.btn_HEAT_ON_AND_STOP.setStyleSheet("background-color: gray; border: 1px solid black")
-        self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray; border: 1px solid black")
-        self.btn_PRE_HEAT_ON_AND_STOP.setStyleSheet("background-color: gray; border: 1px solid black")
+        for obj in self.btn_list:
+            obj.setStyleSheet("background-color: {}; border: 1px solid black".format('gray'))
 
-        self.label_pre_heat_on.setStyleSheet("background-color: gray")
-        self.label_heat_on.setStyleSheet("background-color: gray")
-        self.label_emc_heat_on.setStyleSheet("background-color: gray")
+        for obj in self.label_list:
+            obj.setStyleSheet("background-color: {}; border: 1px solid black".format('gray'))
 
         self.label_warning_timer.stop()
         self.label_warning.setVisible(False)
@@ -873,7 +892,11 @@ class qt(QMainWindow, form_class):
             mcuSerial.write(b'2')
 
         if MQTT_ENABLE:
-            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            for obj in self.btn_list:
+                self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [obj.objectName(), 'gray']}))
+
+            for obj in self.label_list:
+                self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [obj.objectName(), 'gray']}))
 
 
     def label_warning_timeout_func(self):
@@ -923,24 +946,23 @@ class qt(QMainWindow, form_class):
     def func_btn_AUTO_MODE(self):
         self.flag_AUTO_MODE = True
         self.btn_AUTO_MODE.setStyleSheet(f"background-color: blue; border: 1px solid black")
+        if MQTT_ENABLE:
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_AUTO_MODE.objectName(), 'blue']}))
 
+    def func_btn_HEAT_STOP(self):
+        self.heat_timeout_func(self.btn_HEAT_STOP)
 
-    def func_btn_PRE_HEAT_ON(self, button):
+    def func_btn_PRE_HEAT_ON(self):
         if self.flag_HEAT_ON:
             return
 
         self.label_pre_heat_on.setStyleSheet("background-color: yellow")
         self.label_emc_heat_on.setStyleSheet("background-color: gray")
 
-        if button == self.btn_PRE_HEAT_ON:
-            self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
-            if not self.flag_AUTO_MODE:
-                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: yellow; border: 1px solid black")
-            self.flag_AUTO_MODE = True
-        elif button == self.btn_PRE_HEAT_ON_AND_STOP:
-            self.flag_AUTO_MODE = False
-            self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
-            self.btn_PRE_HEAT_ON_AND_STOP.setStyleSheet("background-color: yellow; border: 1px solid black")
+        # if not self.flag_AUTO_MODE:
+        self.btn_PRE_HEAT_ON.setStyleSheet("background-color: yellow; border: 1px solid black")
+        self.flag_AUTO_MODE = True
+        self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
 
         self.heating_timer.start(PRE_HEATING_TIME)
 
@@ -952,27 +974,56 @@ class qt(QMainWindow, form_class):
             mcuSerial.write(b'1')
 
         if MQTT_ENABLE:
-            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_AUTO_MODE.objectName(), 'blue']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_PRE_HEAT_ON.objectName(), 'yellow']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_pre_heat_on.objectName(), 'yellow']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_emc_heat_on.objectName(), 'gray']}))
+
+    def func_btn_PRE_HEAT_ON_AND_STOP(self):
+        if self.flag_HEAT_ON:
+            return
+
+        self.label_pre_heat_on.setStyleSheet("background-color: yellow")
+        self.label_emc_heat_on.setStyleSheet("background-color: gray")
+
+        self.flag_AUTO_MODE = False
+        self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
+        self.btn_PRE_HEAT_ON_AND_STOP.setStyleSheet("background-color: yellow; border: 1px solid black")
+
+        self.heating_timer.start(PRE_HEATING_TIME)
+
+        self.flag_HEAT_ON = True
+        self.PRE_HEAT_STATUS = True
+        self.HEAT_STATUS = False
+
+        if USB_SERIAL == True:
+            mcuSerial.write(b'1')
+
+        if MQTT_ENABLE:
+            # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_AUTO_MODE.objectName(), 'gray']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_PRE_HEAT_ON_AND_STOP.objectName(), 'yellow']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_pre_heat_on.objectName(), 'yellow']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_emc_heat_on.objectName(), 'gray']}))
 
 
-    def func_btn_HEAT_ON(self, button):
+    def func_btn_HEAT_ON(self, mode):
         if self.flag_HEAT_ON:
             return
 
         self.label_heat_on.setStyleSheet("background-color: pink")
 
-        if button == self.btn_HEAT_ON:
-            self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
-            if not self.flag_AUTO_MODE:
-                self.btn_HEAT_ON.setStyleSheet("background-color: pink; border: 1px solid black")
-            self.flag_AUTO_MODE = True
-        elif button == self.btn_HEAT_ON_AND_STOP:
-            self.flag_AUTO_MODE = False
-            self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
-            self.btn_HEAT_ON_AND_STOP.setStyleSheet("background-color: pink; border: 1px solid black")
+        # if mode == 'AUTO':
+        # else:
+        self.btn_HEAT_ON.setStyleSheet("background-color: pink; border: 1px solid black")
+        self.flag_AUTO_MODE = True
+        self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
 
         if self.flag_EMC_HEAT_ON == True:
             self.label_emc_heat_on.setStyleSheet("background-color: red")
+            if MQTT_ENABLE:
+                self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_emc_heat_on.objectName(), 'red']}))
 
         self.heating_timer.start(HEATING_TIME)
 
@@ -984,12 +1035,53 @@ class qt(QMainWindow, form_class):
             mcuSerial.write(b'3')
 
         if MQTT_ENABLE:
-            self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_AUTO_MODE.objectName(), 'blue']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_HEAT_ON.objectName(), 'pink']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_heat_on.objectName(), 'pink']}))
+
+    def func_btn_HEAT_ON_AND_STOP(self):
+        if self.flag_HEAT_ON:
+            return
+
+        self.label_heat_on.setStyleSheet("background-color: pink")
+
+        self.flag_AUTO_MODE = False
+        self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
+        self.btn_HEAT_ON_AND_STOP.setStyleSheet("background-color: pink; border: 1px solid black")
+
+        if self.flag_EMC_HEAT_ON == True:
+            self.label_emc_heat_on.setStyleSheet("background-color: red")
+            if MQTT_ENABLE:
+                self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_emc_heat_on.objectName(), 'red']}))
+
+        self.heating_timer.start(HEATING_TIME)
+
+        self.flag_HEAT_ON = True
+        self.PRE_HEAT_STATUS = False
+        self.HEAT_STATUS = True
+
+        if USB_SERIAL == True:
+            mcuSerial.write(b'3')
+
+        if MQTT_ENABLE:
+            # self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_AUTO_MODE.objectName(), 'gray']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [self.btn_HEAT_ON_AND_STOP.objectName(), 'pink']}))
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_heat_on.objectName(), 'pink']}))
 
     def current_STATUS(self):
         print("request current STATUS")
         self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps(self.config_dict))
-        self.sub_mqtt.send_msg(pub_root_topic+"STATUS", json.dumps({'CH1': self.PRE_HEAT_STATUS, 'CH2': self.HEAT_STATUS}))
+
+        obj = self.btn_AUTO_MODE
+        self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [obj.objectName(), obj.palette().window().color().name()]}))
+
+        for obj in self.btn_list:
+            self.sub_mqtt.send_msg(pub_root_topic+"BUTTON", json.dumps({'btn': [obj.objectName(), obj.palette().window().color().name()]}))
+
+        for obj in self.label_list:
+            self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [obj.objectName(), obj.palette().window().color().name()]}))
 
     # press the button for Thermal Film ON in R/pi or receive Film ON command from PC/APP
     # sned STATUS by mqtt

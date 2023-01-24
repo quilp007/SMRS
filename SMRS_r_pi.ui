@@ -72,7 +72,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>3</number>
    </property>
    <property name="iconSize">
     <size>
@@ -128,10 +128,10 @@
     <widget class="QFrame" name="frame">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>19</x>
        <y>20</y>
-       <width>960</width>
-       <height>450</height>
+       <width>971</width>
+       <height>471</height>
       </rect>
      </property>
      <property name="font">
@@ -850,9 +850,9 @@
     <widget class="QFrame" name="frame_2">
      <property name="geometry">
       <rect>
-       <x>9</x>
+       <x>19</x>
        <y>20</y>
-       <width>991</width>
+       <width>971</width>
        <height>471</height>
       </rect>
      </property>
@@ -2067,7 +2067,7 @@
        <x>30</x>
        <y>20</y>
        <width>960</width>
-       <height>450</height>
+       <height>471</height>
       </rect>
      </property>
      <property name="font">
@@ -2259,86 +2259,30 @@
       <normaloff>icon/engineer_on.png</normaloff>icon/engineer_on.png</iconset>
     </attribute>
     <attribute name="title">
-     <string>Admin</string>
+     <string>Log</string>
     </attribute>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QTextEdit" name="textEdit_log">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>20</x>
        <y>20</y>
-       <width>960</width>
-       <height>450</height>
+       <width>971</width>
+       <height>471</height>
       </rect>
      </property>
-     <property name="rowCount">
-      <number>10</number>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>10</pointsize>
+       <weight>50</weight>
+       <italic>false</italic>
+       <bold>false</bold>
+       <underline>false</underline>
+       <strikeout>false</strikeout>
+       <stylestrategy>PreferDefault</stylestrategy>
+       <kerning>true</kerning>
+      </font>
      </property>
-     <property name="columnCount">
-      <number>2</number>
-     </property>
-     <attribute name="horizontalHeaderHighlightSections">
-      <bool>true</bool>
-     </attribute>
-     <row>
-      <property name="text">
-       <string>1</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>2</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>3</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>4</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>5</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>6</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>7</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>8</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>9</string>
-      </property>
-     </row>
-     <row>
-      <property name="text">
-       <string>10</string>
-      </property>
-     </row>
-     <column>
-      <property name="text">
-       <string>시간</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>LOG</string>
-      </property>
-     </column>
     </widget>
    </widget>
   </widget>
