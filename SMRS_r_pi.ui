@@ -39,7 +39,7 @@
    </property>
    <property name="font">
     <font>
-     <family>3DS Fonticon</family>
+     <family>Arial</family>
      <pointsize>10</pointsize>
      <weight>50</weight>
      <italic>false</italic>
@@ -72,7 +72,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -107,7 +107,7 @@
     </property>
     <property name="font">
      <font>
-      <family>3DS Fonticon</family>
+      <family>Arial</family>
       <pointsize>30</pointsize>
       <weight>50</weight>
       <italic>false</italic>
@@ -136,7 +136,7 @@
      </property>
      <property name="font">
       <font>
-       <family>3DS Fonticon</family>
+       <family>Arial</family>
        <pointsize>10</pointsize>
        <weight>50</weight>
        <italic>false</italic>
@@ -164,7 +164,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -196,7 +196,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -222,7 +222,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -241,7 +241,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -273,7 +273,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -292,7 +292,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -317,7 +317,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -342,7 +342,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -374,7 +374,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -406,7 +406,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>75</weight>
         <bold>true</bold>
@@ -443,7 +443,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>75</weight>
         <italic>false</italic>
@@ -475,7 +475,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>75</weight>
         <italic>false</italic>
@@ -507,7 +507,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>9</pointsize>
         <weight>50</weight>
         <bold>false</bold>
@@ -528,7 +528,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -554,7 +554,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -580,7 +580,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>9</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -606,7 +606,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -638,7 +638,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -664,7 +664,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -690,7 +690,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -709,7 +709,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -735,7 +735,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -761,7 +761,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -787,7 +787,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -813,7 +813,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
        </font>
       </property>
@@ -829,7 +829,7 @@
    <widget class="QWidget" name="settings">
     <property name="font">
      <font>
-      <family>3DS Fonticon</family>
+      <family>Arial</family>
       <pointsize>30</pointsize>
       <weight>50</weight>
       <italic>false</italic>
@@ -858,7 +858,7 @@
      </property>
      <property name="font">
       <font>
-       <family>3DS Fonticon</family>
+       <family>Arial</family>
        <pointsize>10</pointsize>
        <weight>50</weight>
        <italic>false</italic>
@@ -934,7 +934,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
@@ -2072,7 +2072,7 @@
      </property>
      <property name="font">
       <font>
-       <family>3DS Fonticon</family>
+       <family>Arial</family>
        <pointsize>10</pointsize>
        <weight>50</weight>
        <italic>false</italic>
@@ -2100,7 +2100,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -2126,7 +2126,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
@@ -2153,7 +2153,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>
@@ -2180,7 +2180,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -2203,7 +2203,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <italic>false</italic>
@@ -2229,7 +2229,7 @@
       </property>
       <property name="font">
        <font>
-        <family>3DS Fonticon</family>
+        <family>Arial</family>
         <pointsize>10</pointsize>
         <weight>50</weight>
         <bold>false</bold>

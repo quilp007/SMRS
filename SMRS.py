@@ -807,7 +807,6 @@ class qt(QMainWindow, form_class):
                 # self.label_33.setStyleSheet("background-color: gray")
                 log_text = time_text + ' 가동 멈춤'
 
-
             self.textEdit_log.append(log_text)
 
         elif topic == sub_root_topic + 'CONFIG':
@@ -846,6 +845,11 @@ class qt(QMainWindow, form_class):
         #         self.btn_AUTO_MODE.setStyleSheet("background-color: gray")
 
         elif topic == sub_root_topic + 'BUTTON':
+            if jsonData['btn'][1] != 'gray':
+                time_text = time.strftime('%y.%m.%d_%H:%M:%S', time.localtime(time.time()))
+                log_text = time_text + '   ' + jsonData['btn'][0][4:]
+                self.textEdit_log.append(log_text)
+
             self.findChild(QPushButton, jsonData['btn'][0]).setStyleSheet("background-color: {}".format(jsonData['btn'][1]))
 
         elif topic == sub_root_topic + 'LABEL':
