@@ -29,20 +29,22 @@ import base64
 import argparse
 import platform
 
-ARG_TEST = True 
+ARG_ENABLE = True 
 TEST = False
 CERTI = True
+ENABLE_MONGODB = True
 
-if ARG_TEST:
-    parser = argparse.ArgumentParser(description='SMRS raspberry pi for PC')
-    parser.add_argument('-id', '--arg1', help='arg for mqtt id/publisher topic')
-    args = parser.parse_args()
-    if args.arg1 != None:
-        print('arg1=', args.arg1)
-        DEVICE_ID = args.arg1
+DEVICE_ID = None
+
+if ARG_ENABLE == False:
+    if TEST == False:
+        MQTT_CLIENT_ID = 'client_r_pi1'
+        pub_root_topic = "R_PI111/"
+        sub_root_topic = "APP111/"
     else:
-        print('arg is None!! please input arg!!')
-        exit(1)
+        MQTT_CLIENT_ID = 'client_r_pi_test'
+        pub_root_topic = "R_PI_test/"
+        sub_root_topic = "APP_test/"
 
 USB_SERIAL = False
 MQTT_ENABLE = True
@@ -61,22 +63,6 @@ passwd = 'smrs2580_1!'
 mongo_port = 27017
 mqtt_port = 1883
 
-if ARG_TEST:
-    MQTT_CLIENT_ID = 'client_' + DEVICE_ID
-    pub_root_topic = "PUB_" + DEVICE_ID + "/"
-    sub_root_topic = "SUB_" + DEVICE_ID + "/"
-
-    print(pub_root_topic)
-    print(sub_root_topic)
-else:
-    if TEST == False:
-        MQTT_CLIENT_ID = 'client_r_pi1'
-        pub_root_topic = "R_PI111/"
-        sub_root_topic = "APP111/"
-    else:
-        MQTT_CLIENT_ID = 'client_r_pi_test'
-        pub_root_topic = "R_PI_test/"
-        sub_root_topic = "APP_test/"
 
 # TTA version is TEST = True, MQTT ID no is 1
 
@@ -132,6 +118,23 @@ if CERTI == True and platform.system() == 'Windows':
 else:
     form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
+
+mongodb_collection = None
+mongodb_signup_col = None
+
+def initMongoDB():
+    global mongodb_collection
+    global mongodb_signup_col
+
+    if ENABLE_MONGODB:
+        conn = pymongo.MongoClient('mongodb://' + server_ip,
+                                   username=userid,
+                                   password=passwd,
+                                   authSource=DEVICE_ID)
+
+        db = conn.get_database(DEVICE_ID)
+        mongodb_collection = db.get_collection('heating_log')
+        mongodb_signup_col = db.get_collection('signup')
 
 class VideoThread(QThread):
     change_pixmap_signal = pyqtSignal(np.ndarray)
@@ -391,8 +394,8 @@ class qt(QMainWindow, form_class):
         self.util_func = Util_Function()
 
         # self.query_time = datetime.now()
-        self.query_time = datetime(2022, 6, 15, 18, 22, 37)
-        results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
+        # self.query_time = datetime(2022, 6, 15, 18, 22, 37)
+        # results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
 
         # table Widget ------------------------------------------------------------------
         # self.tableWidget.setRowCount(ROW_COUNT)
@@ -414,10 +417,10 @@ class qt(QMainWindow, form_class):
         # self.timer.start()
 
         # HEAT TIMER setting ##############################
-        self.heat_timer = QtCore.QTimer()
-        self.pre_heat_timer = QtCore.QTimer()
-        self.pre_heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_pre_heat_on))
-        self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
+        # self.heat_timer = QtCore.QTimer()
+        # self.pre_heat_timer = QtCore.QTimer()
+        # self.pre_heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_pre_heat_on))
+        # self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
 
         self.heating_timer = QtCore.QTimer()
         self.heating_timer.timeout.connect(lambda: self.heat_timeout_func(None))
@@ -878,6 +881,8 @@ class qt(QMainWindow, form_class):
         log_text = time_text + '   ' + txt
         self.textEdit_log.append(log_text)
 
+        result = mongodb_collection.insert_one({'timestamp': datetime.now(), 'heating_mode': txt})
+
     # change color of remote button/label
     def send_mqtt_msg(self, obj_type, obj_name, color):
         if not MQTT_ENABLE:
@@ -891,6 +896,9 @@ class qt(QMainWindow, form_class):
 
 
     def func_btn_AUTO_MODE(self):
+        if self.flag_AUTO_MODE == True:
+            return
+
         self.flag_AUTO_MODE = True
         self.btn_AUTO_MODE.setStyleSheet(f"background-color: blue; border: 1px solid black")
 
@@ -898,6 +906,7 @@ class qt(QMainWindow, form_class):
         self.insert_log('AUTO_MODE')
 
     def func_btn_HEAT_STOP(self):
+        self.send_mqtt_msg('BUTTON', self.btn_HEAT_STOP.objectName(), 'grey')
         self.heat_timeout_func(self.btn_HEAT_STOP)
         self.insert_log('HEAT_STOP')
 
@@ -927,6 +936,11 @@ class qt(QMainWindow, form_class):
         self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),       'blue')
         if mode != 'AUTO':
             self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(),     'yellow')
+        else:   # AUTO MODE & HEAT ON
+            # self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'rgb(128, 128, 128)')
+            self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(), 'grey')
+            self.insert_log('AUTO MODE')
+
         self.send_mqtt_msg('LABEL',  self.label_pre_heat_on.objectName(),   'yellow')
         self.send_mqtt_msg('LABEL',  self.label_emc_heat_on.objectName(),   'gray')
 
@@ -960,7 +974,7 @@ class qt(QMainWindow, form_class):
 
         self.insert_log('PRE_HEAT_ON_AND_STOP')
 
-    def func_btn_HEAT_ON(self, mode = False):
+    def func_btn_HEAT_ON(self, mode = False):   # mode == False: pressed button # mode == 'AUTO', 'EMC' --> AUTO MODE
         if self.flag_HEAT_ON:
             return
 
@@ -971,13 +985,6 @@ class qt(QMainWindow, form_class):
 
         self.flag_AUTO_MODE = True
         self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
-
-        # if self.flag_EMC_HEAT_ON == True:
-        if mode == 'EMC':
-            self.label_emc_heat_on.setStyleSheet("background-color: red")
-
-            # send mqtt msg to chagne color
-            self.send_mqtt_msg('LABEL', self.label_emc_heat_on.objectName(), 'red')
 
         self.heating_timer.start(HEATING_TIME)
 
@@ -990,11 +997,25 @@ class qt(QMainWindow, form_class):
 
         # send mqtt msg to chagne color
         self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),   'blue')
-        if mode == False:
+        if mode == False:   # pressed HEAT ON button
             self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'pink')
+        else:   # AUTO MODE & HEAT ON
+            # self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'rgb(128, 128, 128)')
+            self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'grey')
+            self.insert_log('AUTO MODE')
+
         self.send_mqtt_msg('LABEL',  self.label_heat_on.objectName(),   'pink')
 
-        self.insert_log('HEAT_ON')
+        # if self.flag_EMC_HEAT_ON == True:
+        if mode == 'EMC':
+            self.label_emc_heat_on.setStyleSheet("background-color: red")
+
+            # send mqtt msg to chagne color
+            self.send_mqtt_msg('LABEL', self.label_emc_heat_on.objectName(), 'red')
+            self.insert_log('EMC_HEAT_ON')
+        else:
+            self.insert_log('HEAT_ON')
+
 
     def func_btn_HEAT_ON_AND_STOP(self):
         if self.flag_HEAT_ON:
@@ -1085,8 +1106,27 @@ def run():
 
 
 if __name__ == "__main__":
-    # conn = pymongo.MongoClient('203.251.78.135', 27017)
+    if ARG_ENABLE:
+        parser = argparse.ArgumentParser(description='SMRS raspberry pi for PC')
+        parser.add_argument('-id', '--arg1', help='arg for mqtt id/publisher topic')
+        args = parser.parse_args()
+        if args.arg1 != None:
+            print('arg1=', args.arg1)
+            DEVICE_ID = args.arg1   # login ID, DB name
+        else:
+            print('arg is None!! please input arg!!')
+            exit(1)
 
+        MQTT_CLIENT_ID = 'client_' + DEVICE_ID
+        pub_root_topic = "PUB_" + DEVICE_ID + "/"
+        sub_root_topic = "SUB_" + DEVICE_ID + "/"
+
+        print(pub_root_topic)
+        print(sub_root_topic)
+
+        initMongoDB()
+
+    """
     conn = pymongo.MongoClient('mongodb://' + server_ip,
                         username = userid,
                         password =  passwd,
@@ -1098,5 +1138,6 @@ if __name__ == "__main__":
     #results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     #for result in results:
     #    print(result)
+    """
 
     run()

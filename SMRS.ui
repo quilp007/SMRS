@@ -75,7 +75,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>4</number>
    </property>
    <property name="iconSize">
     <size>
@@ -2432,9 +2432,9 @@
     <widget class="QTextEdit" name="textEdit_log">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>650</x>
        <y>14</y>
-       <width>981</width>
+       <width>341</width>
        <height>451</height>
       </rect>
      </property>
@@ -2451,6 +2451,129 @@
        <kerning>true</kerning>
       </font>
      </property>
+    </widget>
+    <widget class="QTabWidget" name="tabWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>10</y>
+       <width>611</width>
+       <height>451</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="g_tab_1">
+      <attribute name="title">
+       <string>유효전력</string>
+      </attribute>
+      <widget class="QTabWidget" name="tabWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>581</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="g_p_tab_1">
+        <attribute name="title">
+         <string>일일</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>541</width>
+           <height>331</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="p_layout_1"/>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="g_p_tab_2">
+        <attribute name="title">
+         <string>월간</string>
+        </attribute>
+       </widget>
+       <widget class="QWidget" name="g_p_tab_3">
+        <attribute name="title">
+         <string>년간</string>
+        </attribute>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="g_tab_2">
+      <attribute name="title">
+       <string>가동횟수</string>
+      </attribute>
+      <widget class="QTabWidget" name="tabWidget_4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>581</width>
+         <height>401</height>
+        </rect>
+       </property>
+       <property name="currentIndex">
+        <number>2</number>
+       </property>
+       <widget class="QWidget" name="g_t_tab_1">
+        <attribute name="title">
+         <string>일일</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_2">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>0</y>
+           <width>551</width>
+           <height>361</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="t_layout_1"/>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="g_t_tab_2">
+        <attribute name="title">
+         <string>월간</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>0</y>
+           <width>551</width>
+           <height>361</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="t_layout_2"/>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="g_t_tab_3">
+        <attribute name="title">
+         <string>년간</string>
+        </attribute>
+        <widget class="QWidget" name="gridLayoutWidget_5">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>0</y>
+           <width>551</width>
+           <height>361</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="t_layout_3"/>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
     </widget>
    </widget>
   </widget>

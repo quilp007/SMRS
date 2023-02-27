@@ -2,23 +2,21 @@
 # coding=utf8
 
 import os, sys, time, datetime, warnings, signal
-from PyQt5.QtCore import QSize, QRect, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
-from PyQt5.QtWidgets import QApplication, QComboBox, QDialog, QMainWindow, QWidget, QLabel, QTextEdit, QListWidget, \
-    QListView
-from PyQt5.QtWidgets import QPushButton, QGridLayout, QLCDNumber
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QSize, QObject, pyqtSignal, QThread, pyqtSignal, pyqtSlot, Qt, QEvent, QTimer
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QLCDNumber, QMessageBox
 from PyQt5 import uic, QtTest, QtGui, QtCore
 from PyQt5.QtGui import QPixmap
 
 import numpy as np
 import shelve
-from datetime import datetime
 import pandas as pd
 import pyqtgraph as pg
 
 import time
 import pymongo
-import pprint
+import calendar
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 import mqtt.sub_class as sc
 import json
@@ -39,6 +37,8 @@ if platform.system() == 'Windows':
 WEB_APP_MODE = False
 ENABLE_MQTT = True
 ENABLE_MONGODB = True
+
+DEVICE_ID = None
 
 # x_size = 360# graph's x size
 x_size = 720  # graph's x size
@@ -110,16 +110,27 @@ if CERTI == True and platform.system() == 'Windows':
 else:
     form_class = uic.loadUiType('SMRS.ui')[0]
 
-if ENABLE_MONGODB:
-    conn = pymongo.MongoClient('mongodb://' + server_ip,
-                               username=userid,
-                               password=passwd,
-                               authSource='road_1')
+mongodb_collection = None
+mongodb_signup_col = None
 
-    db = conn.get_database('road_1')
-    collection = db.get_collection('device_1')
-    signup_col = db.get_collection('signup')
+def initMongoDB():
+    global mongodb_collection
+    global mongodb_signup_col
 
+    if ENABLE_MONGODB:
+        conn = pymongo.MongoClient('mongodb://' + server_ip,
+                                   username=userid,
+                                   password=passwd,
+                                   authSource=DEVICE_ID)
+                                   # authSource='road_1')
+
+        # db = conn.get_database('road_1')
+        # mongodb_collection = db.get_collection('device_1')
+        db = conn.get_database(DEVICE_ID)
+        mongodb_collection = db.get_collection('heating_log')
+        mongodb_signup_col = db.get_collection('signup')
+
+# initMongoDB()
 
 # --------------------------------------------------------------
 # [THREAD]
@@ -143,7 +154,7 @@ class THREAD_RECEIVE_Data(QThread):
             while self.__suspend:
                 time.sleep(0.5)
 
-            _time = datetime.now()
+            _time = datetime.datetime.now()
             _time = _time.strftime(self.time_format)
 
             ### Exit ###
@@ -179,15 +190,6 @@ class Util_Function:
             except:
                 pass
 
-
-class LineEdit(QLineEdit):
-    def __int__(self):
-        QLineEdit.__init__(self)
-
-    def focusOutEvent(self, e):
-        print("====================")
-
-
 class qt(QMainWindow, form_class):
     def __init__(self):
         # QMainWindow.__init__(self)
@@ -198,7 +200,6 @@ class qt(QMainWindow, form_class):
         self.setupUi(self)
         # self.setWindowFlags(Qt.FramelessWindowHint)
         self.setWindowFlags(Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
-        # lineEdit = LineEdit(self)
 
         self.tabWidget.setTabEnabled(1, False)
         self.tabWidget.setTabEnabled(2, False)
@@ -210,16 +211,23 @@ class qt(QMainWindow, form_class):
         #jw0829변경분
         self.tabWidget.currentChanged.connect(self.onChangeTab) #탭변경시 필요한 초기화설정
         self.setFixedSize(QSize(1000, 530))                     #사이즈고정
+        self.btn_AUTO_MODE.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))#버튼 및 탭 마우스오버시 커서변경
+        self.btn_INIT_MODE.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))#버튼 및 탭 마우스오버시 커서변경
+        self.btn_HEAT_STOP.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))#버튼 및 탭 마우스오버시 커서변경
         self.btn_PRE_HEAT_ON.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))#버튼 및 탭 마우스오버시 커서변경
+        self.btn_PRE_HEAT_ON_AND_STOP.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))#버튼 및 탭 마우스오버시 커서변경
         self.btn_HEAT_ON.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_HEAT_ON_AND_STOP.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_capture.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+
         self.tabWidget.tabBar().installEventFilter(self)
         self.tabWidget.tabBar().setMouseTracking(True)
-
-        # self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON))
-        # self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.send_CMD(self.btn_PRE_HEAT_ON_AND_STOP))
-        # self.btn_HEAT_ON.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON))
-        # self.btn_HEAT_ON_AND_STOP.clicked.connect(lambda: self.send_CMD(self.btn_HEAT_ON_AND_STOP))
+        self.tabWidget_2.tabBar().installEventFilter(self)
+        self.tabWidget_2.tabBar().setMouseTracking(True)
+        self.tabWidget_3.tabBar().installEventFilter(self)
+        self.tabWidget_3.tabBar().setMouseTracking(True)
+        self.tabWidget_4.tabBar().installEventFilter(self)
+        self.tabWidget_4.tabBar().setMouseTracking(True)
 
         self.btn_PRE_HEAT_ON.clicked.connect(lambda: self.pressed_button(self.btn_PRE_HEAT_ON))
         self.btn_PRE_HEAT_ON_AND_STOP.clicked.connect(lambda: self.pressed_button(self.btn_PRE_HEAT_ON_AND_STOP))
@@ -231,46 +239,9 @@ class qt(QMainWindow, form_class):
         self.btn_HEAT_STOP.clicked.connect(lambda: self.pressed_button(self.btn_HEAT_STOP))
         self.btn_capture.clicked.connect(lambda: self.pressed_button(self.btn_capture))
 
-        # self.btn_capture.clicked.connect(lambda: self.send_CMD(self.btn_capture))
-        # self.btn_INIT_SETTING.clicked.connect(lambda: self.send_CMD(self.btn_INIT_SETTING))
-
         self.road_temp = []
         self.road_humidity = []
         self.air_temp = []
-
-        # qeury(read) from start date (time) to end date (time)
-        # TODO: need to modify "query_time" as a user input
-
-        if ENABLE_MONGODB:
-            self.query_time = datetime(2022, 6, 20, 00, 36, 43)
-            results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
-
-            # self.query_time = datetime.now()
-            # results = collection.find({}, {"_id": -1, limit = NUM_X_AXIS})
-
-            for result in results:
-                self.road_temp.append(result.get("road_temp"))
-                self.road_humidity.append(result.get("road_humidity"))
-                self.air_temp.append(result.get("air_temp"))
-                self.query_time = result.get("timestamp")
-                # print(result)
-                # print(result.get("road_temp"))
-                # print(self.query_time)
-
-            # print("self.road_temp")
-            # print(self.road_temp)
-            # print("self.road_humidity")
-            # print(self.road_humidity)
-            # print("self.air_temp")
-            # print(self.air_temp)
-
-        self.data = np.linspace(-np.pi, np.pi, x_size)
-        self.y2_1 = np.sin(self.data)
-        # self.y2_1 = np.zeros(x_size)
-
-        # self.road_temp = np.zeros(x_size)
-        # self.road_humidity = np.zeros(x_size)
-        # self.air_temp = np.zeros(x_size)
 
         self.lineEdit_pre_heat_road_temp.returnPressed.connect(
             lambda: self.LineEdit_pre_heat_road_temp_RET(self.lineEdit_pre_heat_road_temp.text()))
@@ -291,40 +262,6 @@ class qt(QMainWindow, form_class):
         self.Login_2.returnPressed.connect(lambda: self.LineEdit_Login_2_RET(self.Login_2.text()))
         self.Login_3.returnPressed.connect(lambda: self.LineEdit_Login_3_RET(self.Login_3.text()))
         self.textEdit_log.setReadOnly(True)
-
-        # table Widget ------------------------------------------------------------------
-        """
-        self.tableWidget.setRowCount(ROW_COUNT)
-        self.tableWidget.setColumnCount(COL_COUNT)  # MEAN, parallel resistance
-
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        """
-
-        """
-        # Updating Plot
-        self.plot = self.graphWidget.addPlot(title="Current Status")
-
-        self.curve_road_temp = self.plot.plot(pen='g')
-        self.curve_road_humidity = self.plot.plot(pen='r')
-        self.curve_air_temp = self.plot.plot(pen='y')
-
-        # self.plot.setGeometry(0, 0, x_size, 5)
-        self.plot.setGeometry(0, 0, NUM_X_AXIS, 5)
-
-        # self.plot.setYRange(self.plot_upper, self.plot_lower, padding=0)
-
-        # self.drawLine(self.plot, self.error_lower, 'y')
-        # self.drawLine(self.plot, self.error_upper, 'y')
-        # self.drawLine(self.plot, self.error_limit_lower, 'r')
-        # self.drawLine(self.plot, self.error_limit_upper, 'r')
-
-        # self.graphWidget.nextRow()
-        """
-
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(1000)  # 100ms
-        self.timer.timeout.connect(self.graph_plot)
 
         # start loop for drawing graph #################
         # self.timer.start()
@@ -392,7 +329,26 @@ class qt(QMainWindow, form_class):
             self.label_26.setVisible(False)
             self.Login_3.setVisible(False)
 
-        # -------------------------------------------------------------
+        self.initPlot()
+# ----------------------------------------------------------------------------------------------------------
+
+    def initPlot(self):
+        plt.rcParams.update({'font.size': 7})
+
+        self.fig_1 = plt.Figure()
+        self.canvas_1 = FigureCanvas(self.fig_1)
+        self.t_layout_1.addWidget(self.canvas_1)
+        self.ax_1 = self.fig_1.add_subplot()
+
+        self.fig_2 = plt.Figure()
+        self.canvas_2 = FigureCanvas(self.fig_2)
+        self.t_layout_2.addWidget(self.canvas_2)
+        self.ax_2 = self.fig_2.add_subplot()
+
+        self.fig_3 = plt.Figure()
+        self.canvas_3 = FigureCanvas(self.fig_3)
+        self.t_layout_3.addWidget(self.canvas_3)
+        self.ax_3 = self.fig_3.add_subplot()
 
     def onChangeTab(self):
         self.lineEdit_pre_heat_road_temp.setText("")
@@ -403,8 +359,9 @@ class qt(QMainWindow, form_class):
         self.lineEdit_set_air_temp.setText("")
 
     def eventFilter(self, source, event):
-        if (event.type() == QtCore.QEvent.MouseMove and
-                source is self.tabWidget.tabBar()):
+        # if (event.type() == QtCore.QEvent.MouseMove and source is self.tabWidget.tabBar()):
+        if (event.type() == QtCore.QEvent.MouseMove and 
+            source in [self.tabWidget.tabBar(), self.tabWidget_2.tabBar(), self.tabWidget_3.tabBar(), self.tabWidget_4.tabBar()]):
             index = source.tabAt(event.pos())
             if index >= 0 and index != source.currentIndex():
                 source.setCursor(QtCore.Qt.PointingHandCursor)
@@ -621,8 +578,12 @@ class qt(QMainWindow, form_class):
 
 
     def LineEdit_Login_id_RET(self, input_num):
+        global DEVICE_ID
+        DEVICE_ID = input_num
+
+        initMongoDB()
         if ENABLE_MONGODB:
-            if signup_col.find_one({'id': input_num}) == None:
+            if mongodb_signup_col.find_one({'id': input_num}) == None:
                 QMessageBox.warning(self, '아이디 오류', '입력하신 아디이가 없습니다.')
             else:
                 self.login_id = input_num
@@ -663,7 +624,7 @@ class qt(QMainWindow, form_class):
         else: # normal mode
             # load passwd
             if ENABLE_MONGODB:
-                saved_passwd = signup_col.find_one({'id': self.login_id})['pwd']
+                saved_passwd = mongodb_signup_col.find_one({'id': self.login_id})['pwd']
                 print('mongoDB id/pwd: ', self.login_id, '/', saved_passwd)
             else:
                 saved_passwd = self.util_func.read_var(self.login_id)
@@ -691,6 +652,12 @@ class qt(QMainWindow, form_class):
         else:
             self.set_Tab_visible()
 
+        now = datetime.datetime.now()
+        self.getHeatingLogStatistics(now.year, now.month, 26)
+        self.getHeatingLogStatistics(now.year)
+        self.getHeatingLogStatistics()
+        # self.getHeatingLogStatistics(now.year, now.month, now.day)
+
     
     def initMqtt(self, login_id, on_message, on_message_cb = None):
         global pub_root_topic, sub_root_topic
@@ -703,36 +670,6 @@ class qt(QMainWindow, form_class):
 
         self.loop_start_func(on_message)
 
-
-    def input_value(self, lcdNum):
-        if self.flag_HEAT_ON == True:
-            self.label_warning.setVisible(True)
-            self.label_warning_timer.start(LABEL_WARNING_TIME)
-            print('Heat ON!!!')
-            return
-
-        # if('temp' in lcdNum.objectName()):
-        # self.lineEdit.setValidator(QtGui.QIntValidator(-30, 60, self))
-        # if('humidity' in lcdNum.objectName()):
-        #     self.lineEdit.setValidator(QtGui.QIntValidator(0, 5, self))
-        # if('time' in lcdNum.objectName()):
-        #     self.lineEdit.setValidator(QtGui.QIntValidator(1, 120, self))
-
-        # self.temp_lcdNumber = lcdNum
-        # self.lineEdit.setVisible(True)
-        # self.lineEdit.setFocus()
-        if (lcdNum.objectName() == "pre_heat_road_temp"):
-            self.lineEdit_pre_heat_road_temp.setFocus()
-        if (lcdNum.objectName() == "heat_road_temp"):
-            self.lineEdit_heat_road_temp.setFocus()
-        if (lcdNum.objectName() == "set_road_humidity"):
-            self.lineEdit_set_road_humidity.setFocus()
-        if (lcdNum.objectName() == "pre_heat_on_time"):
-            self.lineEdit_pre_heat_on_time.setFocus()
-        if (lcdNum.objectName() == "heat_on_time"):
-            self.lineEdit_heat_on_time.setFocus()
-        if (lcdNum.objectName() == "set_air_temp"):
-            self.lineEdit_set_air_temp.setFocus()
 
     def loop_start_func(self, on_message):
         self.sub_mqtt.messageSignal.connect(on_message)
@@ -760,6 +697,57 @@ class qt(QMainWindow, form_class):
             self.curve_road_humidity.setData(self.road_humidity)
             self.curve_air_temp.setData(self.air_temp)
 
+        elif topic == sub_root_topic + 'CONFIG':
+            print('received CONFIG')
+            for key, value in jsonData.items():
+                print(key, value)
+                lcdNum = self.findChild(QLCDNumber, key)
+                lcdNum.display(value)
+
+                lcdNum = self.findChild(QLCDNumber, key + '_2')  # find LCDNumber with key
+                if (lcdNum is not None):
+                    lcdNum.display(value)  # display to LCDNumber
+
+        elif topic == sub_root_topic + 'IMAGE':
+            filename = jsonData['filename'].split('/')[2]
+            img_str = jsonData['IMG']
+
+            # to decode back to np.array
+            jpg_original = base64.b64decode(img_str)
+            jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+            decoded_img = cv2.imdecode(jpg_as_np, flags=1)
+
+            filename = jsonData['filename']
+            cv2.imwrite(filename, decoded_img)
+            print('image saved')
+
+            self.update_image(decoded_img, 480, 360)
+            self.btn_capture.setStyleSheet("background-color: gray; border: 1px solid black")
+
+            self.textEdit.append('captured ' + filename)
+
+        # elif topic == sub_root_topic + 'MODE':
+        #     if jsonData['MODE'] == 'AUTO':
+        #         self.btn_AUTO_MODE.setStyleSheet("background-color: blue")
+        #     else:
+        #         self.btn_AUTO_MODE.setStyleSheet("background-color: gray")
+
+        elif topic == sub_root_topic + 'BUTTON':
+            if jsonData['btn'][1] != '#808080' and jsonData['btn'][1] != 'gray':
+            # if jsonData['btn'][1] in ['blue', 'pink', 'yellow']:
+                time_text = time.strftime('%y.%m.%d_%H:%M:%S', time.localtime(time.time()))
+                log_text = time_text + '   ' + jsonData['btn'][0][4:]
+                self.textEdit_log.append(log_text)
+
+            self.findChild(QPushButton, jsonData['btn'][0]).setStyleSheet("background-color: {}".format(jsonData['btn'][1]))
+
+        elif topic == sub_root_topic + 'LABEL':
+            self.findChild(QLabel, jsonData['label'][0]).setStyleSheet("background-color: {}".format(jsonData['label'][1]))
+            if jsonData['label'][0] == 'label_emc_heat_on':
+                time_text = time.strftime('%y.%m.%d_%H:%M:%S', time.localtime(time.time()))
+                log_text = time_text + '   ' + 'EMC_HEAT_ON'
+                self.textEdit_log.append(log_text)
+        """
         elif topic == sub_root_topic + 'STATUS':
             print("CMD: ", "CH1: ", str(jsonData['CH1']))
             print("CMD: ", "CH2: ", str(jsonData['CH2']))
@@ -808,52 +796,7 @@ class qt(QMainWindow, form_class):
                 log_text = time_text + ' 가동 멈춤'
 
             self.textEdit_log.append(log_text)
-
-        elif topic == sub_root_topic + 'CONFIG':
-            print('received CONFIG')
-            for key, value in jsonData.items():
-                print(key, value)
-                lcdNum = self.findChild(QLCDNumber, key)
-                lcdNum.display(value)
-
-                lcdNum = self.findChild(QLCDNumber, key + '_2')  # find LCDNumber with key
-                if (lcdNum is not None):
-                    lcdNum.display(value)  # display to LCDNumber
-
-        elif topic == sub_root_topic + 'IMAGE':
-            filename = jsonData['filename'].split('/')[2]
-            img_str = jsonData['IMG']
-
-            # to decode back to np.array
-            jpg_original = base64.b64decode(img_str)
-            jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
-            decoded_img = cv2.imdecode(jpg_as_np, flags=1)
-
-            filename = jsonData['filename']
-            cv2.imwrite(filename, decoded_img)
-            print('image saved')
-
-            self.update_image(decoded_img, 480, 360)
-            self.btn_capture.setStyleSheet("background-color: gray; border: 1px solid black")
-
-            self.textEdit.append('captured ' + filename)
-
-        # elif topic == sub_root_topic + 'MODE':
-        #     if jsonData['MODE'] == 'AUTO':
-        #         self.btn_AUTO_MODE.setStyleSheet("background-color: blue")
-        #     else:
-        #         self.btn_AUTO_MODE.setStyleSheet("background-color: gray")
-
-        elif topic == sub_root_topic + 'BUTTON':
-            if jsonData['btn'][1] != 'gray':
-                time_text = time.strftime('%y.%m.%d_%H:%M:%S', time.localtime(time.time()))
-                log_text = time_text + '   ' + jsonData['btn'][0][4:]
-                self.textEdit_log.append(log_text)
-
-            self.findChild(QPushButton, jsonData['btn'][0]).setStyleSheet("background-color: {}".format(jsonData['btn'][1]))
-
-        elif topic == sub_root_topic + 'LABEL':
-            self.findChild(QLabel, jsonData['label'][0]).setStyleSheet("background-color: {}".format(jsonData['label'][1]))
+        """
 
     def clickable(self, widget):
         class Filter(QObject):
@@ -888,51 +831,6 @@ class qt(QMainWindow, form_class):
         self.resist_data.append(tt)
         print(tt)
 
-    def graph_plot(self):
-        # self.g_plotWidget.plot(hour, temperature)
-        # curve = self.graphWidget_2.plot(pen='y')
-
-        update_data_road_temp = []
-        update_data_road_humidity = []
-        update_data_air_temp = []
-
-        update_results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_UPDATE_X_AXIS)
-        for result in update_results:
-            update_data_road_temp.append(result.get("road_temp"))
-            update_data_road_humidity.append(result.get("road_humidity"))
-            update_data_air_temp.append(result.get("air_temp"))
-            self.query_time = result.get("timestamp")
-            # print(result)
-            # print(result.get("temperature"))
-            # print(self.query_time)
-
-        # print("road_temp")
-        # print(self.road_temp)
-        # print("road_humidity")
-        # print(self.road_humidity)
-        # print("air_temp")
-        # print(self.air_temp)
-        # print("update_data_road_temp")
-        # print(update_data_road_temp)
-        # print("update_data_road_humidity")
-        # print(update_data_road_humidity)
-        # print("update_data_air_temp")
-        # print(update_data_air_temp)
-
-        self.road_temp = self.road_temp[NUM_UPDATE_X_AXIS: NUM_X_AXIS + NUM_UPDATE_X_AXIS - 1] + update_data_road_temp
-        self.road_humidity = self.road_humidity[
-                             NUM_UPDATE_X_AXIS: NUM_X_AXIS + NUM_UPDATE_X_AXIS - 1] + update_data_road_humidity
-        self.air_temp = self.air_temp[NUM_UPDATE_X_AXIS: NUM_X_AXIS + NUM_UPDATE_X_AXIS - 1] + update_data_air_temp
-
-        update_data_road_temp.clear()
-        update_data_road_humidity.clear()
-        update_data_air_temp.clear()
-
-        self.curve_road_temp.setData(self.road_temp)
-        self.curve_road_humidity.setData(self.road_humidity)
-        self.curve_air_temp.setData(self.air_temp)
-
-
     def pressed_button(self, button):
         self.sub_mqtt.send_msg(pub_root_topic + "BUTTON", json.dumps({'btn': button.objectName()}))
 
@@ -943,6 +841,7 @@ class qt(QMainWindow, form_class):
             self.sub_mqtt.send_msg(pub_root_topic + "INIT", json.dumps({'REQUEST': 'INIT'}))
             return
 
+        """
         # button.setStyleSheet("background-color: green; border: 1px solid black")
         if button == self.btn_PRE_HEAT_ON :
             print('pressed PRE/ HEAT BUtton')
@@ -957,6 +856,7 @@ class qt(QMainWindow, form_class):
         elif button == self.btn_INIT_SETTING:
             print('pressed INIT SETTING')
             self.sub_mqtt.send_msg(pub_root_topic + "INIT_SETTING", json.dumps({'INIT_SETTING': True}))
+        """
 
     @pyqtSlot(np.ndarray)
     def update_image(self, cv_img, _width=360, _height=270):
@@ -973,6 +873,91 @@ class qt(QMainWindow, form_class):
         # p = convert_to_Qt_format.scaled(self.disply_width, self.display_height, Qt.KeepAspectRatio)
         p = convert_to_Qt_format.scaled(_width, _height, Qt.KeepAspectRatio)
         return QPixmap.fromImage(p)
+
+
+    def mongoDB_aggregate(self, _mode = None, _d_format = None, _year = None, _month = None, _day = None):
+        if _d_format == '%Y':
+            start_date = datetime.datetime(2023, 1, 1)
+            end_date = datetime.datetime(2033, 12, 31)
+        elif _d_format == '%Y-%m':
+            start_date = datetime.datetime(_year, 1, 1)
+            end_date = datetime.datetime(_year, 12, 31)
+        elif _d_format == '%H':
+            start_date = datetime.datetime(_year, _month, _day)
+            end_date = datetime.datetime(_year, _month, _day+1)
+
+        a = mongodb_collection.aggregate([
+        {
+            "$match": 
+            {
+                # "timestamp": { "$gte": datetime.datetime(2023, 1, 1), "$lte": datetime.datetime(2023, 2, 28)},
+                "timestamp": { "$gte": start_date, "$lte": end_date},
+                "heating_mode": _mode
+            }
+        },
+        {
+            "$group": {
+                "_id":  {"$dateToString": {"date": "$timestamp", "format": _d_format}},
+                "Count":{"$sum": 1}
+            }
+        } ])
+
+        return a
+
+    def getHeatingLogStatistics(self, _year = None, _month = None, _day = None):
+        print(_year,'-',_month,'-',_day)
+        ax_temp = None
+        canvas_temp = None
+        if _day:
+            date_format = "%H"
+            df_index = ['{0:02d}'.format(x) for x in range(0, 24)]  # 00 ~ 23
+            ax_temp = self.ax_1
+            canvas_temp = self.canvas_1
+        elif _month:
+            date_format = "%Y-%m-%d"
+            num_days = calendar.monthrange(_year, _month)[1] + 1
+            df_index = [datetime.date(_year, _month, day).strftime(date_format) for day in range(1, num_days)]
+        elif _year:
+            date_format = "%Y-%m"   # 1 ~ 12
+            df_index = [datetime.date(_year, month, 1).strftime(date_format) for month in range(1, 13)]
+            ax_temp = self.ax_2
+            canvas_temp = self.canvas_2
+        else:
+            date_format = "%Y"      # 2023 ~ 2033
+            df_index = [datetime.date(year, 1, 1).strftime(date_format) for year in range(2023, 2023+10)]
+            ax_temp = self.ax_3
+            canvas_temp = self.canvas_3
+
+        df = pd.DataFrame(index=df_index)
+
+        for mode in ['HEAT_ON', 'HEAT_ON_AND_STOP', 'PRE_HEAT_ON', 'PRE_HEAT_ON_AND_STOP', 'EMC_HEAT_ON']:
+            a = self.mongoDB_aggregate(mode, date_format, _year, _month, _day)
+
+            val_dict = {}
+            for item in a:
+                val_dict[item['_id']] = item['Count']
+
+            # print(mode)
+            # print(val_dict)
+
+            temp = pd.DataFrame(val_dict.values(), index= val_dict.keys(), columns=[mode])
+            df = df.join(temp)
+
+        df['HEAT_ON'] = df[['HEAT_ON', 'HEAT_ON_AND_STOP']].sum(axis=1)
+        del df['HEAT_ON_AND_STOP']
+
+        df['PRE_HEAT_ON'] = df[['PRE_HEAT_ON', 'PRE_HEAT_ON_AND_STOP']].sum(axis=1)
+        del df['PRE_HEAT_ON_AND_STOP']
+
+        if _year == None:
+            df.index = df.index.str[0:4]
+        elif _day == None:
+            df.index = df.index.str[5:]
+
+        df.plot(kind='bar', ax=ax_temp)
+        canvas_temp.show()
+
+        # print(df)
 
 
 def run(pc_app):
@@ -996,7 +981,7 @@ if __name__ == "__main__":
     # initMongoDB()
 
     # conn = pymongo.MongoClient('203.251.78.135', 27017)
-    # results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
+    # results = mongodb_collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
     # for result in results:
     #    print(result)
 
