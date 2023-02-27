@@ -130,8 +130,6 @@ def initMongoDB():
         mongodb_collection = db.get_collection('heating_log')
         mongodb_signup_col = db.get_collection('signup')
 
-# initMongoDB()
-
 # --------------------------------------------------------------
 # [THREAD]
 # --------------------------------------------------------------
@@ -263,10 +261,6 @@ class qt(QMainWindow, form_class):
         self.Login_3.returnPressed.connect(lambda: self.LineEdit_Login_3_RET(self.Login_3.text()))
         self.textEdit_log.setReadOnly(True)
 
-        # start loop for drawing graph #################
-        # self.timer.start()
-        ################################################
-
         # Warning label TIMER setting ##############################
         self.label_warning_timer = QtCore.QTimer()
         self.label_warning_timer.timeout.connect(self.label_warning_timeout_func)
@@ -330,7 +324,7 @@ class qt(QMainWindow, form_class):
             self.Login_3.setVisible(False)
 
         self.initPlot()
-# ----------------------------------------------------------------------------------------------------------
+# END init QT ------------------------------------------------------------------------------------
 
     def initPlot(self):
         plt.rcParams.update({'font.size': 7})
@@ -396,8 +390,6 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_pre_heat_road_temp.setText("")
         else:
-            # self.findChild(QLCDNumber, "pre_heat_road_temp").display(input_num)
-            # self.findChild(QLCDNumber, "pre_heat_road_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_road_temp": input_num}))
 
             if WEB_APP_MODE == False:
@@ -417,8 +409,6 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_heat_road_temp.setText("")
         else:
-            # self.findChild(QLCDNumber, "heat_road_temp").display(input_num)
-            # self.findChild(QLCDNumber, "heat_road_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_road_temp": input_num}))
 
             if WEB_APP_MODE == False:
@@ -438,8 +428,6 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_set_road_humidity.setText("")
         else:
-            # self.findChild(QLCDNumber, "set_road_humidity").display(input_num)
-            # self.findChild(QLCDNumber, "set_road_humidity_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_road_humidity": input_num}))
 
             if WEB_APP_MODE == False:
@@ -459,7 +447,6 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_pre_heat_on_time.setText("")
         else:
-            # self.findChild(QLCDNumber, "pre_heat_on_time").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"pre_heat_on_time": input_num}))
 
             if WEB_APP_MODE == False:
@@ -479,7 +466,6 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_heat_on_time.setText("")
         else:
-            # self.findChild(QLCDNumber, "heat_on_time").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"heat_on_time": input_num}))
             
             if WEB_APP_MODE == False:
@@ -499,8 +485,6 @@ class qt(QMainWindow, form_class):
             QMessageBox.warning(self, '입력오류', '숫자(범위:-30~60)만 입력해주세요.')
             self.lineEdit_set_air_temp.setText("")
         else:
-            # self.findChild(QLCDNumber, "set_air_temp").display(input_num)
-            # self.findChild(QLCDNumber, "set_air_temp_2").display(input_num)
             self.sub_mqtt.send_msg(pub_root_topic + "CONFIG", json.dumps({"set_air_temp": input_num}))
 
             if WEB_APP_MODE == False:
@@ -526,23 +510,18 @@ class qt(QMainWindow, form_class):
         if len(passwd) < 9:
             print('length should be at least 8')
             val = False
-
         if len(passwd) > 13:
             print('length should be not be greater than 12')
             val = False
-
         if not any(char.isdigit() for char in passwd):
             print('Password should have at least one numeral')
             val = False
-
         if not any(char.isupper() for char in passwd):
             print('Password should have at least one uppercase letter')
             val = False
-
         if not any(char.islower() for char in passwd):
             print('Password should have at least one lowercase letter')
             val = False
-
         if not any(char in SpecialSym for char in passwd):
             print('Password should have at least one of the symbols $@#')
             val = False
@@ -653,10 +632,10 @@ class qt(QMainWindow, form_class):
             self.set_Tab_visible()
 
         now = datetime.datetime.now()
-        self.getHeatingLogStatistics(now.year, now.month, 26)
+        # self.getHeatingLogStatistics(now.year, now.month, 26)
         self.getHeatingLogStatistics(now.year)
         self.getHeatingLogStatistics()
-        # self.getHeatingLogStatistics(now.year, now.month, now.day)
+        self.getHeatingLogStatistics(now.year, now.month, now.day)
 
     
     def initMqtt(self, login_id, on_message, on_message_cb = None):
@@ -747,56 +726,7 @@ class qt(QMainWindow, form_class):
                 time_text = time.strftime('%y.%m.%d_%H:%M:%S', time.localtime(time.time()))
                 log_text = time_text + '   ' + 'EMC_HEAT_ON'
                 self.textEdit_log.append(log_text)
-        """
-        elif topic == sub_root_topic + 'STATUS':
-            print("CMD: ", "CH1: ", str(jsonData['CH1']))
-            print("CMD: ", "CH2: ", str(jsonData['CH2']))
 
-            self.flag_HEAT_ON = True
-            self.label_warning_timer.stop()
-            self.label_warning.setVisible(False)
-
-            time_text = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
-
-            if jsonData['CH1'] == True and jsonData['CH2'] == True:  # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
-                self.label_33.setStyleSheet("background-color: red")
-                self.label_8.setStyleSheet("background-color: pink")
-                self.btn_HEAT_ON.setStyleSheet("background-color: pink")
-                log_text = time_text + '비상 가동 시작'
-                self.textEdit_log.append(log_text)
-                return
-
-            if jsonData['CH1'] == True:  # PRE HEAT ON
-                print("PRE HEAT: ON")
-                self.label_7.setStyleSheet("background-color: yellow")
-                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: yellow")
-                # log
-                log_text = time_text + ' 예비 가동 시작'
-            elif jsonData['CH1'] == False:  # PRE HEAT OFF
-                print("PRE HEAT: OFF")
-                self.label_7.setStyleSheet("background-color: gray")
-                self.btn_PRE_HEAT_ON.setStyleSheet("background-color: gray")
-                self.label_33.setStyleSheet("background-color: gray")
-
-            if jsonData['CH2'] == True:  # HEAT ON
-                print("HEAT: ON")
-                self.label_8.setStyleSheet("background-color: pink")
-                self.btn_HEAT_ON.setStyleSheet("background-color: pink")
-                log_text = time_text + ' 가동 시작'
-            elif jsonData['CH2'] == False:  # HEAT OFF
-                print("HEAT: OFF")
-                self.label_8.setStyleSheet("background-color: gray")
-                self.btn_HEAT_ON.setStyleSheet("background-color: gray")
-                self.label_33.setStyleSheet("background-color: gray")
-
-            if jsonData['CH1'] == False and jsonData[
-                'CH2'] == False:  # heat time out -> ch1 or ch2 off -> both ch1 & ch2 off
-                self.flag_HEAT_ON = False
-                # self.label_33.setStyleSheet("background-color: gray")
-                log_text = time_text + ' 가동 멈춤'
-
-            self.textEdit_log.append(log_text)
-        """
 
     def clickable(self, widget):
         class Filter(QObject):
@@ -841,22 +771,6 @@ class qt(QMainWindow, form_class):
             self.sub_mqtt.send_msg(pub_root_topic + "INIT", json.dumps({'REQUEST': 'INIT'}))
             return
 
-        """
-        # button.setStyleSheet("background-color: green; border: 1px solid black")
-        if button == self.btn_PRE_HEAT_ON :
-            print('pressed PRE/ HEAT BUtton')
-            self.sub_mqtt.send_msg(pub_root_topic + "CMD", json.dumps({'CH1': True, 'CH2': False}))
-        elif button == self.btn_HEAT_ON:
-            print('pressed HEAT BUtton')
-            self.sub_mqtt.send_msg(pub_root_topic + "CMD", json.dumps({'CH1': False, 'CH2': True}))
-        elif button == self.btn_capture:
-            print('pressed capture button')
-            QMessageBox.warning(self, '사진촬영', '사진촬영 명령이 전송되었습니다.')
-            self.sub_mqtt.send_msg(pub_root_topic + "CAPTURE", json.dumps({'CAPTURE': True}))
-        elif button == self.btn_INIT_SETTING:
-            print('pressed INIT SETTING')
-            self.sub_mqtt.send_msg(pub_root_topic + "INIT_SETTING", json.dumps({'INIT_SETTING': True}))
-        """
 
     @pyqtSlot(np.ndarray)
     def update_image(self, cv_img, _width=360, _height=270):
@@ -884,7 +798,7 @@ class qt(QMainWindow, form_class):
             end_date = datetime.datetime(_year, 12, 31)
         elif _d_format == '%H':
             start_date = datetime.datetime(_year, _month, _day)
-            end_date = datetime.datetime(_year, _month, _day+1)
+            end_date = datetime.datetime(_year, _month, _day + 1)
 
         a = mongodb_collection.aggregate([
         {
@@ -979,10 +893,5 @@ def run(pc_app):
 
 if __name__ == "__main__":
     # initMongoDB()
-
-    # conn = pymongo.MongoClient('203.251.78.135', 27017)
-    # results = mongodb_collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
-    # for result in results:
-    #    print(result)
 
     run(pc_app = True)

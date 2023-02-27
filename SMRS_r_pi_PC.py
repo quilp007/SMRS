@@ -71,15 +71,6 @@ DEBUG_PRINT = False
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-# x_size = 360# graph's x size
-x_size = 720# graph's x size
-# NUM_X_AXIS = 300
-NUM_X_AXIS = 720
-NUM_UPDATE_X_AXIS = 5
-
-ROW_COUNT = 7
-COL_COUNT = 3
-
 SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
 
 PRE_HEATING_TIME            = 3000 # ms -> timer setting
@@ -393,34 +384,6 @@ class qt(QMainWindow, form_class):
 
         self.util_func = Util_Function()
 
-        # self.query_time = datetime.now()
-        # self.query_time = datetime(2022, 6, 15, 18, 22, 37)
-        # results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
-
-        # table Widget ------------------------------------------------------------------
-        # self.tableWidget.setRowCount(ROW_COUNT)
-        # self.tableWidget.setColumnCount(COL_COUNT)  # MEAN, parallel resistance
-
-        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        # self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-        self.x_size = 720
-        self.sine_x_data = np.linspace(-np.pi, np.pi, self.x_size)
-        self.idx = 0
-        self.temp_data = {}
-
-        # loop for sending sensor data ###################
-        # self.timer = QtCore.QTimer()
-        # self.timer.setInterval(SEND_SENSOR_DATA_INTERVAL) # 100ms 
-        # self.timer.timeout.connect(self.send_msg_loop_timer)
-
-        # self.timer.start()
-
-        # HEAT TIMER setting ##############################
-        # self.heat_timer = QtCore.QTimer()
-        # self.pre_heat_timer = QtCore.QTimer()
-        # self.pre_heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_pre_heat_on))
-        # self.heat_timer.timeout.connect(lambda: self.heat_timeout_func(self.label_heat_on))
 
         self.heating_timer = QtCore.QTimer()
         self.heating_timer.timeout.connect(lambda: self.heat_timeout_func(None))
@@ -772,19 +735,6 @@ class qt(QMainWindow, form_class):
                 self.current_STATUS()
                 return
 
-        elif topic == sub_root_topic + 'CMD':
-
-            print("CMD: ", "CH1: ", str(jsonData['CH1']))
-            print("CMD: ", "CH2: ", str(jsonData['CH2']))
-            if jsonData['CH1'] == True and jsonData['CH2'] == False:
-                print("pressed pre-heat-on")
-                self.func_btn_PRE_HEAT_ON()
-                # TODO: update DB for heating status
-            elif jsonData['CH1'] == False and jsonData['CH2'] == True:
-                print("pressed heat-on")
-                self.func_btn_HEAT_ON()
-                # TODO: update DB for heating status
-
         elif topic == sub_root_topic + 'BUTTON':
             func_btn_xxx = getattr(self, 'func_' + jsonData['btn'])
             func_btn_xxx()
@@ -795,8 +745,8 @@ class qt(QMainWindow, form_class):
                 self.temp_lcdNumber = lcdNum
                 self.LineEdit_RET(value)
 
-        elif topic == sub_root_topic+'CAPTURE':
-            self.func_btn_capture()
+        # elif topic == sub_root_topic+'CAPTURE':
+        #     self.func_btn_capture()
 
         elif topic == sub_root_topic+'INIT_SETTING':
             self.func_btn_INIT_MODE()
@@ -935,7 +885,7 @@ class qt(QMainWindow, form_class):
         # send mqtt msg to chagne color
         self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),       'blue')
         if mode != 'AUTO':
-            self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(),     'yellow')
+            self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(), 'yellow')
         else:   # AUTO MODE & HEAT ON
             # self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'rgb(128, 128, 128)')
             self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(), 'grey')
@@ -1083,18 +1033,6 @@ class qt(QMainWindow, form_class):
         widget.installEventFilter(filter)
         return filter.clicked
 
-    def graph_plot(self):
-        update_data_road_temp = []
-        update_data_road_humidity = []
-        update_data_air_temp = []
-
-        update_results = collection.find({"timestamp": {"$gt":self.query_time}}, limit=NUM_UPDATE_X_AXIS)
-        for result in update_results:
-            update_data_road_temp.append(result.get("road_temp"))
-            update_data_road_humidity.append(result.get("road_humidity"))
-            update_data_air_temp.append(result.get("air_temp"))
-            self.query_time = result.get("timestamp")
-
 
 def run():
     app = QApplication(sys.argv)
@@ -1125,19 +1063,5 @@ if __name__ == "__main__":
         print(sub_root_topic)
 
         initMongoDB()
-
-    """
-    conn = pymongo.MongoClient('mongodb://' + server_ip,
-                        username = userid,
-                        password =  passwd,
-                        authSource = 'road_1')
-
-    db = conn.get_database('road_1')
-    collection = db.get_collection('device_1')
-
-    #results = collection.find()  # find()에 인자가 없으면 해당 컬렉션의 전체 데이터 조회. return type = cursor
-    #for result in results:
-    #    print(result)
-    """
 
     run()
