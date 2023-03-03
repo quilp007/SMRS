@@ -19,7 +19,6 @@ import shelve
 from datetime import datetime
 # import pandas as pd
 
-import time
 import pymongo
 
 import mqtt.sub_class as sc
@@ -28,6 +27,7 @@ import serial
 import base64
 import argparse
 import platform
+import minimalmodbus
 
 ARG_ENABLE = True 
 TEST = False
@@ -48,12 +48,18 @@ if ARG_ENABLE == False:
 
 USB_SERIAL = False
 MQTT_ENABLE = True
+MPM_330_ENABLE = False
 
 # serial_port = "/dev/ttyACM0"
 serial_port = "/dev/ttyUSB0"
 
 if USB_SERIAL == True:
     mcuSerial = serial.Serial(serial_port, 115200)
+
+mpm_330_port = "/dev/ttyUSB1"
+mpm_330_station_addr = 1
+reg_40020 = 20
+
 
 server_ip = '203.251.78.135'
 
@@ -110,11 +116,13 @@ else:
     form_class = uic.loadUiType('SMRS_r_pi.ui')[0]
 
 
-mongodb_collection = None
+mongodb_heating_log_col = None
+mongodb_power_log_col = None
 mongodb_signup_col = None
 
 def initMongoDB():
-    global mongodb_collection
+    global mongodb_heating_log_col
+    global mongodb_power_log_col
     global mongodb_signup_col
 
     if ENABLE_MONGODB:
@@ -124,7 +132,8 @@ def initMongoDB():
                                    authSource=DEVICE_ID)
 
         db = conn.get_database(DEVICE_ID)
-        mongodb_collection = db.get_collection('heating_log')
+        mongodb_heating_log_col = db.get_collection('heating_log')
+        mongodb_power_log_col = db.get_collection('power_log')
         mongodb_signup_col = db.get_collection('signup')
 
 class VideoThread(QThread):
@@ -220,7 +229,9 @@ class THREAD_RECEIVE_Data(QThread):
 
                         print('received key: {} value: {}'.format(key, value))
                         print('value type: ', type(value))
-            
+
+                        self.config_dict[key] = value
+
                         # send to PC or S/P
                         self.mqtt_object.send_msg(pub_root_topic+"CONFIG", json.dumps({key: value}))
 
@@ -240,6 +251,51 @@ class THREAD_RECEIVE_Data(QThread):
     def close(self):
         self.mySuspend()
 
+# --------------------------------------------------------------
+# [THREAD] MPM-330 (Multi Function Digital Power Meter)
+# --------------------------------------------------------------
+class THREAD_POWER_METER(QThread):
+    intReady = pyqtSignal()
+
+    @pyqtSlot()
+    def __init__(self):
+        super(THREAD_POWER_METER, self).__init__()
+
+        self.__suspend = False
+        self.__exit = False
+
+        self.instr = minimalmodbus.Instrument(mpm_330_port, mpm_330_station_addr)
+
+    def run(self):
+        while True:
+            ### Suspend ###
+            while self.__suspend:
+                time.sleep(0.5)
+
+            try: 
+                reg_data = self.instr.read_register(reg_40020)
+                print(reg_data)
+            except:
+                print('mpm330 read error!!!')
+                pass
+            else:
+                result = mongodb_power_log_col.insert_one({'timestamp': datetime.now(), 'power': reg_data/100})
+
+            ### Exit ###
+            if self.__exit:
+                break
+
+    def mySuspend(self):
+        self.__suspend = True
+
+    def myResume(self):
+        self.__suspend = False
+
+    def myExit(self):
+        self.__exit = True
+
+    def close(self):
+        self.mySuspend()
 
 class Util_Function:
     def Qsleep(self, ms):
@@ -407,6 +463,11 @@ class qt(QMainWindow, form_class):
         # self.thread_rcv_data.to_excel.connect(self.to_excel_func)
         self.thread_rcv_data.intReady.connect(self.send_msg_loop_timer)
 
+        # MPM330 THREAD ##############################
+        if MPM_330_ENABLE == True:
+            self.thread_mpm_330 = THREAD_POWER_METER()
+            self.thread_mpm_330.start()
+
         if USB_SERIAL == True:
             self.thread_rcv_data.start()
 
@@ -434,12 +495,12 @@ class qt(QMainWindow, form_class):
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            'pre_heat_road_temp':   3,
+            'pre_heat_road_temp':   5,
             'heat_road_temp':       1,
             'set_road_humidity':    3,
-            'set_air_temp':         -15,
-            'pre_heat_on_time':     60,
-            'heat_on_time':         90,
+            'set_air_temp':         -20,
+            'pre_heat_on_time':     1,
+            'heat_on_time':         2,
             'road_temp':            0,
             'road_humidity':        0,
             'air_temp':             0
@@ -831,7 +892,7 @@ class qt(QMainWindow, form_class):
         log_text = time_text + '   ' + txt
         self.textEdit_log.append(log_text)
 
-        result = mongodb_collection.insert_one({'timestamp': datetime.now(), 'heating_mode': txt})
+        result = mongodb_heating_log_col.insert_one({'timestamp': datetime.now(), 'heating_mode': txt})
 
     # change color of remote button/label
     def send_mqtt_msg(self, obj_type, obj_name, color):
