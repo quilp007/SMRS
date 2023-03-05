@@ -59,6 +59,7 @@ if USB_SERIAL == True:
 mpm_330_port = "/dev/ttyUSB1"
 mpm_330_station_addr = 1
 reg_40020 = 20
+reg_40002 = 2 
 
 
 server_ip = '203.251.78.135'
@@ -272,8 +273,11 @@ class THREAD_POWER_METER(QThread):
             while self.__suspend:
                 time.sleep(0.5)
 
+            # time.sleep(60*5) # every 5 min
+            time.sleep(5) # every 5 min
+
             try: 
-                reg_data = self.instr.read_register(reg_40020)
+                reg_data = self.instr.read_register(reg_40002)
                 print(reg_data)
             except:
                 print('mpm330 read error!!!')

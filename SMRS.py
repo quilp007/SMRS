@@ -110,11 +110,13 @@ if CERTI == True and platform.system() == 'Windows':
 else:
     form_class = uic.loadUiType('SMRS.ui')[0]
 
-mongodb_collection = None
+mongodb_heating_log_col = None
+mongodb_power_log_col = None
 mongodb_signup_col = None
 
 def initMongoDB():
-    global mongodb_collection
+    global mongodb_heating_log_col
+    global mongodb_power_log_col
     global mongodb_signup_col
 
     if ENABLE_MONGODB:
@@ -125,9 +127,10 @@ def initMongoDB():
                                    # authSource='road_1')
 
         # db = conn.get_database('road_1')
-        # mongodb_collection = db.get_collection('device_1')
+        # mongodb_heating_log_col = db.get_collection('device_1')
         db = conn.get_database(DEVICE_ID)
-        mongodb_collection = db.get_collection('heating_log')
+        mongodb_heating_log_col = db.get_collection('heating_log')
+        mongodb_power_log_col = db.get_collection('power_log')
         mongodb_signup_col = db.get_collection('signup')
 
 # --------------------------------------------------------------
@@ -343,6 +346,22 @@ class qt(QMainWindow, form_class):
         self.canvas_3 = FigureCanvas(self.fig_3)
         self.t_layout_3.addWidget(self.canvas_3)
         self.ax_3 = self.fig_3.add_subplot()
+
+        self.fig_4 = plt.Figure()
+        self.canvas_4 = FigureCanvas(self.fig_4)
+        self.p_layout_1.addWidget(self.canvas_4)
+        self.ax_4 = self.fig_4.add_subplot()
+
+        self.fig_5 = plt.Figure()
+        self.canvas_5 = FigureCanvas(self.fig_5)
+        self.p_layout_2.addWidget(self.canvas_5)
+        self.ax_5 = self.fig_5.add_subplot()
+
+        self.fig_6 = plt.Figure()
+        self.canvas_6 = FigureCanvas(self.fig_6)
+        self.p_layout_3.addWidget(self.canvas_6)
+        self.ax_6 = self.fig_6.add_subplot()
+
 
     def onChangeTab(self):
         self.lineEdit_pre_heat_road_temp.setText("")
@@ -637,6 +656,9 @@ class qt(QMainWindow, form_class):
         self.getHeatingLogStatistics()
         self.getHeatingLogStatistics(now.year, now.month, now.day)
 
+        self.getHeatingLogStatistics_2(now.year, now.month, now.day)
+        self.getHeatingLogStatistics_2(now.year, now.month)
+        self.getHeatingLogStatistics_2(now.year)
     
     def initMqtt(self, login_id, on_message, on_message_cb = None):
         global pub_root_topic, sub_root_topic
@@ -800,7 +822,7 @@ class qt(QMainWindow, form_class):
             start_date = datetime.datetime(_year, _month, _day)
             end_date = datetime.datetime(_year, _month, _day + 1)
 
-        a = mongodb_collection.aggregate([
+        a = mongodb_heating_log_col.aggregate([
         {
             "$match": 
             {
@@ -872,6 +894,86 @@ class qt(QMainWindow, form_class):
         canvas_temp.show()
 
         # print(df)
+
+    def mongoDB_aggregate_2(self, _d_format = None, _year = None, _month = None, _day = None):
+        if _d_format == '%Y':
+            start_date = datetime.datetime(2023-1, 12, 1)
+            end_date = datetime.datetime(2023+10, 12, 31)
+        elif _d_format == '%Y-%m':
+            start_date = datetime.datetime(_year -1, 12, 1) # for jan. data, add last year Dec.
+            end_date = datetime.datetime(_year, 12, 31)
+        elif _d_format == '%H':
+            start_date = datetime.datetime(_year, _month, _day)
+            end_date = datetime.datetime(_year, _month, _day+1)
+        elif _d_format == '%Y-%m-%d':
+            start_date = datetime.datetime(_year, _month-1, 1)
+            num_days = calendar.monthrange(_year, _month)[1]
+            end_date = datetime.datetime(_year, _month, num_days)
+
+        a = mongodb_power_log_col.find({"timestamp": { "$gte": start_date, "$lte": end_date}})
+        print(a)
+        return a
+
+    def getHeatingLogStatistics_2(self, _year = None, _month = None, _day = None):
+        ax_temp = None
+        canvas_temp = None
+        if _day:
+            date_format = "%H"
+            df_index = ['{0:02d}'.format(x) for x in range(0, 24)]
+            ax_temp = self.ax_4
+            canvas_temp = self.canvas_4
+        elif _month:
+            date_format = "%Y-%m-%d"
+            num_days = calendar.monthrange(_year, _month)[1] + 1
+            df_index = [datetime.date(_year, _month, day).strftime(date_format) for day in range(1, num_days)]
+            num_days = calendar.monthrange(_year, _month-1)[1]
+            df_index.insert(0, datetime.date(_year, _month-1, num_days).strftime(date_format))
+            ax_temp = self.ax_5
+            canvas_temp = self.canvas_5
+        elif _year:
+            date_format = "%Y-%m"
+            df_index = [datetime.date(_year, month, 1).strftime(date_format) for month in range(1, 13)]
+            # add last year, Dec. to index
+            df_index.insert(0, datetime.date(_year-1, 12, 1).strftime(date_format))
+            ax_temp = self.ax_6
+            canvas_temp = self.canvas_6
+        else:
+            year_ = datetime.datetime.now().year
+            date_format = "%Y"
+            df_index = [datetime.date(year, 1, 1).strftime(date_format) for year in range(year_, year_+10)]
+            df_index.insert(0, datetime.date(year_-1, 12, 1).strftime(date_format))
+
+        df = pd.DataFrame(index=df_index)
+
+        a = self.mongoDB_aggregate_2(date_format, _year, _month, _day)
+        val_dict = {}
+        for item in a:
+            print(item)
+            # val_dict[item['_id']] = item['Count']
+            val_dict[item['timestamp'].strftime(date_format)] = item['power']
+
+        temp = pd.DataFrame(val_dict.values(), index= val_dict.keys(), columns=['accumulate_power'])
+        df = df.join(temp)
+        print(df)
+
+        print(val_dict)
+
+        # df = df.fillna(0)
+
+        df['power'] = df.accumulate_power.diff() # each month data
+
+        df = df.drop(df.index[0])   # remove last year Dec.
+
+        del df['accumulate_power']
+
+        print(df)
+        if _year == None:
+            df.index = df.index.str[0:4]
+        elif _day == None:
+            df.index = df.index.str[5:]
+
+        df.plot(kind='bar', ax=ax_temp)
+        canvas_temp.show()
 
 
 def run(pc_app):
