@@ -663,7 +663,10 @@ class qt(QMainWindow, form_class):
     def initMqtt(self, login_id, on_message, on_message_cb = None):
         global pub_root_topic, sub_root_topic
         mac_address = str(hex(uuid.getnode()))
-        MQTT_CLIENT_ID = mac_address + '_' + login_id
+        if WEB_APP_MODE:
+            MQTT_CLIENT_ID = mac_address + '_' + login_id + '_APP'
+        else:
+            MQTT_CLIENT_ID = mac_address + '_' + login_id
         sub_root_topic = 'PUB_' + login_id + '/'
         pub_root_topic = 'SUB_' + login_id + '/'
         self.sub_mqtt = sc.SUB_MQTT(_broker_address=server_ip, _topic=sub_root_topic + '+', _client=MQTT_CLIENT_ID,
@@ -911,7 +914,7 @@ class qt(QMainWindow, form_class):
             end_date = datetime.datetime(_year, _month, num_days)
 
         a = mongodb_power_log_col.find({"timestamp": { "$gte": start_date, "$lte": end_date}})
-        print(a)
+        # print(a)
         return a
 
     def getHeatingLogStatistics_2(self, _year = None, _month = None, _day = None):
@@ -948,15 +951,15 @@ class qt(QMainWindow, form_class):
         a = self.mongoDB_aggregate_2(date_format, _year, _month, _day)
         val_dict = {}
         for item in a:
-            print(item)
+            # print(item)
             # val_dict[item['_id']] = item['Count']
             val_dict[item['timestamp'].strftime(date_format)] = item['power']
 
         temp = pd.DataFrame(val_dict.values(), index= val_dict.keys(), columns=['accumulate_power'])
         df = df.join(temp)
-        print(df)
+        # print(df)
 
-        print(val_dict)
+        # print(val_dict)
 
         # df = df.fillna(0)
 
@@ -966,7 +969,7 @@ class qt(QMainWindow, form_class):
 
         del df['accumulate_power']
 
-        print(df)
+        # print(df)
         if _year == None:
             df.index = df.index.str[0:4]
         elif _day == None:
@@ -976,7 +979,7 @@ class qt(QMainWindow, form_class):
         canvas_temp.show()
 
 
-def run(pc_app):
+def run(pc_app = False):
     app = QApplication(sys.argv)
     widget = qt()
 

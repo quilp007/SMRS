@@ -191,7 +191,7 @@ with gr.Blocks() as app2:
                 with gr.Column(scale=1, min_width=70):
                     l_pre_heat_dur_time = gr.Textbox(label="")
                 with gr.Column(scale=10):
-                    s_pre_heat_dur_time = gr.Slider(0, 6, step=1, label="[설정] 예열 가동 지속 횟수 (회)")
+                    s_pre_heat_dur_time = gr.Slider(1, 6, step=1, label="[설정] 예열 가동 지속 횟수 (회)")
                 app2.load(fn_pre_heat_dur_time,  inpupts=None, outputs=l_pre_heat_dur_time,  every=1)
 
             with gr.Row():
@@ -212,14 +212,14 @@ with gr.Blocks() as app2:
                 with gr.Column(scale=1, min_width=70):
                     l_pos_heat_dur_time = gr.Textbox(label="")
                 with gr.Column(scale=10):
-                    s_pos_heat_dur_time = gr.Slider(0, 4, step=1, label="[설정] 본 가동 지속 횟수 (회)")
+                    s_pos_heat_dur_time = gr.Slider(1, 4, step=1, label="[설정] 본 가동 지속 횟수 (회)")
                 app2.load(fn_pos_heat_dur_time,  inpupts=None, outputs=l_pos_heat_dur_time,  every=1)
 
             with gr.Row():
                 with gr.Column(scale=1, min_width=70):
                     l_emer_heat_set_temp = gr.Textbox(label="")
                 with gr.Column(scale=10):
-                    s_emer_heat_set_temp = gr.Slider(-30, -20, step=1, label="비상 가동 대기 온도(℃)")
+                    s_emer_heat_set_temp = gr.Slider(-30, 20, step=1, label="[설정] 비상 가동 대기 온도(℃)")
                 app2.load(fn_emer_heat_set_temp,  inpupts=None, outputs=l_emer_heat_set_temp,  every=1)
 
             md = gr.Markdown()
@@ -234,12 +234,14 @@ with gr.Blocks() as app2:
 
         with gr.Column():
             gr.Markdown("수동 설정")
-            pre_heat_dur_time = gr.Slider(0, 60, step=1, label="예열 가동 횟수 (회)")
+            ll_pre_heat_dur_time = gr.Textbox(label="")
+            app2.load(fn_pre_heat_dur_time,  inpupts=None, outputs=ll_pre_heat_dur_time,  every=1)
             pre_heat_end_btn = gr.Button("예열 가동 후 정지")
             pre_heat_end_btn.click(fn=pre_heat_end, inputs=None, outputs=md)
             pre_heat_auto_change_btn = gr.Button("예열 가동 후 자동 전환")
             pre_heat_auto_change_btn.click(fn=pre_heat_auto_change, inputs=None, outputs=md)
-            pos_heat_dur_time = gr.Slider(0, 60, step=1, label="본 가동 횟수 (회)")
+            ll_pos_heat_dur_time = gr.Textbox(label="")
+            app2.load(fn_pos_heat_dur_time,  inpupts=None, outputs=ll_pos_heat_dur_time,  every=1)
             pos_heat_end_btn = gr.Button("본 가동 후 정지")
             pos_heat_end_btn.click(fn=pos_heat_end, inputs=None, outputs=md)
             pos_heat_auto_change_btn = gr.Button("본 가동 후 자동 전환")
@@ -293,6 +295,7 @@ with gr.Blocks() as app4:
 #         login.close()
 #         break
 def check_auth_mongodb(username, password):
+    widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
     SMRS.DEVICE_ID = username
     SMRS.initMongoDB()
     global LOGIN_FLAG
@@ -301,7 +304,7 @@ def check_auth_mongodb(username, password):
     if saved_passwd == password:
         print('password is correct!!')
         if not LOGIN_FLAG:
-            widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
+            # widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
             widget.send_CMD('INIT')
             LOGIN_FLAG = True
         return True
@@ -355,6 +358,8 @@ def on_message_sp(msg, topic):
                 g_set_air_temp = value
             elif key == 'pre_heat_on_time':
                 g_pre_heat_on_time = value
+            elif key == 'heat_on_time':
+                g_heat_on_time = value
             elif key == 'road_temp':
                 g_road_temp = value
             elif key == 'road_humidity':

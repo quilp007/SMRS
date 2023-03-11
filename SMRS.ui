@@ -75,7 +75,7 @@
     <enum>QTabWidget::Rounded</enum>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>1</number>
    </property>
    <property name="iconSize">
     <size>
@@ -1258,7 +1258,7 @@
            </font>
           </property>
           <property name="text">
-           <string>(1~120)</string>
+           <string>(1~6)</string>
           </property>
          </widget>
         </item>
@@ -1327,7 +1327,7 @@
            </font>
           </property>
           <property name="text">
-           <string>(-30~60)</string>
+           <string>(-10~10)</string>
           </property>
          </widget>
         </item>
@@ -1348,7 +1348,7 @@
           </property>
           <property name="text">
            <string>예열작동
-지속시간</string>
+지속횟수</string>
           </property>
          </widget>
         </item>
@@ -1442,7 +1442,7 @@
            </font>
           </property>
           <property name="text">
-           <string>(-30~60)</string>
+           <string>(0~10)</string>
           </property>
          </widget>
         </item>
@@ -1558,7 +1558,7 @@
            </font>
           </property>
           <property name="text">
-           <string>(1~120)</string>
+           <string>(1~4)</string>
           </property>
          </widget>
         </item>
@@ -1629,7 +1629,7 @@
            </font>
           </property>
           <property name="text">
-           <string>(-30~60)</string>
+           <string>(-30~20)</string>
           </property>
          </widget>
         </item>
@@ -1760,7 +1760,7 @@
           </property>
           <property name="text">
            <string>본작동
-지속시간</string>
+지속횟수</string>
           </property>
          </widget>
         </item>
