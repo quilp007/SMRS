@@ -600,8 +600,8 @@ class qt(QMainWindow, form_class):
             self.flag_EMC_HEAT_ON = True
             self.func_btn_HEAT_ON('EMC')
 
-        elif (self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']) and \
-            (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity']):
+        elif ((self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']) and (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity'])) or \
+            (self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']):
             self.func_btn_HEAT_ON('AUTO')
 
         elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
