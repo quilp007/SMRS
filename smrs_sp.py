@@ -324,10 +324,11 @@ with gr.Blocks() as app4:
 #         login.close()
 #         break
 def check_auth_mongodb(username, password):
-    widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
+    global LOGIN_FLAG
+    if not LOGIN_FLAG:
+        widget.initMqtt(username, on_message_sp, on_message_cb=on_message_sp_rcv)
     SMRS.DEVICE_ID = username
     SMRS.initMongoDB()
-    global LOGIN_FLAG
     saved_passwd = SMRS.mongodb_signup_col.find_one({'id': username})['pwd']
 
     if saved_passwd == password:
