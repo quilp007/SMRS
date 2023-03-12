@@ -2,6 +2,9 @@ import gradio as gr
 import SMRS
 import json
 import time
+import base64
+import numpy as np
+import cv2
 
 title = "Multiple Interfaces"
 
@@ -25,6 +28,9 @@ label_dict = {  'label_pre_heat_on': 'gray',
                 'label_heat_on': 'gray',
                 'label_emc_heat_on': 'gray',
                 'btn_AUTO_MODE': 'gray'}
+
+jpg_original = None
+capture_flag = False
 
 # global is_login
 # is_login = 0
@@ -90,6 +96,9 @@ def fn_update_label_3():
 
 def fn_update_label_4():
     return gr.Label.update(color=label_dict['btn_AUTO_MODE'])
+
+def fn_update_image():
+    return gr.Image(jpg_original)
 
 
 app1 = gr.Interface(fn=dummy, inputs=None, outputs="text")
@@ -258,16 +267,36 @@ with gr.Blocks() as app2:
 
 
 def take_picture():
+    global capture_flag
+    widget.pressed_button(widget.btn_capture)
+    count = 0
+    while(True):
+        if capture_flag: 
+            break
+        else:
+            time.sleep(0.5)
+            count+=1
+            if (count == 5): 
+                break
+
+    capture_flag = False
+    return jpg_original
     return f'take_picture'
 
 
 with gr.Blocks() as app3:
     md = gr.Markdown()
     with gr.Row():
-        gr.Image("./icon/logo1.png")
+        # gr.Image("./icon/logo1.png")
+        img_output = gr.Image("./icon/logo1.png")
+        # outputs = gr.outputs.Image(type="numpy", label = "capture image")
+
+        # app3.load(fn_update_image,        inputs=None, outputs=img_output,               every=1)
+
     with gr.Row():
         take_picture_btn = gr.Button("사진 촬영")
-        take_picture_btn.click(fn=take_picture, inputs=None, outputs=md)
+        # take_picture_btn.click(fn=take_picture, inputs=None, outputs=md)
+        take_picture_btn.click(fn=take_picture, inputs=None, outputs=img_output)
 
 with gr.Blocks() as app4:
     with gr.Row():
@@ -335,7 +364,7 @@ def on_message_sp(msg, topic):
     global g_l_pre_heat
 
     jsonData = json.loads(msg)
-    print('on_message_callback: ', msg)
+    # print('on_message_callback: ', msg)
 
     if topic == SMRS.sub_root_topic + 'DATA':
         roadTemp = jsonData['road_temp']
@@ -368,14 +397,19 @@ def on_message_sp(msg, topic):
                 g_air_temp = value
 
     elif topic == SMRS.sub_root_topic + 'IMAGE':
+        global jpg_original, capture_flag
         print('image captured')
         filename = jsonData['filename'].split('/')[2]
         img_str = jsonData['IMG']
 
         # to decode back to np.array
-        # jpg_original = base64.b64decode(img_str)
-        # jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+        jpg_original = base64.b64decode(img_str)
+        jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
         # decoded_img = cv2.imdecode(jpg_as_np, flags=1)
+        jpg_original = cv2.imdecode(jpg_as_np, flags=1)
+        jpg_original = cv2.cvtColor(jpg_original, cv2.COLOR_BGR2RGB)
+
+        capture_flag = True
 
         # filename = jsonData['filename']
         # cv2.imwrite(filename, decoded_img)
