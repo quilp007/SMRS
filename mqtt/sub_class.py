@@ -110,7 +110,7 @@ class SUB_MQTT(QtCore.QObject):
        try:
            print("Trying to Reconnect")
            client.connect(broker_address, port)
-           client.subscribe(topic)
+           client.subscribe(self.topic)
 
            print('tried to subscribe')
        except:
