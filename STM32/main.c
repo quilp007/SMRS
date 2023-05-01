@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "json/cJSON.h"
+#include "../json/cJSON.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -238,25 +239,21 @@ void create_objects(void)
 char *my_json(void)
 {
 	char *jsonValue;
-	cJSON *jsonCreat;
-	cJSON *jsonCreatValue;
 
-	jsonCreat = cJSON_CreateObject();//Create a json object
-	//jsonCreatValue = cJSON_CreateObject();//Create a json object
+	cJSON *jsonCreate = cJSON_CreateObject();//Create a json object
 
-	cJSON_AddNumberToObject(jsonCreat, "road_temp", 12.3);
-	cJSON_AddNumberToObject(jsonCreat, "road_humidity", -456);
-	cJSON_AddNumberToObject(jsonCreat, "air_temp", -7.89);
+	cJSON_AddNumberToObject(jsonCreate, "road_temp", 12.3);
+	cJSON_AddNumberToObject(jsonCreate, "road_humidity", 4);
+	cJSON_AddNumberToObject(jsonCreate, "air_temp", -7.89);
 
-	//jsonValue=cJSON_Print(jsonCreat);//Print data in JSON format
-	jsonValue=cJSON_PrintUnformatted(jsonCreat);//Print data in JSON format
+	jsonValue=cJSON_PrintUnformatted(jsonCreate);//Print data in JSON format
 
-	cJSON_Delete(jsonCreat);
-	//cJSON_Delete(jsonCreatValue);
-	//printf( "%s\r\n", jsonValue);
+	cJSON_Delete(jsonCreate);
+	printf("%s\n", jsonValue);
 
 	return jsonValue;
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -306,22 +303,26 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_6);
+	  HAL_Delay(500);
 
-	  //HAL_UART_Transmit(&huart1, req, sizeof(req), HAL_MAX_DELAY);
-	  //printf("abcdefg\r\n");
-	  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+	  //HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+	  //HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
+      
 	  //str = test_json();
 	  //str = create_monitor_with_helpers();
+      
 	  str = my_json();
-	  printf("%s\r\n", str);
 
 	  //create_objects();
+      
+	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7);
+	  HAL_Delay(500);
 
-	  delay(500000);
-	  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-	  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-	  delay(500000);
+	  //delay(500000);
+	  //HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
+	  //HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+	  //delay(500000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

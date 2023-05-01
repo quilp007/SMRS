@@ -52,6 +52,7 @@ MPM_330_ENABLE = False
 
 # serial_port = "/dev/ttyACM0"
 serial_port = "/dev/ttyUSB0"
+# serial_port = "/dev/tty.usbserial-1413130"
 
 if USB_SERIAL == True:
     mcuSerial = serial.Serial(serial_port, 115200)
@@ -223,15 +224,16 @@ class THREAD_RECEIVE_Data(QThread):
                     # self.intReady.emit()
 
                     for key, value in data.items():
+                        value = round(value, 1)
                         lcdNum = self.qt_object.findChild(QLCDNumber, key)    # find LCDNumber with key 
                         if lcdNum is not None:
-                            print('lcd is not empty!!')
+                            # print('lcd is not empty!!')
                             lcdNum.display(value)                        # display to LCDNumber
 
                         print('received key: {} value: {}'.format(key, value))
-                        print('value type: ', type(value))
+                        # print('value type: ', type(value))
 
-                        self.config_dict[key] = value
+                        self.qt_object.config_dict[key] = value
 
                         # send to PC or S/P
                         self.mqtt_object.send_msg(pub_root_topic+"CONFIG", json.dumps({key: value}))
@@ -877,7 +879,7 @@ class qt(QMainWindow, form_class):
         self.temp_data['timestamp'] = datetime.now()
         self.temp_data['metadata'] = {"sensorId": self.idx, "type": "sensor data"}
 
-        result = collection.insert_one(self.temp_data)
+        # result = collection.insert_one(self.temp_data)
 
         if DEBUG_PRINT:
             print("inserted data", self.temp_data['timestamp'])
