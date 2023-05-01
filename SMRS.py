@@ -661,10 +661,12 @@ class qt(QMainWindow, form_class):
         self.getHeatingLogStatistics_2(now.year)
     
     def initMqtt(self, login_id, on_message, on_message_cb = None):
+        count = 0
         global pub_root_topic, sub_root_topic
         mac_address = str(hex(uuid.getnode()))
         if WEB_APP_MODE:
-            MQTT_CLIENT_ID = mac_address + '_' + login_id + '_APP'
+            count +=1
+            MQTT_CLIENT_ID = mac_address + '_' + login_id + '_APP_' + str(count)
         else:
             MQTT_CLIENT_ID = mac_address + '_' + login_id
         sub_root_topic = 'PUB_' + login_id + '/'
