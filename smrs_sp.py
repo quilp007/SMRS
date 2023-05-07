@@ -104,7 +104,8 @@ def fn_update_image():
 app1 = gr.Interface(fn=dummy, inputs=None, outputs="text")
 app2 = gr.Interface(fn=dummy, inputs=None, outputs="text")
 app3 = gr.Interface(fn=dummy, inputs=None, outputs="text")
-app4 = gr.Interface(fn=dummy, inputs=None, outputs="text")
+# app4 = gr.Interface(fn=dummy, inputs=None, outputs="text")
+
 # app1 =  gr.Interface(fn = dummy, inputs="text", outputs="text")
 # app2 =  gr.Interface(fn = dummy, inputs="text", outputs="text")
 # app3 =  gr.Interface(fn = dummy, inputs="text", outputs="text")
@@ -186,6 +187,7 @@ def init_set():
 
 with gr.Blocks() as app2:
     with gr.Row():
+        """
         with gr.Column():
             gr.Markdown("자동 설정")
 
@@ -231,7 +233,6 @@ with gr.Blocks() as app2:
                     s_emer_heat_set_temp = gr.Slider(-30, 20, step=1, label="[설정] 비상 가동 대기 온도(℃)")
                 app2.load(fn_emer_heat_set_temp,  inpupts=None, outputs=l_emer_heat_set_temp,  every=1)
 
-            md = gr.Markdown()
 
             s_pre_heat_set_temp.change(fn=update_pre_heat_set_temp,  inputs=s_pre_heat_set_temp,  outputs=None)
             s_pre_heat_dur_time.change(fn=update_pre_heat_dur_time,  inputs=s_pre_heat_dur_time,  outputs=None)
@@ -240,23 +241,39 @@ with gr.Blocks() as app2:
             s_pos_heat_dur_time.change(fn=update_pos_heat_dur_time,  inputs=s_pos_heat_dur_time,  outputs=None)
             s_emer_heat_set_temp.change(fn=update_emer_heat_set_temp,inputs=s_emer_heat_set_temp, outputs=None)
 
+            md = gr.Markdown()
+        """
 
         with gr.Column():
-            gr.Markdown("수동 설정")
-            ll_pre_heat_dur_time = gr.Textbox(label="")
-            app2.load(fn_pre_heat_dur_time,  inpupts=None, outputs=ll_pre_heat_dur_time,  every=1)
+            gr.Markdown("예열가동 설정")
+            md = gr.Markdown()
             pre_heat_end_btn = gr.Button("예열 가동 후 정지")
             pre_heat_end_btn.click(fn=pre_heat_end, inputs=None, outputs=md)
             pre_heat_auto_change_btn = gr.Button("예열 가동 후 자동 전환")
             pre_heat_auto_change_btn.click(fn=pre_heat_auto_change, inputs=None, outputs=md)
-            ll_pos_heat_dur_time = gr.Textbox(label="")
-            app2.load(fn_pos_heat_dur_time,  inpupts=None, outputs=ll_pos_heat_dur_time,  every=1)
+
+        with gr.Column():
+            gr.Markdown("본가동 설정")
+            md = gr.Markdown()
+            # ll_pre_heat_dur_time = gr.Textbox(label="")
+            # app2.load(fn_pre_heat_dur_time,  inpupts=None, outputs=ll_pre_heat_dur_time,  every=1)
+
+            # pre_heat_end_btn = gr.Button("예열 가동 후 정지")
+            # pre_heat_end_btn.click(fn=pre_heat_end, inputs=None, outputs=md)
+            # pre_heat_auto_change_btn = gr.Button("예열 가동 후 자동 전환")
+            # pre_heat_auto_change_btn.click(fn=pre_heat_auto_change, inputs=None, outputs=md)
+
+            # ll_pos_heat_dur_time = gr.Textbox(label="")
+            # app2.load(fn_pos_heat_dur_time,  inpupts=None, outputs=ll_pos_heat_dur_time,  every=1)
             pos_heat_end_btn = gr.Button("본 가동 후 정지")
             pos_heat_end_btn.click(fn=pos_heat_end, inputs=None, outputs=md)
             pos_heat_auto_change_btn = gr.Button("본 가동 후 자동 전환")
             pos_heat_auto_change_btn.click(fn=pos_heat_auto_change, inputs=None, outputs=md)
+
     with gr.Row():
         gr.Markdown("Main 설정")
+        md = gr.Markdown()
+
     with gr.Row():
         auto_btn = gr.Button("자동")
         auto_btn.click(fn=auto, inputs=None, outputs=md)
@@ -303,26 +320,6 @@ with gr.Blocks() as app4:
         gr.Dataframe(type="numpy", datatype="number", row_count=5, col_count=3)
 
 
-# def login_send():
-#     is_login = 1
-#     return f'login_send'
-#
-#
-# with gr.Blocks() as app0:
-#     with gr.Row():
-#         md = gr.Markdown()
-#         login_id = gr.Textbox(label="아이디")
-#         login_pw = gr.Textbox(label="패스워드")
-#         login_btn = gr.Button("로그인")
-#         login_btn.click(fn=login_send, inputs=None, outputs=md)
-#
-# login = gr.TabbedInterface([app0], ["로그인"])
-# login.launch()
-#
-# while (is_login == 0):
-#     if is_login == 1:
-#         login.close()
-#         break
 def check_auth_mongodb(username, password):
     global LOGIN_FLAG
     if not LOGIN_FLAG:
@@ -449,29 +446,13 @@ def on_message_sp(msg, topic):
             # TODO: write log
             print(log_text)
             
-        
-
-        """
-        self.config_dict = {
-            'pre_heat_road_temp':   3,
-            'heat_road_temp':       1,
-            'set_road_humidity':    3,
-            'set_air_temp':         -15,
-            'pre_heat_on_time':     60,
-            'heat_on_time':         90,
-            'road_temp':            0,
-            'road_humidity':        0,
-            'air_temp':             0
-        }
-        """
-
-
 
 widget = SMRS.run(pc_app = False)
 # password = widget.util_func.read_var('enerpia_1')
 # print(password)
 
-smrs = gr.TabbedInterface([app1, app2, app3, app4], ["현재상태", "설정", "카메라", "로그"])
+# smrs = gr.TabbedInterface([app1, app2, app3, app4], ["현재상태", "설정", "카메라", "로그"])
+smrs = gr.TabbedInterface([app1, app2, app3], ["현재상태", "설정", "카메라"])
 # smrs.launch(auth=check_auth, auth_message="Please Enter ID and Password")
 smrs.launch(auth=check_auth_mongodb, auth_message="Please Enter ID and Password", 
             server_name='192.168.0.26', server_port=7860, enable_queue=True)
