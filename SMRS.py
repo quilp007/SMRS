@@ -51,7 +51,8 @@ COL_COUNT = 3
 
 LABEL_WARNING_TIME = 3000  # ms -> timer setting
 
-server_ip = '203.251.78.135'
+# server_ip = '203.251.78.135'
+server_ip = '211.57.90.83'
 
 userid = 'smrs_1'
 passwd = 'smrs2580_1!'

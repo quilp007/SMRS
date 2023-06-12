@@ -46,9 +46,9 @@ if ARG_ENABLE == False:
         pub_root_topic = "R_PI_test/"
         sub_root_topic = "APP_test/"
 
-USB_SERIAL = False
-MQTT_ENABLE = True
-MPM_330_ENABLE = False
+USB_SERIAL      = False
+MQTT_ENABLE     = True
+MPM_330_ENABLE  = False
 
 # serial_port = "/dev/ttyACM0"
 serial_port = "/dev/ttyUSB0"
@@ -63,7 +63,8 @@ reg_40020 = 20
 reg_40002 = 2 
 
 
-server_ip = '203.251.78.135'
+# server_ip = '203.251.78.135'
+server_ip = '211.57.90.83'
 
 userid = 'smrs_1'
 passwd = 'smrs2580_1!'
@@ -79,14 +80,21 @@ DEBUG_PRINT = False
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-SEND_SENSOR_DATA_INTERVAL   = 1000 # ms -> timer setting
-
-PRE_HEATING_TIME            = 3000 # ms -> timer setting
-HEATING_TIME                = 5000 # ms -> timer setting
+HEATING_TIME                = 3000 # ms -> timer setting
+COOLING_TIME                = 2000 # ms -> stop time
 
 LABEL_WARNING_TIME          = 3000 # ms -> timer setting
 
 CHECK_TEMP_INTERVAL_TIME    = 1000 # ms -> timer setting
+
+HEATER_0    = b'0'
+HEATER_1    = b'1'
+HEATER_0_1  = b'2'
+HEATER_STOP = b'3'
+
+STOP        = 0
+HEATING     = 1
+COOLING     = 2
 
 KEYPAD_TIME = 5000
 
@@ -308,11 +316,13 @@ class Util_Function:
         QtTest.QTest.qWait(ms)
 
     def save_var(self, key, value):
-        with shelve.open('C:\work\SMRS\config') as f:
+        # with shelve.open('C:\work\SMRS\config') as f:
+        with shelve.open('config') as f:
             f[key] = int(value)
 
     def read_var(self, key):
-        with shelve.open('C:\work\SMRS\config') as f:
+        # with shelve.open('C:\work\SMRS\config') as f:
+        with shelve.open('config') as f:
             try:
                 temp = int(f[key])
                 # print(f[key])
@@ -446,9 +456,14 @@ class qt(QMainWindow, form_class):
 
         self.util_func = Util_Function()
 
+        self.HEAT_MODE = None
 
-        self.heating_timer = QtCore.QTimer()
-        self.heating_timer.timeout.connect(lambda: self.heat_timeout_func(None))
+        self.heating_on_timer = QtCore.QTimer()
+        self.heating_on_timer.timeout.connect(lambda: self.heating_timeout_func(None))
+
+        self.cooling_on_timer = QtCore.QTimer()
+        # self.cooling_on_timer.timeout.connect(lambda: self.cooling_timeout_func(self.HEAT_MODE))
+        self.cooling_on_timer.timeout.connect(self.cooling_timeout_func)
 
         # Warning label TIMER setting ##############################
         self.label_warning_timer = QtCore.QTimer()
@@ -497,38 +512,44 @@ class qt(QMainWindow, form_class):
         self.clickable(self.road_humidity).connect(lambda: self.input_value(self.road_humidity))
         self.clickable(self.air_temp).connect(lambda: self.input_value(self.air_temp))
 
+        self.clickable(self.heat_on_time_manual).connect(lambda: self.input_value(self.heat_on_time_manual))            # heat_on_time_manual
+        self.clickable(self.pre_heat_on_time_manual).connect(lambda: self.input_value(self.pre_heat_on_time_manual))    # pre_heat_on_time_manual
+
 
         # TODO: connect all lcdNums
 
         self.config_dict = {
-            'pre_heat_road_temp':   5,
-            'heat_road_temp':       1,
-            'set_road_humidity':    3,
-            'set_air_temp':         -20,
-            'pre_heat_on_time':     1,
-            'heat_on_time':         2,
-            'road_temp':            0,
-            'road_humidity':        0,
-            'air_temp':             0
+            'pre_heat_road_temp':       5,
+            'heat_road_temp':           1,
+            'set_road_humidity':        3,
+            'set_air_temp':             -20,
+            'pre_heat_on_time':         1,
+            'heat_on_time':             2,
+            'road_temp':                0,
+            'road_humidity':            0,
+            'air_temp':                 0,
+            'heat_on_time_manual':      2,
+            'pre_heat_on_time_manual':  2
         }
 
-        self.btn_list = [
-            self.btn_HEAT_ON,
-            self.btn_HEAT_ON_AND_STOP,
-            self.btn_PRE_HEAT_ON,
-            self.btn_PRE_HEAT_ON_AND_STOP
-        ]
+        self.btn_dict = {
+            self.btn_AUTO_MODE:             'gray',
+            self.btn_HEAT_ON:               'gray',
+            self.btn_HEAT_ON_AND_STOP:      'gray',
+            self.btn_PRE_HEAT_ON:           'gray',
+            self.btn_PRE_HEAT_ON_AND_STOP:  'gray'
+        }
+        self.label_dict = {
+            self.label_pre_heat_on:         'gray',
+            self.label_heat_on:             'gray',
+            self.label_emc_heat_on:         'gray'
+        }
 
-        self.label_list = [
-            self.label_pre_heat_on,
-            self.label_heat_on,
-            self.label_emc_heat_on
-        ]
+        self.HEATING_COUNT = 0
+        self.PRE_HEATING_COUNT = 0
 
-        self.HEATING_TIME = 0
-        self.PRE_HEATING_TIME = 0
-
-        if not os.path.isfile('config.dat'):
+        if not os.path.isfile('config.db'):             # config.db -> macbook ok!!
+            print('no file')
             for key, value in self.config_dict.items():
                 self.util_func.save_var(key, value)
 
@@ -545,14 +566,6 @@ class qt(QMainWindow, form_class):
 
             print('key: {0}, value: {1}'.format(key, temp))
 
-            if key == 'heat_on_time' and temp != None:
-                self.HEATING_TIME = int(temp)*60*1000
-            elif key == 'pre_heat_on_time' and temp!= None:
-                self.PRE_HEATING_TIME = int(temp)*60*1000
-
-        print('=========================================================================')
-        print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
-
         # limit line to 150 (log textEdit)
         self.textEdit_log.document().setMaximumBlockCount(150)
 
@@ -561,16 +574,18 @@ class qt(QMainWindow, form_class):
 
         # GLOBAL VARIABLE --------------------------------------------------
         # BLOCK change config during HEAT ON time
-        self.flag_HEAT_ON = False
-        self.flag_AUTO_MODE = False
+        self.flag_HEAT_ON       = STOP
+        self.flag_AUTO_MODE     = False
 
-        self.PRE_HEAT_STATUS = False
-        self.HEAT_STATUS = False
+        self.PRE_HEAT_STATUS    = False
+        self.HEAT_STATUS        = False
 
-        self.flag_EMC_HEAT_ON = False
+        self.flag_EMC_HEAT_ON   = False
+
+        self.flag_CHANNEL       = 0
 
         # CAM preview/caputre THREAD ##############################
-        self.disply_width = 360
+        self.disply_width   = 360
         self.display_height = 240
 
         # create the video capture thread
@@ -590,24 +605,37 @@ class qt(QMainWindow, form_class):
 
 
     def check_temp(self):
-        # flag_HEAT_ON <= True: 1. pre heat on 2. heat on 3. emergency heat on
-        # flag_AUTO_MODE <= True: 1. set auto mode 2. auto mode after pre/heat on
-        # flag_AUTO_MODE <= False: 1. Stop 2. stop after pre/heat on
+        # print("[[AUTO MODE]] -> Check temp!!")
+        # print("[[AUTO MODE]] -> self.flag_AUTO_MODE : ", self.flag_AUTO_MODE)
+        # print("[[AUTO MODE]] -> self.flag_HEAT_ON: ", self.flag_HEAT_ON)
 
-        # if self.flag_HEAT_ON == True or self.flag_AUTO_MODE == False:
         if self.flag_AUTO_MODE == False:
+            # print("[[AUTO MODE]] -> not AUTO MODE")
+            return
+
+        if self.flag_HEAT_ON:
+            # print("[[AUTO MODE]] -> 'HEAT on'")
             return
 
         if self.config_dict['air_temp'] <= self.config_dict['set_air_temp']:
             self.flag_EMC_HEAT_ON = True
-            self.func_btn_HEAT_ON('EMC')
+            self.HEAT_MODE = 'EMC'
+            # self.func_btn_HEAT_ON('EMC')
+            self.HEATING_COUNT = self.config_dict['heat_on_time']
+            self.cooling_timeout_func()
 
         elif ((self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']) and (self.config_dict['road_humidity'] >= self.config_dict['set_road_humidity'])) or \
             (self.config_dict['road_temp'] <= self.config_dict['heat_road_temp']):
-            self.func_btn_HEAT_ON('AUTO')
+            # self.func_btn_HEAT_ON('AUTO')
+            self.HEAT_MODE = 'HEAT_ON'
+            self.HEATING_COUNT = self.config_dict['heat_on_time']
+            self.cooling_timeout_func()
 
         elif self.config_dict['road_temp'] <= self.config_dict['pre_heat_road_temp']:
-            self.func_btn_PRE_HEAT_ON('AUTO')
+            # self.func_btn_PRE_HEAT_ON('AUTO')
+            self.HEAT_MODE = 'PRE_HEAT_ON'
+            self.HEATING_COUNT = self.config_dict['pre_heat_on_time']
+            self.cooling_timeout_func()
 
 
     def _preview(self):
@@ -636,35 +664,30 @@ class qt(QMainWindow, form_class):
             # changing text of label
             self.textEdit.setText("preview off")
 
-    def func_btn_INIT_MODE(self):
-        self.config_dict['pre_heat_road_temp']  = 5
-        self.config_dict['pre_heat_on_time']    = 1 
-        self.config_dict['heat_road_temp']      = 1
-        self.config_dict['set_road_humidity']   = 3
-        self.config_dict['heat_on_time']        = 2
-        self.config_dict['set_air_temp']        = -20
 
-        self.HEATING_TIME = 0
-        self.PRE_HEATING_TIME = 0
+    def func_btn_INIT_MODE(self):
+        self.config_dict['pre_heat_road_temp']      = 5
+        self.config_dict['pre_heat_on_time']        = 1 
+        self.config_dict['heat_road_temp']          = 1
+        self.config_dict['set_road_humidity']       = 3
+        self.config_dict['heat_on_time']            = 2
+        self.config_dict['set_air_temp']            = -20
+        self.config_dict['heat_on_time_manual']     = 1
+        self.config_dict['pre_heat_on_time_manual'] = 1
+
+        for key, value in self.config_dict.items():
+            self.util_func.save_var(key, value)
 
         # laod saved config data and display to QLCDNumber
-        for key, value in self.config_dict.items():     # saved (LCDNumber name, value) in config.db
+        for key, value in self.config_dict.items():         # saved (LCDNumber name, value) in config.db
             print('key: {0}, value: {1}'.format(key, value))
-            lcdNum = self.findChild(QLCDNumber, key)    # find LCDNumber with key
+            lcdNum = self.findChild(QLCDNumber, key)        # find LCDNumber with key
             if (lcdNum is not None):
-                lcdNum.display(value)                        # display to LCDNumber
+                lcdNum.display(value)                       # display to LCDNumber
 
-            lcdNum = self.findChild(QLCDNumber, key+'_2')    # find LCDNumber with key
+            lcdNum = self.findChild(QLCDNumber, key+'_2')   # find LCDNumber with key
             if (lcdNum is not None):
-                lcdNum.display(value)                        # display to LCDNumber
-
-            if key == 'heat_on_time' and value:
-                self.HEATING_TIME = int(value)*20*60*1000   # 1 time -> 20min
-            elif key == 'pre_heat_on_time' and value:
-                self.PRE_HEATING_TIME = int(value)*20*60*1000
-
-        print('=========================================================================')
-        print('self.HEATING_TIME: ', self.HEATING_TIME, 'type: ', type(self.HEATING_TIME))
+                lcdNum.display(value)                       # display to LCDNumber
 
 
     def func_btn_capture(self):
@@ -757,15 +780,15 @@ class qt(QMainWindow, form_class):
 
         # 5. save config to local file 
         self.util_func.save_var(variable_name, input_num)
-        print(self.util_func.read_var(variable_name))
+        print('saved: ', self.util_func.read_var(variable_name))
 
         # TODO: send config datas to PC & DB
         # or if recevied config data from PC, update local & DB config data
 
-        if self.temp_lcdNumber.objectName() == 'heat_on_time':
-            self.HEATING_TIME = int(input_num) * 60*1000
-        elif self.temp_lcdNumber.objectName() == 'pre_heat_on_time':
-            self.PRE_HEATING_TIME = int(input_num) * 60*1000
+        # if self.temp_lcdNumber.objectName() == 'heat_on_time':
+        #     self.HEATING_COUNT = input_num
+        # elif self.temp_lcdNumber.objectName() == 'pre_heat_on_time':
+        #     self.PRE_HEATING_COUNT = input_num
 
 
     # QLCDNumber input
@@ -775,10 +798,8 @@ class qt(QMainWindow, form_class):
         print(sensor_data_dict.keys())
 
         print((lcdNum.objectName() in sensor_data_dict.keys()))
-        # print(sensor_data_dict[lcdNum.objectName()])
-        # print(sensor_data_dict.values())
 
-        if (not(lcdNum.objectName() in sensor_data_dict.keys())) and self.flag_HEAT_ON == True:
+        if (not(lcdNum.objectName() in sensor_data_dict.keys())) and self.flag_HEAT_ON:
             self.label_warning.setVisible(True)
             self.label_warning_timer.start(LABEL_WARNING_TIME)
             print('Heat ON!!!')
@@ -818,42 +839,146 @@ class qt(QMainWindow, form_class):
         elif topic == sub_root_topic+'INIT_SETTING':
             self.func_btn_INIT_MODE()
 
-    def heat_timeout_func(self, inLabel):
-        if inLabel == self.btn_HEAT_STOP:
-            self.flag_AUTO_MODE = False
-            self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
 
-            # send mqtt msg to chagne color
-            self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(), 'gray')
+    def btn_lbl_color_change(self, mode):
+        serial_cmd = b'9'   # dummy cmd
 
-        self.heating_timer.stop()
+        for obj, color in self.btn_dict.items():    # first, set all btn color to gray
+            self.btn_dict[obj] = 'gray'
 
-        self.flag_HEAT_ON = False
-        self.flag_EMC_HEAT_ON = False
+        if self.flag_AUTO_MODE:                     # if AUTO MODE, to blue
+            self.btn_dict[self.btn_AUTO_MODE]              = 'green'
 
-        self.PRE_HEAT_STATUS = False
-        self.HEAT_STATUS = False
+        for obj, color in self.label_dict.items():
+            self.label_dict[obj] = 'gray'
 
-        # change color of all buttons to gray
-        for obj in self.btn_list:
-            obj.setStyleSheet("background-color: {}; border: 1px solid black".format('gray'))
+        if mode == 'AUTO':
+            self.btn_dict[self.btn_AUTO_MODE]              = 'green'
 
-        # change color of all label to gray
-        for obj in self.label_list:
-            obj.setStyleSheet("background-color: {}; border: 1px solid black".format('gray'))
+        elif mode == 'HEAT_STOP':
+            if self.HEAT_MODE == 'HEAT_ON_AND_STOP':
+                if not self.flag_AUTO_MODE:
+                    self.btn_dict[self.btn_HEAT_ON_AND_STOP]    = 'darkblue'
+                self.label_dict[self.label_heat_on]             = 'darkblue'
+            elif self.HEAT_MODE == 'HEAT_ON':
+                if not self.flag_AUTO_MODE:
+                    self.btn_dict[self.btn_HEAT_ON]             = 'darkblue'
+                self.label_dict[self.label_heat_on]             = 'darkblue'
+            elif self.HEAT_MODE == 'EMC':
+                self.label_dict[self.label_emc_heat_on]         = 'purple'
+            # self.btn_dict[self.btn_AUTO_MODE]                   = 'gray'
+            serial_cmd = HEATER_STOP    # b'3' 
+
+        elif mode == 'HEAT_ON':
+            # self.btn_dict[self.btn_AUTO_MODE]                 = 'blue'
+            if not self.flag_AUTO_MODE:
+                self.btn_dict[self.btn_HEAT_ON]                 = 'pink'
+            self.label_dict[self.label_heat_on]                 = 'pink'
+            serial_cmd = HEATER_0_1     # b'2' 
+
+        elif mode == 'HEAT_ON_AND_STOP':
+            if not self.flag_AUTO_MODE:
+                self.btn_dict[self.btn_HEAT_ON_AND_STOP]        = 'pink'
+            self.label_dict[self.label_heat_on]                 = 'pink'
+            serial_cmd = HEATER_0_1     # b'2' 
+
+        elif mode == 'PRE_HEAT_ON':
+            self.flag_CHANNEL ^= 1
+            if self.flag_CHANNEL:
+                if not self.flag_AUTO_MODE:
+                    self.btn_dict[self.btn_PRE_HEAT_ON]         = 'yellow'
+                self.label_dict[self.label_pre_heat_on]         = 'yellow'
+                serial_cmd = HEATER_1   # b'1' 
+            else:
+                if not self.flag_AUTO_MODE:
+                    self.btn_dict[self.btn_PRE_HEAT_ON]         = 'magenta'
+                self.label_dict[self.label_pre_heat_on]         = 'magenta'
+                serial_cmd = HEATER_0   # b'0' 
+
+        elif mode == 'PRE_HEAT_ON_AND_STOP':
+            self.flag_CHANNEL ^= 1
+            if self.flag_CHANNEL:
+                if not self.flag_AUTO_MODE:
+                    self.btn_dict[self.btn_PRE_HEAT_ON_AND_STOP]= 'yellow'
+                self.label_dict[self.label_pre_heat_on]         = 'yellow'
+                serial_cmd = HEATER_1   # b'1' 
+            else:
+                if not self.flag_AUTO_MODE:
+                    self.btn_dict[self.btn_PRE_HEAT_ON_AND_STOP]= 'magenta'
+                self.label_dict[self.label_pre_heat_on]         = 'magenta'
+                serial_cmd = HEATER_0   # b'0' 
+            
+        elif mode == 'EMC':
+            self.label_dict[self.label_emc_heat_on]             = 'red'
+            serial_cmd = HEATER_0_1     # b'2' 
+
+        # chagne btn color and send mtqq ---------------------------------------------------
+        for obj, color in self.btn_dict.items():
+            obj.setStyleSheet("background-color: {}; border: 1px solid black".format(color))
+            self.send_mqtt_msg('BUTTON', obj.objectName(), color)
+
+        # chagne label color and send mtqq -------------------------------------------------
+        for obj, color in self.label_dict.items():
+            obj.setStyleSheet("background-color: {}; border: 1px solid black".format(color))
+            self.send_mqtt_msg('LABEL', obj.objectName(), color)
+
+        # send serial command --------------------------------------------------------------
+        if USB_SERIAL == True:
+            mcuSerial.write(serial_cmd)
+
+
+    def cooling_timeout_func(self):    # after cooling, turn on heater
+        # print('self.HEAT_MODE: ', self.HEAT_MODE)
+        # print('HEATING_COUNT: ', self.HEATING_COUNT)
+
+        self.cooling_on_timer.stop()
 
         self.label_warning_timer.stop()
         self.label_warning.setVisible(False)
 
-        if USB_SERIAL == True:
-            mcuSerial.write(b'2')
+        if self.HEATING_COUNT and self.HEAT_MODE in ['HEAT_ON', 'HEAT_ON_AND_STOP', 'EMC']:
+            self.flag_HEAT_ON = HEATING
+            self.heating_on_timer.start(HEATING_TIME)
+        elif self.HEATING_COUNT and self.HEAT_MODE in ['PRE_HEAT_ON', 'PRE_HEAT_ON_AND_STOP']:
+            self.flag_HEAT_ON = HEATING
+            self.cooling_on_timer.start(HEATING_TIME)
+        elif self.HEATING_COUNT == 0:
+            if self.HEAT_MODE in ['HEAT_ON', 'PRE_HEAT_ON']:
+                self.flag_AUTO_MODE = True
 
-        # send mqtt msg to chagne color
-        for obj in self.btn_list:
-            self.send_mqtt_msg('BUTTON', obj.objectName(), 'gray')
+            self.flag_HEAT_ON = STOP
+            self.HEAT_STATUS  = False
+            self.HEAT_MODE    = 'HEAT_STOP'
 
-        for obj in self.label_list:
-            self.send_mqtt_msg('LABEL', obj.objectName(), 'gray')
+        self.HEATING_COUNT -= 1
+
+        self.btn_lbl_color_change(self.HEAT_MODE)
+
+        self.insert_log(self.HEAT_MODE)
+        if self.flag_AUTO_MODE:
+            self.insert_log('AUTO_MODE')
+
+
+    def heating_timeout_func(self, inLabel):    # after heating, turn off heater
+        self.flag_HEAT_ON = COOLING
+
+        if inLabel == self.btn_HEAT_STOP:
+            self.flag_EMC_HEAT_ON   = False
+            self.flag_HEAT_ON       = STOP
+
+            self.PRE_HEAT_STATUS    = False
+            self.HEAT_STATUS        = False
+        else:
+            self.heating_on_timer.stop()
+            self.cooling_on_timer.start(COOLING_TIME)
+
+        self.label_warning_timer.stop()
+        self.label_warning.setVisible(False)
+
+        self.btn_lbl_color_change('HEAT_STOP')
+
+        if self.HEATING_COUNT:
+            self.insert_log('HEAT_STOP')
 
 
     def label_warning_timeout_func(self):
@@ -879,15 +1004,12 @@ class qt(QMainWindow, form_class):
         self.temp_data['timestamp'] = datetime.now()
         self.temp_data['metadata'] = {"sensorId": self.idx, "type": "sensor data"}
 
-        # result = collection.insert_one(self.temp_data)
-
         if DEBUG_PRINT:
             print("inserted data", self.temp_data['timestamp'])
 
         del self.temp_data['_id']
         # del temp_data['timestamp']
         self.temp_data['timestamp'] = str(self.temp_data['timestamp'])
-        # pub_mqtt.send_msg(root_topic+"DATA", json.dumps(temp_data))
         self.sub_mqtt.send_msg(pub_root_topic+"DATA", json.dumps(self.temp_data))
 
         self.idx += 1
@@ -917,167 +1039,110 @@ class qt(QMainWindow, form_class):
             return
 
         self.flag_AUTO_MODE = True
-        self.btn_AUTO_MODE.setStyleSheet(f"background-color: blue; border: 1px solid black")
 
-        self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(), 'blue')
+        self.btn_lbl_color_change('AUTO')
+
         self.insert_log('AUTO_MODE')
 
+
     def func_btn_HEAT_STOP(self):
-        self.send_mqtt_msg('BUTTON', self.btn_HEAT_STOP.objectName(), 'grey')
-        self.heat_timeout_func(self.btn_HEAT_STOP)
-        self.insert_log('HEAT_STOP')
+        self.flag_AUTO_MODE = False
+        self.HEAT_MODE = 'HEAT_STOP'
+
+        self.heating_timeout_func(self.btn_HEAT_STOP)
+
 
     def func_btn_PRE_HEAT_ON(self, mode = None):
         if self.flag_HEAT_ON:
             return
 
-        self.label_pre_heat_on.setStyleSheet("background-color: yellow")
-        self.label_emc_heat_on.setStyleSheet("background-color: gray")
-
         if mode != 'AUTO':
-            self.btn_PRE_HEAT_ON.setStyleSheet("background-color: yellow; border: 1px solid black")
+            self.flag_AUTO_MODE = False
 
-        self.flag_AUTO_MODE = True
-        self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
+        self.flag_HEAT_ON       = HEATING
+        self.PRE_HEAT_STATUS    = True
+        self.HEAT_STATUS        = False
 
-        self.heating_timer.start(PRE_HEATING_TIME)
+        # self.flag_CHANNEL       = 0
 
-        self.flag_HEAT_ON = True
-        self.PRE_HEAT_STATUS = True
-        self.HEAT_STATUS = False
+        self.HEAT_MODE = 'PRE_HEAT_ON'
 
-        if USB_SERIAL == True:
-            mcuSerial.write(b'1')
+        if mode == 'AUTO':
+            self.HEATING_COUNT = self.config_dict['pre_heat_on_time']
+        else:
+            self.HEATING_COUNT = self.config_dict['pre_heat_on_time_manual']
 
-        # send mqtt msg to chagne color
-        self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),       'blue')
-        if mode != 'AUTO':
-            self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(), 'yellow')
-        else:   # AUTO MODE & HEAT ON
-            # self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'rgb(128, 128, 128)')
-            self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON.objectName(), 'grey')
-            self.insert_log('AUTO MODE')
+        self.cooling_timeout_func()
 
-        self.send_mqtt_msg('LABEL',  self.label_pre_heat_on.objectName(),   'yellow')
-        self.send_mqtt_msg('LABEL',  self.label_emc_heat_on.objectName(),   'gray')
-
-        self.insert_log('PRE_HEAT_ON')
 
     def func_btn_PRE_HEAT_ON_AND_STOP(self):
         if self.flag_HEAT_ON:
             return
 
-        self.label_pre_heat_on.setStyleSheet("background-color: yellow")
-        self.label_emc_heat_on.setStyleSheet("background-color: gray")
+        self.flag_AUTO_MODE     = False
 
-        self.flag_AUTO_MODE = False
-        self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
-        self.btn_PRE_HEAT_ON_AND_STOP.setStyleSheet("background-color: yellow; border: 1px solid black")
+        self.flag_HEAT_ON       = HEATING
+        self.PRE_HEAT_STATUS    = True
+        self.HEAT_STATUS        = False
 
-        self.heating_timer.start(PRE_HEATING_TIME)
+        # self.flag_CHANNEL       = 0
 
-        self.flag_HEAT_ON = True
-        self.PRE_HEAT_STATUS = True
-        self.HEAT_STATUS = False
+        self.HEAT_MODE = 'PRE_HEAT_ON_AND_STOP'
 
-        if USB_SERIAL == True:
-            mcuSerial.write(b'1')
+        self.HEATING_COUNT = self.config_dict['pre_heat_on_time_manual']
 
-        # send mqtt msg to chagne color
-        self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),               'gray')
-        self.send_mqtt_msg('BUTTON', self.btn_PRE_HEAT_ON_AND_STOP.objectName(),    'yellow')
-        self.send_mqtt_msg('LABEL',  self.label_pre_heat_on.objectName(),           'yellow')
-        self.send_mqtt_msg('LABEL',  self.label_emc_heat_on.objectName(),           'gray')
+        self.cooling_timeout_func()
 
-        self.insert_log('PRE_HEAT_ON_AND_STOP')
 
     def func_btn_HEAT_ON(self, mode = False):   # mode == False: pressed button # mode == 'AUTO', 'EMC' --> AUTO MODE
         if self.flag_HEAT_ON:
             return
 
-        self.label_heat_on.setStyleSheet("background-color: pink")
+        if mode != 'AUTO':
+            self.flag_AUTO_MODE = False
 
-        if mode == False:
-            self.btn_HEAT_ON.setStyleSheet("background-color: pink; border: 1px solid black")
+        self.flag_HEAT_ON       = HEATING
+        self.PRE_HEAT_STATUS    = False
+        self.HEAT_STATUS        = True
 
-        self.flag_AUTO_MODE = True
-        self.btn_AUTO_MODE.setStyleSheet("background-color: blue; border: 1px solid black")
+        self.HEAT_MODE = 'HEAT_ON'
 
-        self.heating_timer.start(HEATING_TIME)
-
-        self.flag_HEAT_ON = True
-        self.PRE_HEAT_STATUS = False
-        self.HEAT_STATUS = True
-
-        if USB_SERIAL == True:
-            mcuSerial.write(b'3')
-
-        # send mqtt msg to chagne color
-        self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),   'blue')
-        if mode == False:   # pressed HEAT ON button
-            self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'pink')
-        else:   # AUTO MODE & HEAT ON
-            # self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'rgb(128, 128, 128)')
-            self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON.objectName(), 'grey')
-            self.insert_log('AUTO MODE')
-
-        self.send_mqtt_msg('LABEL',  self.label_heat_on.objectName(),   'pink')
-
-        # if self.flag_EMC_HEAT_ON == True:
-        if mode == 'EMC':
-            self.label_emc_heat_on.setStyleSheet("background-color: red")
-
-            # send mqtt msg to chagne color
-            self.send_mqtt_msg('LABEL', self.label_emc_heat_on.objectName(), 'red')
-            self.insert_log('EMC_HEAT_ON')
+        if mode == 'AUTO':
+            self.HEATING_COUNT = self.config_dict['heat_on_time']
         else:
-            self.insert_log('HEAT_ON')
+            self.HEATING_COUNT = self.config_dict['heat_on_time_manual']
+
+        self.cooling_timeout_func()
 
 
     def func_btn_HEAT_ON_AND_STOP(self):
         if self.flag_HEAT_ON:
             return
 
-        self.label_heat_on.setStyleSheet("background-color: pink")
+        self.flag_AUTO_MODE     = False
 
-        self.flag_AUTO_MODE = False
-        self.btn_AUTO_MODE.setStyleSheet("background-color: gray; border: 1px solid black")
-        self.btn_HEAT_ON_AND_STOP.setStyleSheet("background-color: pink; border: 1px solid black")
+        self.flag_HEAT_ON       = HEATING
+        self.PRE_HEAT_STATUS    = False
+        self.HEAT_STATUS        = True
 
-        # if self.flag_EMC_HEAT_ON == True:
-        #     self.label_emc_heat_on.setStyleSheet("background-color: red")
-        #     if MQTT_ENABLE:
-        #         self.sub_mqtt.send_msg(pub_root_topic+"LABEL", json.dumps({'label': [self.label_emc_heat_on.objectName(), 'red']}))
+        self.HEAT_MODE = 'HEAT_ON_AND_STOP'
 
-        self.heating_timer.start(HEATING_TIME)
+        self.HEATING_COUNT = self.config_dict['heat_on_time_manual']
 
-        self.flag_HEAT_ON = True
-        self.PRE_HEAT_STATUS = False
-        self.HEAT_STATUS = True
+        self.cooling_timeout_func()
 
-        if USB_SERIAL == True:
-            mcuSerial.write(b'3')
-
-        # send mqtt msg to chagne color
-        self.send_mqtt_msg('BUTTON', self.btn_AUTO_MODE.objectName(),       'gray')
-        self.send_mqtt_msg('BUTTON', self.btn_HEAT_ON_AND_STOP.objectName(),'pink')
-        self.send_mqtt_msg('LABEL',  self.label_heat_on.objectName(),       'pink')
-
-        self.insert_log('HEAT_ON_AND_STOP')
 
     def current_STATUS(self):
         print("request current STATUS")
         self.sub_mqtt.send_msg(pub_root_topic+"CONFIG", json.dumps(self.config_dict))
 
-        obj = self.btn_AUTO_MODE
-        self.send_mqtt_msg('BUTTON', obj.objectName(), obj.palette().window().color().name())
-
         # send mqtt msg to chagne color
-        for obj in self.btn_list:
+        for obj, color in self.btn_dict.items():    # first, set all btn color to gray
             self.send_mqtt_msg('BUTTON', obj.objectName(), obj.palette().window().color().name())
 
-        for obj in self.label_list:
+        for obj, color in self.label_dict.items():
             self.send_mqtt_msg('LABEL', obj.objectName(), obj.palette().window().color().name())
+
 
     def loop_start_func(self):
         self.sub_mqtt.messageSignal.connect(self.on_message_callback)
