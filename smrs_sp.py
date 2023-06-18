@@ -286,6 +286,7 @@ with gr.Blocks() as app2:
 
 def take_picture():
     global capture_flag, jpg_original
+    capture_flag = False
     widget.pressed_button(widget.btn_capture)
     count = 0
     while(True):
