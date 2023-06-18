@@ -98,6 +98,7 @@ def fn_update_label_4():
     return gr.Label.update(color=label_dict['btn_AUTO_MODE'])
 
 def fn_update_image():
+    global jpg_original
     return gr.Image(jpg_original)
 
 
@@ -284,7 +285,7 @@ with gr.Blocks() as app2:
 
 
 def take_picture():
-    global capture_flag
+    global capture_flag, jpg_original
     widget.pressed_button(widget.btn_capture)
     count = 0
     while(True):
@@ -308,7 +309,7 @@ with gr.Blocks() as app3:
         img_output = gr.Image("./icon/logo1.png")
         # outputs = gr.outputs.Image(type="numpy", label = "capture image")
 
-        # app3.load(fn_update_image,        inputs=None, outputs=img_output,               every=1)
+    app3.load(fn_update_image,        inputs=None, outputs=img_output,               every=1)
 
     with gr.Row():
         take_picture_btn = gr.Button("사진 촬영")
