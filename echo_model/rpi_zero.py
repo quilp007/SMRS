@@ -2,6 +2,7 @@ import time
 import zmq
 import RPi.GPIO as GPIO
 import threading as th
+import atexit
 
 ON  = True
 OFF = False
@@ -10,24 +11,64 @@ OFF = False
 print(GPIO.RPI_INFO)
 GPIO.setmode(GPIO.BOARD)
 
-AUTO_MODE_PIN = 3
-MANUAL_MODE_PIN = 7
+# I2C pin for ADC [TODO]
+ADC_SDA                 = 3
+ADC_SCL                 = 5
 
-GPIO.setup(AUTO_MODE_PIN, GPIO.OUT)
-GPIO.setup(MANUAL_MODE_PIN, GPIO.OUT)
+# RELEAY CONTROL
+AUTO_MODE_RELAY_PIN     = 11
+MANUAL_MODE_RELAY_PIN   = 13
+
+# LED ON/OFF
+LED_AUTO_MODE_ON        = 16
+LED_MANUAL_MODE_ON      = 18
+LED_MANUAL_OUT_ON       = 22
+LED_MANUAL_OUT_OFF      = 29
+LED_WIFI_LINK           = 31
+
+# CONFIG ADDR
+ADDR_0_PIN              = 15
+ADDR_1_PIN              = 36
+ADDR_2_PIN              = 37
+
+
+GPIO.setup(AUTO_MODE_RELAY_PIN, GPIO.OUT)
+GPIO.setup(MANUAL_MODE_RELAY_PIN, GPIO.OUT)
+
+GPIO.setup(LED_AUTO_MODE_ON  , GPIO.OUT)
+GPIO.setup(LED_MANUAL_MODE_ON, GPIO.OUT)
+GPIO.setup(LED_MANUAL_OUT_ON , GPIO.OUT)
+GPIO.setup(LED_MANUAL_OUT_OFF, GPIO.OUT)
+GPIO.setup(LED_WIFI_LINK     , GPIO.OUT)
+
+GPIO.setup(ADDR_0_PIN, GPIO.IN)
+GPIO.setup(ADDR_1_PIN, GPIO.IN)
+GPIO.setup(ADDR_2_PIN, GPIO.IN)
+
+addr = 0
+if GPIO.input(ADDR_2_PIN):
+    addr += 1 << 2
+if GPIO.input(ADDR_1_PIN):
+    addr += 1 << 1
+if GPIO.input(ADDR_0_PIN):
+    addr += 1
 
 context = zmq.Context()
 # socket = context.socket(zmq.REP)
 # socket.bind("tcp://*:5555")
 socket = context.socket(zmq.PAIR)
 # socket.connect("tcp://192.168.0.26:5555")
-socket.connect("tcp://192.168.0.26:5500")
+socket.connect(f"tcp://192.168.0.26:550{addr}")
 
 command_dict = {
     'alive':        False,
     'auto_mode':    OFF,
     'manual_mode':  OFF
 }
+def cleanup_gpio():
+    GPIO.cleanup()
+
+atexit.register(cleanup_gpio)
 
 def alive_function():
     global command_dict
@@ -57,17 +98,29 @@ while True:
         # continue
 
     if message['auto_mode']:
-        GPIO.output(AUTO_MODE_PIN, GPIO.HIGH)
+        # AUTO MODE -> relay on, led on
+        GPIO.output(AUTO_MODE_RELAY_PIN, GPIO.HIGH)
+        GPIO.output(LED_AUTO_MODE_ON, GPIO.HIGH)
+        # MANUAL MODE -> relay off, led off 
+        GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.LOW)
+        GPIO.output(LED_MANUAL_MODE_ON, GPIO.LOW)
         command_dict['auto_mode'] = ON
     else:
-        GPIO.output(AUTO_MODE_PIN, GPIO.LOW)
+        # MANUAL MODE -> relay off, led off 
+        GPIO.output(AUTO_MODE_RELAY_PIN, GPIO.LOW)
+        GPIO.output(LED_AUTO_MODE_ON, GPIO.LOW)
+        GPIO.output(LED_MANUAL_MODE_ON, GPIO.HIGH)
         command_dict['auto_mode'] = OFF
 
         if message['manual_mode']:
-            GPIO.output(MANUAL_MODE_PIN, GPIO.HIGH)
+            GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.HIGH)
+            GPIO.output(LED_MANUAL_OUT_ON, GPIO.HIGH)
+            GPIO.output(LED_MANUAL_OUT_OFF, GPIO.LOW)
             command_dict['manual_mode'] = ON
         else:
-            GPIO.output(MANUAL_MODE_PIN, GPIO.LOW)
+            GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.LOW)
+            GPIO.output(LED_MANUAL_OUT_ON, GPIO.LOW)
+            GPIO.output(LED_MANUAL_OUT_OFF, GPIO.HIGH)
             command_dict['manual_mode'] = OFF
 
     #  Send reply back to client
