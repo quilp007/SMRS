@@ -21,7 +21,7 @@ context = zmq.Context()
 # socket.bind("tcp://*:5555")
 socket = context.socket(zmq.PAIR)
 # socket.connect("tcp://192.168.0.26:5555")
-socket.connect("tcp://192.168.0.26:5501")
+socket.connect("tcp://192.168.0.26:5500")
 
 command_dict = {
     'alive':        False,
