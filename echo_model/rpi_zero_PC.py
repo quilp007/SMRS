@@ -71,7 +71,7 @@ class THREAD_RECEIVE_MSG(QThread):
 class main_window(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
-        loadUi('./rpi_zero.ui', self)        
+        loadUi('./rpi_zero_PC.ui', self)        
 
         # setting  the fixed width of window       
         # widtr = 1000
