@@ -249,695 +249,7 @@
            <string>Link</string>
           </property>
          </widget>
-         <widget class="QTextEdit" name="textEdit_1">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>211</width>
-            <height>41</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QFrame" name="frame_0">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QPushButton" name="pb_autoMode_0">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>130</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoRepeat">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_manualMode_0">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>220</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_connection_0">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>70</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_auto_0">
-          <property name="geometry">
-           <rect>
-            <x>70</x>
-            <y>110</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Auto Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_manual_0">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>200</y>
-            <width>101</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Manual Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_connection_0">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>50</y>
-            <width>51</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Link</string>
-          </property>
-         </widget>
-         <widget class="QTextEdit" name="textEdit_0">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>211</width>
-            <height>41</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QFrame" name="frame_2">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QPushButton" name="pb_autoMode_2">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>130</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoRepeat">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_manualMode_2">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>220</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_connection_2">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>70</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_auto_2">
-          <property name="geometry">
-           <rect>
-            <x>70</x>
-            <y>110</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Auto Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_manual_2">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>200</y>
-            <width>101</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Manual Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_connection_2">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>50</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Link</string>
-          </property>
-         </widget>
-         <widget class="QTextEdit" name="textEdit_2">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>211</width>
-            <height>41</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QFrame" name="frame_6">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QPushButton" name="pb_autoMode_6">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>130</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoRepeat">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_manualMode_6">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>220</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_connection_6">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>70</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_auto_6">
-          <property name="geometry">
-           <rect>
-            <x>70</x>
-            <y>110</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Auto Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_manual_6">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>200</y>
-            <width>101</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Manual Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_connection_6">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>50</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Link</string>
-          </property>
-         </widget>
-         <widget class="QTextEdit" name="textEdit_6">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>211</width>
-            <height>41</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-           </font>
-          </property>
-         </widget>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QFrame" name="frame_5">
-         <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
-         </property>
-         <widget class="QPushButton" name="pb_autoMode_5">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>130</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-          <property name="autoRepeat">
-           <bool>false</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_manualMode_5">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>220</y>
-            <width>101</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>100</width>
-            <height>100</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="pb_connection_5">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>70</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_auto_5">
-          <property name="geometry">
-           <rect>
-            <x>70</x>
-            <y>110</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Auto Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_manual_5">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>200</y>
-            <width>101</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Manual Mode</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="label_connection_5">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>50</y>
-            <width>81</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="font">
-           <font>
-            <family>Arial</family>
-            <pointsize>15</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Link</string>
-          </property>
-         </widget>
-         <widget class="QTextEdit" name="textEdit_5">
+         <widget class="QLineEdit" name="lineEdit_1">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -1109,7 +421,7 @@
            <string>Link</string>
           </property>
          </widget>
-         <widget class="QTextEdit" name="textEdit_4">
+         <widget class="QLineEdit" name="lineEdit_4">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -1281,7 +593,7 @@
            <string>Link</string>
           </property>
          </widget>
-         <widget class="QTextEdit" name="textEdit_7">
+         <widget class="QLineEdit" name="lineEdit_7">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -1453,7 +765,695 @@
            <string>Link</string>
           </property>
          </widget>
-         <widget class="QTextEdit" name="textEdit_3">
+         <widget class="QLineEdit" name="lineEdit_3">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>211</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <widget class="QPushButton" name="pb_autoMode_2">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>130</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRepeat">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_manualMode_2">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>220</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_connection_2">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/circle-128.png</normaloff>
+            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_auto_2">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>110</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auto Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_manual_2">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>200</y>
+            <width>101</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Manual Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_connection_2">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Link</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>211</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QFrame" name="frame_6">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <widget class="QPushButton" name="pb_autoMode_6">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>130</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRepeat">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_manualMode_6">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>220</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_connection_6">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/circle-128.png</normaloff>
+            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_auto_6">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>110</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auto Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_manual_6">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>200</y>
+            <width>101</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Manual Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_connection_6">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Link</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_6">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>211</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QFrame" name="frame_5">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <widget class="QPushButton" name="pb_autoMode_5">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>130</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRepeat">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_manualMode_5">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>220</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_connection_5">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/circle-128.png</normaloff>
+            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_auto_5">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>110</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auto Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_manual_5">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>200</y>
+            <width>101</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Manual Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_connection_5">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Link</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_5">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>211</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QFrame" name="frame_0">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <widget class="QPushButton" name="pb_autoMode_0">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>130</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="autoRepeat">
+           <bool>false</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>false</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_manualMode_0">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>220</y>
+            <width>101</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/off_icon.png</normaloff>
+            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>100</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pb_connection_0">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>70</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../../../Downloads/circle-128.png</normaloff>
+            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_auto_0">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>110</y>
+            <width>81</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Auto Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_manual_0">
+          <property name="geometry">
+           <rect>
+            <x>60</x>
+            <y>200</y>
+            <width>101</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Manual Mode</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_connection_0">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>50</y>
+            <width>51</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="font">
+           <font>
+            <family>Arial</family>
+            <pointsize>15</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Link</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="lineEdit_0">
           <property name="geometry">
            <rect>
             <x>0</x>
