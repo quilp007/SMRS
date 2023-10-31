@@ -116,8 +116,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -152,8 +152,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -179,8 +179,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -288,8 +288,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -324,8 +324,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -351,8 +351,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -460,8 +460,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -496,8 +496,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -523,8 +523,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -632,8 +632,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -668,8 +668,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -695,8 +695,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -804,8 +804,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -840,8 +840,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -867,8 +867,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -976,8 +976,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1012,8 +1012,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1039,8 +1039,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1148,8 +1148,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1184,8 +1184,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1211,8 +1211,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1320,8 +1320,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1356,8 +1356,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/off_icon.png</normaloff>
-            <normalon>../../../Downloads/on_icon.png</normalon>../../../Downloads/off_icon.png</iconset>
+            <normaloff>../icon/off_icon.png</normaloff>
+            <normalon>../icon/on_icon.png</normalon>../icon/off_icon.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -1383,8 +1383,8 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../../../Downloads/circle-128.png</normaloff>
-            <normalon>../../../Downloads/circle-128 (1).png</normalon>../../../Downloads/circle-128.png</iconset>
+            <normaloff>../icon/circle-red.png</normaloff>
+            <normalon>../icon/circle-green.png</normalon>../icon/circle-red.png</iconset>
           </property>
           <property name="iconSize">
            <size>
