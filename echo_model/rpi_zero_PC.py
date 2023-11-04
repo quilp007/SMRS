@@ -9,8 +9,8 @@ import threading as th
 import zmq
 
 context = zmq.Context()
-socket = context.socket(zmq.PAIR)
-socket.bind("tcp://*:5555")
+# socket = context.socket(zmq.PAIR)
+# socket.bind("tcp://*:5555")
 
 AUTO_BUTTON     = 0
 MANUAL_BUTTON   = 1
@@ -79,12 +79,12 @@ class THREAD_RECEIVE_MSG(QThread):
                 print('rcv error!!')
                 return
 
-            if message['alive']:
-                print(f'[THREAD] {[idx]} [alive]', message)
+            if command_dict_list[idx]['alive']:
+                print(f'[THREAD] {[idx]} [alive]',command_dict_list[idx])
             else:
-                print('[THREAD] not alive', message)
+                print('[THREAD] not alive', command_dict_list[idx])
 
-            self.received_alive.emit(idx, message)
+            self.received_alive.emit(idx, command_dict_list[idx])
 
 #--------------------------------------------------------------
 # [THREAD] ALIVE CHECK
@@ -93,20 +93,23 @@ class THREAD_RECEIVE_ALIVE(QThread):
     def __init__(self, qt_obj):
         super(THREAD_RECEIVE_ALIVE, self).__init__()
         self.obj = qt_obj
+        print('start thread!!!')
 
     def run(self):
         while True:
             for idx in range(8):
-                self.alive_check(idx)
+                # self.alive_check(idx)
+                self.obj.button_list[idx][SOCKET_IDX].send_json(command_dict_list[idx])
+                print(f'[{idx}] send alive')
 
-            time.sleep(1000)
+            time.sleep(1)
 
     def alive_check(self, num):
-        command_dict_list[num]['alive'] = False
+        # command_dict_list[num]['alive'] = True
         self.obj.button_list[num][SOCKET_IDX].send_json(command_dict_list[num])
+        print(f'[{idx}] send alive')
         # socket.send_json(command_dict)
-        print('send alive', command_dict_list[num])
-    
+   
 
 class main_window(QMainWindow):
     def __init__(self):
@@ -170,8 +173,6 @@ class main_window(QMainWindow):
             buttons[MANUAL_BUTTON].clicked.connect(self.func_pb_manualMode)
             buttons[LOCATION].returnPressed.connect(self.func_lineEdit_returnPressed)
 
-        thread = THREAD_RECEIVE_ALIVE(self)
-        thread.start()
 
         for idx in range(8):
             sock = context.socket(zmq.PAIR)
@@ -186,6 +187,9 @@ class main_window(QMainWindow):
             print('idx: ', idx, 'thread started!!')
             time.sleep(0.1)
         
+        thread = THREAD_RECEIVE_ALIVE(self)
+        thread.start()
+        # thread.wait()
 
         
     # def textEditEditingFinished(self):
