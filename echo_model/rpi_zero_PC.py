@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.uic import loadUi
 from PyQt5 import uic, QtTest, QtCore
 import shelve
+import threading as th
 
 import zmq
 
@@ -85,6 +86,27 @@ class THREAD_RECEIVE_MSG(QThread):
 
             self.received_alive.emit(idx, message)
 
+#--------------------------------------------------------------
+# [THREAD] ALIVE CHECK
+#--------------------------------------------------------------
+class THREAD_RECEIVE_ALIVE(QThread):
+    def __init__(self, qt_obj):
+        super(THREAD_RECEIVE_ALIVE, self).__init__()
+        self.obj = qt_obj
+
+    def run(self):
+        while True:
+            for idx in range(8):
+                self.alive_check(idx)
+
+            time.sleep(1000)
+
+    def alive_check(self, num):
+        command_dict_list[num]['alive'] = False
+        self.obj.button_list[num][SOCKET_IDX].send_json(command_dict_list[num])
+        # socket.send_json(command_dict)
+        print('send alive', command_dict_list[num])
+    
 
 class main_window(QMainWindow):
     def __init__(self):
@@ -148,6 +170,9 @@ class main_window(QMainWindow):
             buttons[MANUAL_BUTTON].clicked.connect(self.func_pb_manualMode)
             buttons[LOCATION].returnPressed.connect(self.func_lineEdit_returnPressed)
 
+        thread = THREAD_RECEIVE_ALIVE(self)
+        thread.start()
+
         for idx in range(8):
             sock = context.socket(zmq.PAIR)
             sock.bind(f"tcp://*:550{idx}")
@@ -161,8 +186,8 @@ class main_window(QMainWindow):
             print('idx: ', idx, 'thread started!!')
             time.sleep(0.1)
         
-        # self.lineEdit_0.returnPressed.connect(self.textEditEditingFinished)
 
+        
     # def textEditEditingFinished(self):
     def func_lineEdit_returnPressed(self):
         # 사용자가 텍스트 입력을 마치면 이 함수가 호출됩니다.
