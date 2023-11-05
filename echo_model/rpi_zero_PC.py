@@ -79,9 +79,12 @@ class THREAD_RECEIVE_MSG(QThread):
                 print('rcv error!!')
                 return
 
-            if command_dict_list[idx]['alive']:
+            # if command_dict_list[idx]['alive']:
+            if message['alive']:
+                command_dict_list[idx]['alive'] = True
                 print(f'[THREAD] {[idx]} [alive]',command_dict_list[idx])
             else:
+                command_dict_list[idx]['alive'] = False
                 print('[THREAD] not alive', command_dict_list[idx])
 
             self.received_alive.emit(idx, command_dict_list[idx])
@@ -99,17 +102,19 @@ class THREAD_RECEIVE_ALIVE(QThread):
         while True:
             for idx in range(8):
                 # self.alive_check(idx)
+                command_dict_list[idx]['alive'] = True
                 self.obj.button_list[idx][SOCKET_IDX].send_json(command_dict_list[idx])
-                print(f'[{idx}] send alive')
+                print(f'[{idx}] send alive ---------------------------->')
+                self.obj.util_func.Qsleep(1000)
 
-            time.sleep(1)
+            # time.sleep(1)
 
     def alive_check(self, num):
         # command_dict_list[num]['alive'] = True
         self.obj.button_list[num][SOCKET_IDX].send_json(command_dict_list[num])
         print(f'[{idx}] send alive')
         # socket.send_json(command_dict)
-   
+#--------------------------------------------------------------
 
 class main_window(QMainWindow):
     def __init__(self):
@@ -185,11 +190,11 @@ class main_window(QMainWindow):
             thread.received_alive.connect(self.alive_func)
             thread.start()
             print('idx: ', idx, 'thread started!!')
-            time.sleep(0.1)
+            self.util_func.Qsleep(100)
         
         thread = THREAD_RECEIVE_ALIVE(self)
         thread.start()
-        # thread.wait()
+        self.util_func.Qsleep(100)
 
         
     # def textEditEditingFinished(self):
