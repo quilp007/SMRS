@@ -64,13 +64,16 @@ context = zmq.Context()
 socket = context.socket(zmq.PAIR)
 socket.connect(f"tcp://192.168.0.26:550{addr}")
 time.sleep(0.5)
+"""
 count = 1
 while True:
-    event = socket.poll(timeout = 2000) # wait 2 seconds
+    event = socket.poll(timeout = 4000) # wait 2 seconds
     if event == 0:
         print(f'not connected. Try again {[count]}!!!')
         if count == 3:
             count = 1
+            socket.close()
+            socket = context.socket(zmq.PAIR)
             socket.connect(f"tcp://192.168.0.26:550{addr}")
             print('reconnect!!')
         else:
@@ -81,6 +84,7 @@ while True:
     else:
         print('connected!!!')
         break
+"""
 
 command_dict = {
     'alive':        False,
@@ -93,7 +97,6 @@ def cleanup_gpio():
 if RPI_ZERO:
     atexit.register(cleanup_gpio)
 
-"""
 def alive_function():
     global command_dict
     command_dict['alive'] = True 
@@ -109,10 +112,10 @@ def start_periodic_task(interval_seconds):
     timer.start()
 
 start_periodic_task(1)
-"""
 
 while True:
-    event = socket.poll(timeout = 2000) # wait 2 seconds
+    # event = socket.poll(timeout = 2000) # wait 2 seconds
+    event = 1
     if event == 0:
         print('timeout!!!!!!!!!!!!!!!!!!')
         # message['alive'] = False
@@ -121,6 +124,7 @@ while True:
             GPIO.output(LED_WIFI_LINK, GPIO.LOW)
 
         time.sleep(1)
+
         continue
 
     else:
