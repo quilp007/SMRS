@@ -33,7 +33,7 @@ LED_MANUAL_OUT_OFF      = 29
 LED_WIFI_LINK           = 31
 
 # CONFIG ADDR
-ADDR_0_PIN              = 15
+ADDR_0_PIN              = 33
 ADDR_1_PIN              = 36
 ADDR_2_PIN              = 37
 
@@ -123,7 +123,7 @@ while True:
         # message['alive'] = False
 
         if RPI_ZERO:
-            GPIO.output(LED_WIFI_LINK, GPIO.LOW)
+            GPIO.output(LED_WIFI_LINK, GPIO.HIGH)
 
         time.sleep(1)
 
@@ -131,7 +131,7 @@ while True:
 
     else:
         if RPI_ZERO:
-            GPIO.output(LED_WIFI_LINK, GPIO.HIGH)
+            GPIO.output(LED_WIFI_LINK, GPIO.LOW)
 
     message = socket.recv_json()
     print(message)
@@ -143,30 +143,30 @@ while True:
         # AUTO MODE -> relay on, led on
         if RPI_ZERO:
             GPIO.output(AUTO_MODE_RELAY_PIN, GPIO.HIGH)
-            GPIO.output(LED_AUTO_MODE_ON, GPIO.HIGH)
+            GPIO.output(LED_AUTO_MODE_ON, GPIO.LOW)
             # MANUAL MODE -> relay off, led off
             GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.LOW)
-            GPIO.output(LED_MANUAL_MODE_ON, GPIO.LOW)
+            GPIO.output(LED_MANUAL_MODE_ON, GPIO.HIGH)
         command_dict['auto_mode'] = ON
     else:
         # MANUAL MODE -> relay off, led off
         if RPI_ZERO:
             GPIO.output(AUTO_MODE_RELAY_PIN, GPIO.LOW)
-            GPIO.output(LED_AUTO_MODE_ON, GPIO.LOW)
-            GPIO.output(LED_MANUAL_MODE_ON, GPIO.HIGH)
+            GPIO.output(LED_AUTO_MODE_ON, GPIO.HIGH)
+            GPIO.output(LED_MANUAL_MODE_ON, GPIO.LOW)
         command_dict['auto_mode'] = OFF
 
         if message['manual_mode']:
             if RPI_ZERO:
                 GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.HIGH)
-                GPIO.output(LED_MANUAL_OUT_ON, GPIO.HIGH)
-                GPIO.output(LED_MANUAL_OUT_OFF, GPIO.LOW)
+                GPIO.output(LED_MANUAL_OUT_ON, GPIO.LOW)
+                GPIO.output(LED_MANUAL_OUT_OFF, GPIO.HIGH)
             command_dict['manual_mode'] = ON
         else:
             if RPI_ZERO:
                 GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.LOW)
-                GPIO.output(LED_MANUAL_OUT_ON, GPIO.LOW)
-                GPIO.output(LED_MANUAL_OUT_OFF, GPIO.HIGH)
+                GPIO.output(LED_MANUAL_OUT_ON, GPIO.HIGH)
+                GPIO.output(LED_MANUAL_OUT_OFF, GPIO.LOW)
             command_dict['manual_mode'] = OFF
 
     #  Send reply back to client
