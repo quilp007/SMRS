@@ -60,10 +60,12 @@ if RPI_ZERO:
     if GPIO.input(ADDR_0_PIN):
         addr += 1
 
+print('addr: ', addr)
 context = zmq.Context()
 socket = context.socket(zmq.PAIR)
-socket.connect(f"tcp://192.168.0.26:550{addr}")
+socket.connect(f"tcp://192.168.0.123:550{addr}")
 time.sleep(0.5)
+
 """
 count = 1
 while True:
@@ -99,7 +101,7 @@ if RPI_ZERO:
 
 def alive_function():
     global command_dict
-    command_dict['alive'] = True 
+    command_dict['alive'] = True
     socket.send_json(command_dict)
     print('send alive', command_dict)
 
@@ -142,12 +144,12 @@ while True:
         if RPI_ZERO:
             GPIO.output(AUTO_MODE_RELAY_PIN, GPIO.HIGH)
             GPIO.output(LED_AUTO_MODE_ON, GPIO.HIGH)
-            # MANUAL MODE -> relay off, led off 
+            # MANUAL MODE -> relay off, led off
             GPIO.output(MANUAL_MODE_RELAY_PIN, GPIO.LOW)
             GPIO.output(LED_MANUAL_MODE_ON, GPIO.LOW)
         command_dict['auto_mode'] = ON
     else:
-        # MANUAL MODE -> relay off, led off 
+        # MANUAL MODE -> relay off, led off
         if RPI_ZERO:
             GPIO.output(AUTO_MODE_RELAY_PIN, GPIO.LOW)
             GPIO.output(LED_AUTO_MODE_ON, GPIO.LOW)
