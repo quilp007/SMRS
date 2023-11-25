@@ -66,28 +66,6 @@ socket = context.socket(zmq.PAIR)
 socket.connect(f"tcp://192.168.0.123:550{addr}")
 time.sleep(0.5)
 
-"""
-count = 1
-while True:
-    event = socket.poll(timeout = 4000) # wait 2 seconds
-    if event == 0:
-        print(f'not connected. Try again {[count]}!!!')
-        if count == 3:
-            count = 1
-            socket.close()
-            socket = context.socket(zmq.PAIR)
-            socket.connect(f"tcp://192.168.0.26:550{addr}")
-            print('reconnect!!')
-        else:
-            count += 1
-
-        time.sleep(1)
-        continue
-    else:
-        print('connected!!!')
-        break
-"""
-
 command_dict = {
     'alive':        False,
     'auto_mode':    OFF,
@@ -116,8 +94,8 @@ def start_periodic_task(interval_seconds):
 start_periodic_task(1)
 
 while True:
-    # event = socket.poll(timeout = 2000) # wait 2 seconds
-    event = 1
+    event = socket.poll(timeout = 2000) # wait 2 seconds
+    # event = 1
     if event == 0:
         print('timeout!!!!!!!!!!!!!!!!!!')
         # message['alive'] = False
@@ -170,5 +148,5 @@ while True:
             command_dict['manual_mode'] = OFF
 
     #  Send reply back to client
-    socket.send_json(command_dict)
-    print('send command', command_dict)
+    # socket.send_json(command_dict)
+    # print('send command', command_dict)
