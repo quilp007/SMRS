@@ -1,3 +1,7 @@
+# auto excution in booting time
+# crontab -e
+# @reboot python /home/pi/work/SMRS/echo_model/rpi_zero.py
+
 import time
 import zmq
 import threading as th
@@ -63,7 +67,7 @@ if RPI_ZERO:
 print('addr: ', addr)
 context = zmq.Context()
 socket = context.socket(zmq.PAIR)
-socket.connect(f"tcp://192.168.0.123:550{addr}")
+socket.connect(f"tcp://192.168.0.26:550{addr}")
 time.sleep(0.5)
 
 command_dict = {
