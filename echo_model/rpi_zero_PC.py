@@ -83,6 +83,7 @@ class THREAD_RECEIVE_MSG(QThread):
             if message['alive']:
                 command_dict_list[idx]['alive'] = True
                 print(f'[THREAD] {[idx]} [alive]',command_dict_list[idx])
+                self.obj.button_list[idx][SOCKET_IDX].send_json(command_dict_list[idx])
             else:
                 command_dict_list[idx]['alive'] = False
                 print('[THREAD] not alive', command_dict_list[idx])
@@ -192,9 +193,9 @@ class main_window(QMainWindow):
             print('idx: ', idx, 'thread started!!')
             self.util_func.Qsleep(100)
         
-        thread = THREAD_RECEIVE_ALIVE(self)
-        thread.start()
-        self.util_func.Qsleep(100)
+        # thread = THREAD_RECEIVE_ALIVE(self)
+        # thread.start()
+        # self.util_func.Qsleep(100)
 
         
     # def textEditEditingFinished(self):
