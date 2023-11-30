@@ -8,7 +8,7 @@ import threading as th
 import atexit
 import argparse
 
-RPI_ZERO = False
+RPI_ZERO = True
 
 if RPI_ZERO:
     import RPi.GPIO as GPIO
@@ -75,7 +75,7 @@ if RPI_ZERO:
 print('addr: ', addr)
 context = zmq.Context()
 socket = context.socket(zmq.PAIR)
-socket.connect(f"tcp://192.168.0.26:550{addr}")
+socket.connect(f"tcp://192.168.0.123:550{addr}")
 time.sleep(0.5)
 
 command_dict = {
