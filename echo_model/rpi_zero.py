@@ -6,8 +6,9 @@ import time
 import zmq
 import threading as th
 import atexit
+import argparse
 
-RPI_ZERO = True
+RPI_ZERO = False
 
 if RPI_ZERO:
     import RPi.GPIO as GPIO
@@ -41,7 +42,14 @@ ADDR_0_PIN              = 33
 ADDR_1_PIN              = 36
 ADDR_2_PIN              = 37
 
-addr = 0
+
+parser = argparse.ArgumentParser(description='input Port')
+parser.add_argument('-p', '--port', type=int, default=0, help='port')
+args = parser.parse_args()
+
+port = args.port
+
+addr = port
 
 if RPI_ZERO:
     GPIO.setup(AUTO_MODE_RELAY_PIN, GPIO.OUT)
