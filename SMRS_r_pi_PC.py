@@ -46,7 +46,7 @@ if ARG_ENABLE == False:
         pub_root_topic = "R_PI_test/"
         sub_root_topic = "APP_test/"
 
-USB_SERIAL      = False
+USB_SERIAL      = True
 MQTT_ENABLE     = True
 MPM_330_ENABLE  = False
 
@@ -64,10 +64,11 @@ reg_40002 = 2
 
 
 # server_ip = '203.251.78.135'
-server_ip = '211.57.90.83'
+# server_ip = '211.57.90.83'
+server_ip = '123.111.199.251'
 
-userid = 'smrs_1'
-passwd = 'smrs2580_1!'
+userid = 'ep_pt_1'
+passwd = 'ep_pt_1'
 
 mongo_port = 27017
 mqtt_port = 1883
@@ -80,8 +81,8 @@ DEBUG_PRINT = False
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-HEATING_TIME                = 3000 # ms -> timer setting
-COOLING_TIME                = 2000 # ms -> stop time
+HEATING_TIME                = 3000 # ms -> timer setting    # 1000*60*25 -> 25min
+COOLING_TIME                = 2000 # ms -> stop time        # 1000*60*5  ->  5min
 
 LABEL_WARNING_TIME          = 3000 # ms -> timer setting
 
@@ -214,7 +215,8 @@ class THREAD_RECEIVE_Data(QThread):
             # time.sleep(1)
 
             try: 
-                line = mcuSerial.readline()
+                line = mcuSerial.readline().decode('utf-8')
+                # line = mcuSerial.readline()
                 print(line)
             except:
                 print('MCU uart readline error!!!')
@@ -222,8 +224,8 @@ class THREAD_RECEIVE_Data(QThread):
             else:
                 try:
                     data = json.loads(line)
-                except:
-                    print('json error!!')
+                except json.JSONDecodeError as e:
+                    print(f"JSONDecodeError: {e}")
                     pass
                 else:
                     # sensor_data_dict = data

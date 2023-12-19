@@ -52,10 +52,11 @@ COL_COUNT = 3
 LABEL_WARNING_TIME = 3000  # ms -> timer setting
 
 # server_ip = '203.251.78.135'
-server_ip = '211.57.90.83'
+# server_ip = '211.57.90.83'
+server_ip = '123.111.199.251'
 
-userid = 'smrs_1'
-passwd = 'smrs2580_1!'
+userid = 'ep_pt_1'
+passwd = 'ep_pt_1'
 
 mongo_port = 27017
 mqtt_port = 1883
@@ -549,7 +550,8 @@ class qt(QMainWindow, form_class):
             return val
 
     def set_Tab_visible(self):
-        self.tabWidget.setTabVisible(0, False)
+        # self.tabWidget.setTabVisible(0, False)
+        self.tabWidget.setTabEnabled(0, False)
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setTabEnabled(2, True)
         self.tabWidget.setTabEnabled(3, True)
