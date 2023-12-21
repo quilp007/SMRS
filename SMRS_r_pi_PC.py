@@ -81,21 +81,23 @@ DEBUG_PRINT = False
 # ------------------------------------------------------------------------------
 # config -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-HEATING_TIME                = 3000 # ms -> timer setting    # 1000*60*25 -> 25min
-COOLING_TIME                = 2000 # ms -> stop time        # 1000*60*5  ->  5min
+HEATING_TIME                = 1000*60*20 # ms -> timer setting    # 1000*60*20 -> 20min
+COOLING_TIME                = 1000*60*5  # ms -> stop time        # 1000*60*5  ->  5min
 
 LABEL_WARNING_TIME          = 3000 # ms -> timer setting
 
 CHECK_TEMP_INTERVAL_TIME    = 1000 # ms -> timer setting
 
-HEATER_0    = b'0'
-HEATER_1    = b'1'
-HEATER_0_1  = b'2'
-HEATER_STOP = b'3'
+HEATER_0    = b'0'  # magenta
+HEATER_1    = b'1'  # yellow
+HEATER_0_1  = b'1'  # pink
+HEATER_STOP = b'0'  # 3
 
 STOP        = 0
 HEATING     = 1
 COOLING     = 2
+
+POWER_INTERVAL  = 60*5    # 5min
 
 KEYPAD_TIME = 5000
 
@@ -285,8 +287,8 @@ class THREAD_POWER_METER(QThread):
             while self.__suspend:
                 time.sleep(0.5)
 
-            # time.sleep(60*5) # every 5 min
-            time.sleep(5) # every 5 min
+            time.sleep(POWER_INTERVAL) # every 5 min
+            # time.sleep(5) # every 5 sec (for test)
 
             try: 
                 reg_data = self.instr.read_register(reg_40002)

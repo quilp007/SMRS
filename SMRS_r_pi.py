@@ -36,10 +36,11 @@ serial_port = "/dev/ttyUSB0"
 if USB_SERIAL == True:
     mcuSerial = serial.Serial(serial_port, 115200)
 
-server_ip = '203.251.78.135'
+# server_ip = '203.251.78.135'
+server_ip = '123.111.199.251'
 
-userid = 'smrs_1'
-passwd = 'smrs2580_1!'
+userid = 'ep_pt_1'
+passwd = 'ep_pt_1'
 
 mongo_port = 27017
 mqtt_port = 1883
@@ -342,11 +343,11 @@ class qt(QMainWindow, form_class):
         results = collection.find({"timestamp": {"$gt": self.query_time}}, limit=NUM_X_AXIS)
 
         # table Widget ------------------------------------------------------------------
-        self.tableWidget.setRowCount(ROW_COUNT)
-        self.tableWidget.setColumnCount(COL_COUNT)  # MEAN, parallel resistance
+        # self.tableWidget.setRowCount(ROW_COUNT)
+        # self.tableWidget.setColumnCount(COL_COUNT)  # MEAN, parallel resistance
 
-        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # self.tableWidget.verticalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         self.x_size = 720
         self.sine_x_data = np.linspace(-np.pi, np.pi, self.x_size)
